@@ -15,7 +15,7 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from .core.entities import Player
-from .core.floor import Floor
+from .core.floor import Section
 from .core.combat import CombatSystem
 
 NAMES = [
@@ -33,7 +33,7 @@ class Game:
     def __init__(self, player_name: str):
         self.player = Player(player_name)
         # Create 4 floors, maybe if i add an infinite mode this may need to be changed
-        self.floors = [Floor(i+1) for i in range(4)]
+        self.floors = [Section(i+1) for i in range(4)]
         self.current_floor = self.floors[0]
         self.current_place = self.current_floor.places[0]
         self.game_over = False

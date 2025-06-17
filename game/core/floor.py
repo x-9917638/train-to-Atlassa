@@ -13,41 +13,41 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import random
-from ..utils.enums import PlaceType
-from .places import Place
+from ..utils.enums import CarriageType
+from .places import Carriage
 
-class Floor:
-    def __init__(self, floor_number: int):
-        self.number = floor_number
+class Section:
+    def __init__(self, section_number: int):
+        self.number = section_number
         self.places = []
-        self.generate_floor()
+        self.generate_section()
     
-    def generate_floor(self):
+    def generate_section(self):
         # Create the guaranteed home place
-        home = Place(PlaceType.HOME, f"Floor {self.number} Home")
+        home = Carriage(CarriageType.HOME, f"Floor {self.number} Home")
         self.places.append(home)
         
         # Generate other places
-        self._generate_other_places()
+        self._generate_other_carriages()
         
         # Create the guaranteed boss room
-        boss_room = Place(PlaceType.BOSS, f"Floor {self.number} Boss Room")
+        boss_room = Carriage(CarriageType.BOSS, f"Floor {self.number} Boss Room")
         self.places.append(boss_room)
 
         # Connect places
-        self._connect_places()
+        self._connect_carriages()
     
-    def _generate_other_places(self):
+    def _generate_other_carriages(self):
         num_places = random.randint(4, 6)
-        place_types = [PlaceType.REST, PlaceType.FIGHT, PlaceType.CHALLENGE]
+        place_types = [CarriageType.REST, CarriageType.FIGHT, CarriageType.CHALLENGE]
         weights = [0.3, 0.5, 0.2] # Might be too hard rn?
         
         for i in range(num_places):
             place_type = random.choices(place_types, k=1, weights=weights)[0]
-            place = Place(place_type, f"Floor {self.number} {place_type.value} {i+1}")
+            place = Carriage(place_type, f"Floor {self.number} {place_type.value} {i+1}")
             self.places.append(place)
     
-    def _connect_places(self):
+    def _connect_carriages(self):
         for i in range(len(self.places) - 1):
             self.places[i].add_connection(self.places[i+1])
         self.places[-2].add_connection(self.places[-1])

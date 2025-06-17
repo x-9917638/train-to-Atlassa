@@ -78,10 +78,8 @@ class CombatSystem:
             case _: pass
     
     def enemy_turn(self):
-        print("\n=== Enemy Turn ===")
-        for enemy in self.enemies:
-            if enemy.is_alive():
-                self._execute_enemy_action(enemy)
+        [self._execute_enemy_action(enemy) for enemy in self.enemies if enemy.is_alive]
+
 
     def _execute_enemy_action(self, enemy):
         # Implementation of enemy AI

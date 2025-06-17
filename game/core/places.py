@@ -13,12 +13,12 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from .events import Event
-from ..utils.enums import PlaceType
+from ..utils.enums import CarriageType
 import random as rand
 
-class Place:
-    def __init__(self, place_type: PlaceType, name: str, possible_events:list[Event]=None):
-        self.type = place_type
+class Carriage:
+    def __init__(self, carriage_type: CarriageType, name: str, possible_events:list[Event]=None):
+        self.type = carriage_type
         self.name = name
         self.entities = []
         self.connected_places = []

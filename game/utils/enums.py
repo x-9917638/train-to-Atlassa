@@ -16,7 +16,7 @@
 # So I can refer to stuff more easily in the code, e.g. PlaceType.FIGHT instead of typing "Challenge Area"
 from enum import Enum
 
-class PlaceType(Enum):
+class CarriageType(Enum):
     HOME = "Home"
     REST = "Resting Place"
     FIGHT = "Combat Area"
@@ -30,3 +30,6 @@ class SkillTarget(Enum):
     SINGLE_ALLY = "single_ally"
     ALL_ALLIES = "all_allies"
 
+
+class Command(Enum):
+    NEXT = "next"
