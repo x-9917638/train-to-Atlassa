@@ -13,6 +13,7 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from .entities import Player, Enemy
+from ..utils.enums import CombatCommand
 from ..utils.styles import Styles, colorprint
 
 class CombatSystem:
@@ -39,8 +40,8 @@ class CombatSystem:
         print(f"Mana: {self.player.mana}/{self.player.max_mana}")
         
         # Display enemies and skills
-        self._get_enemies()
-        self._get_skills()
+        print(self._get_enemies())
+
         
         # Handle player input
         self._handle_player_action()
@@ -75,7 +76,15 @@ class CombatSystem:
     def _handle_player_action(self):
         command = self._get_player_action()
         match command:
-            case _: pass
+            case CombatCommand.FIGHT: 
+                print(self._get_skills())
+            case CombatCommand.REST: 
+                self.player.rest()
+            case CombatCommand.ITEM: 
+                pass
+            case CombatCommand.RUN: 
+                pass
+
     
     def enemy_turn(self):
         [self._execute_enemy_action(enemy) for enemy in self.enemies if enemy.is_alive]

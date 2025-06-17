@@ -31,5 +31,11 @@ class SkillTarget(Enum):
     ALL_ALLIES = "all_allies"
 
 
-class Command(Enum):
-    NEXT = "next"
+class CombatCommand(Enum):
+    FIGHT = "fight",
+    ITEM = "items"
+    REST = "rest"
+    RUN = "retreat"
+
+class GeneralCommand(Enum):
+    pass
