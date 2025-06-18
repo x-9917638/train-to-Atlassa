@@ -51,8 +51,9 @@ class Game:
         # Implementation of place events
         pass
     
-    def initiate_combat(self):
-        CombatSystem.start_combat()
+    def initiate_combat(self, enemies:list):
+        combat_system = CombatSystem(self.player, enemies)
+        combat_system.start_combat()
     
     def handle_boss_defeat(self):
         # Implementation of boss defeat logic

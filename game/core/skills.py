@@ -29,7 +29,6 @@ class Skill:
         self.effect = effect
     
     def use(self, user, targets: list) -> tuple[str, bool]:
-        """Returns (result_message, was_successful)"""
         if user.mana < self.mana_cost:
             return f"Not enough mana to use {self.name}!", False
         
