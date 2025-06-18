@@ -12,7 +12,7 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import List
+from .items import Item
 from .skills import Skill, Skills
 import random, math
 
@@ -24,8 +24,8 @@ class Entity:
         self.health = health
         self.attack = attack
         self.defense = defense
-        self.skills: List[Skill] = []
-        self.inventory = []
+        self.skills: list[Skill] = []
+        self.inventory: list[Item] = []
         self.effects = {} # Status effects
     
     def take_damage(self, amount: int) -> int:
@@ -52,7 +52,7 @@ class Player(Entity):
         self.max_mana = 50
         self.mana = 50
         self.current_floor = 0
-        self.current_place = None
+        self.current_carriage = None
         self.armour = None
         self.weapon = None
         self.skill_deck = [
@@ -60,7 +60,7 @@ class Player(Entity):
             Skills["Basic Attack"], 
             Skills["Power Strike"]
         ]
-        self.skill_hand: List[Skill] = []
+        self.skill_hand: list[Skill] = []
     
     def add_skills_to_deck(self, skills:list[Skill]):
         self.skill_deck.extend(skills)

@@ -13,3 +13,5 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Not yet implemented
+class Item:
+    pass

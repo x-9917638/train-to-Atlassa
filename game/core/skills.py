@@ -12,7 +12,7 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import List, Tuple, Optional
+from typing import Optional # So I don't get annoying type hints
 from ..utils.enums import SkillTarget
 from enum import Enum
 
@@ -28,7 +28,7 @@ class Skill:
         self.current_cooldown = 0
         self.effect = effect
     
-    def use(self, user, targets: List) -> Tuple[str, bool]:
+    def use(self, user, targets: list) -> tuple[str, bool]:
         """Returns (result_message, was_successful)"""
         if user.mana < self.mana_cost:
             return f"Not enough mana to use {self.name}!", False

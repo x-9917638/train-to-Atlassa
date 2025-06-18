@@ -14,7 +14,7 @@
 
 import random
 from ..utils.enums import CarriageType
-from .places import Carriage
+from .carriages import Carriage
 
 class Section:
     def __init__(self, section_number: int):

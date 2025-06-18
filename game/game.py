@@ -15,7 +15,7 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from .core.entities import Player
-from .core.floor import Section
+from .core.section import Section
 from .core.combat import CombatSystem
 
 NAMES = [
