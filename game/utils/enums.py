@@ -32,7 +32,7 @@ class SkillTarget(Enum):
 
 
 class CombatCommand(Enum):
-    FIGHT = "fight",
+    FIGHT = "attack"
     ITEM = "items"
     REST = "rest"
     RUN = "retreat"

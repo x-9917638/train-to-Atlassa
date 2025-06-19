@@ -81,17 +81,17 @@ class Player(Entity):
     def rest(self):
         # When a player rests, they do not attack. 
         # Instead, they refresh skill cooldowns, heal, and generate mana
-        self.mana += math.ceil(0.2 * self.max_mana) # Regenerate 20% of max mana (rounded up)
-        self.mana += math.floor(0.1 * self.max_health) # Regenerate 10% of max health (rounded down)
+        self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
+        self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
 
 class Enemy(Entity):
     def __init__(self, name: str, level:int, health: int, attack: int, defense: int, is_boss: bool = False):
         super().__init__(name, level, health, attack, defense)
-        # Enemies have infinite mana to not overcomplicate stuff
+        self.mana = 999999 # Enemies have infinite mana to not overcomplicate stuff
         self.is_boss = is_boss
         self.skills = self.create_enemy_skills(is_boss)
     
-    def create_enemy_skills(self, is_boss: bool) -> List[Skill]:
+    def create_enemy_skills(self, is_boss: bool) -> list[Skill]:
         # To implement: Randomly pick a few skills
         # Give more skills if boss
         skills = []

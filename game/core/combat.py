@@ -11,7 +11,7 @@
 #
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
+import random as rand
 from .entities import Player, Enemy
 from ..utils.enums import CombatCommand
 from ..utils.styles import Styles, colorprint
@@ -50,39 +50,46 @@ class CombatSystem:
         return [f"{i+1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if enemy.is_alive()]
     
     def _get_skills(self):
-        return [f"{i+1}. {skill.name} (Cost: {skill.mana_cost} MP) - {skill.description}" for i, skill in enumerate(self.player.skill_hand)]
-    
+        """Get skills in player's hands returned in a list of strings formatted for display"""
+        for i, skill in enumerate(self.player.skill_hand):
+            if skill.mana_cost > self.player.mana:
+                print(f"{i+1}. {Styles.fg.red} {skill.name} (Cost: {skill.mana_cost} MP) - {skill.description} {Styles.reset}")
+            else:
+                print(f"{i+1}. {Styles.fg.lightgreen} {skill.name} (Cost: {skill.mana_cost} MP) - {skill.description} {Styles.reset}")
+        colorprint(f"Pick a skill...\n(1 - {len(self.player.skill_hand)}, 0 to cancel.)", "lightblue")
+        chosen = input(f"{Styles.fg.pink}> {Styles.reset}")
+
     def _get_player_action(self):
         # Ask for input (with style :P)
         commands = ["attack", "retreat", "items", "rest"]
         colorprint("Choose an action...", "lightblue")
-        chosen = input("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}\n{pink}> ".format(
+        chosen = input("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}\n{pink}>{reset} ".format(
             red=Styles.fg.red, 
             reset=Styles.reset, 
             yellow=Styles.fg.yellow, 
             green=Styles.fg.green, 
             blue=Styles.fg.blue, 
-            pink=Styles.fg.lightblue))
-        while chosen.lower() not in commands:
-            chosen = input("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}\n{pink}> ".format(
+            pink=Styles.fg.lightblue)).lower()
+        while chosen not in commands:
+            chosen = input("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}\n{pink}>{reset} ".format(
                 red=Styles.fg.red, 
                 reset=Styles.reset, 
                 yellow=Styles.fg.yellow, 
                 green=Styles.fg.green, 
                 blue=Styles.fg.blue, 
-                pink=Styles.fg.lightblue))
+                pink=Styles.fg.lightblue)).lower()
         return chosen
     
     def _handle_player_action(self):
         command = self._get_player_action()
         match command:
-            case CombatCommand.FIGHT: 
-                print(self._get_skills())
-            case CombatCommand.REST: 
+            case CombatCommand.FIGHT.value: 
+                self._get_skills()
+            case CombatCommand.REST.value: 
                 self.player.rest()
-            case CombatCommand.ITEM: 
+            case CombatCommand.ITEM.value: 
                 pass
-            case CombatCommand.RUN: 
+            case CombatCommand.RUN.value: 
                 pass
 
     
@@ -90,6 +97,12 @@ class CombatSystem:
         [self._execute_enemy_action(enemy) for enemy in self.enemies if enemy.is_alive]
 
 
-    def _execute_enemy_action(self, enemy):
-        # Implementation of enemy AI
-        pass
+    def _execute_enemy_action(self, enemy: Enemy):
+        # Check for any fatal skills, if none found just choose a random skill
+        fatal_skills = [skill for skill in enemy.skills if (enemy.attack + skill.power) >= self.player.health]
+        if any(fatal_skills):
+            rand.choice(fatal_skills).use(enemy, [self.player])
+        else:
+            rand.choice(enemy.skills).use(enemy, [self.player])
+        
+

@@ -37,7 +37,7 @@ class Skill:
         results = []
         for target in targets:
             if self.target in [SkillTarget.SINGLE_ENEMY, SkillTarget.ALL_ENEMIES]:
-                damage = max(1, (user.attack + self.power) - (target.defense // 2))
+                damage = max(1, user.attack + self.power)
                 actual_damage = target.take_damage(damage)
                 results.append(f"{user.name} uses {self.name} on {target.name} for {actual_damage} damage!")
             elif self.target in [SkillTarget.SELF, SkillTarget.SINGLE_ALLY, SkillTarget.ALL_ALLIES]:
