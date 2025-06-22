@@ -38,6 +38,6 @@ class Styles:
         purple = "\033[45m"
         cyan = "\033[46m"
     
-def colorprint(to_print:str, fgcolor: str, bgcolor: str = ""):
+def colorprint(to_print:str, fgcolor: str, bgcolor: str = "", sep: str = "\n"):
     # Apply modifications, print text, then reset.
-    print(f"{getattr(Styles.fg, fgcolor)}{getattr(Styles.bg, bgcolor, '')}{to_print}{Styles.reset}")
+    print(f"{getattr(Styles.fg, fgcolor)}{getattr(Styles.bg, bgcolor, '')}{to_print}{Styles.reset}", sep=sep)

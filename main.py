@@ -14,9 +14,18 @@
 
 
 from game.game import Game
+from game.core.entities import *
 from game.core.skills import Skill, Skills
 from game.core.combat import CombatSystem
 from game.utils.styles import Styles, colorprint
 
+
+banana = Item("Banana", "A cool banana")
+apple = Item("Apple", "Big red apple")
+pear = Item("Pear", "A sour pear!")
 game = Game(input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}"))
-game.initiate_combat()
+goblin = Enemy("Goblin", 10, 10, 10, 10)
+goblin.skills = [Skills["Basic Attack"], Skills["Power Strike"]]
+game.player.skill_hand = [Skills["Basic Attack"], Skills["Power Strike"]]
+game.player.inventory = {banana: 2, apple:7, pear: 1}
+game.initiate_combat([goblin])

@@ -25,7 +25,7 @@ class Entity:
         self.attack = attack
         self.defense = defense
         self.skills: list[Skill] = []
-        self.inventory: list[Item] = []
+        self.inventory: dict[Item, int] = {} # Should store {<Item.name>: <NumItems>}
         self.effects = {} # Status effects
     
     def take_damage(self, amount: int) -> int:
@@ -55,7 +55,7 @@ class Player(Entity):
         self.current_carriage = None
         self.armour = None
         self.weapon = None
-        self.skill_deck = [
+        self.skills = [
             # Player default skills
             Skills["Basic Attack"], 
             Skills["Power Strike"]
@@ -63,10 +63,10 @@ class Player(Entity):
         self.skill_hand: list[Skill] = []
     
     def add_skills_to_deck(self, skills:list[Skill]):
-        self.skill_deck.extend(skills)
+        self.skills.extend(skills)
     
     def draw_skills(self, num: int = 1) -> list[Skill]:
-        available_skills = [skill for skill in self.skill_deck if skill not in self.skill_hand] # Make sure we do not draw dupes
+        available_skills = [skill for skill in self.skills if skill not in self.skill_hand] # Make sure we do not draw dupes
         if len(available_skills):
         # If there aren't any skills to draw, don't draw.
             drawn = random.sample(available_skills, num)

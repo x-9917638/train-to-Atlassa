@@ -49,8 +49,12 @@ class CombatSystem:
     def _get_enemies(self):
         return [f"{i+1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if enemy.is_alive()]
     
-    def _get_skills(self):
+
+    def _get_chosen_skill(self):
         """Get skills in player's hands returned in a list of strings formatted for display"""
+        if self.player.skill_hand == []:
+            colorprint("You have no skills in your hand...", "red")
+            return 0
         for i, skill in enumerate(self.player.skill_hand):
             if skill.mana_cost > self.player.mana:
                 print(f"{i+1}. {Styles.fg.red} {skill.name} (Cost: {skill.mana_cost} MP) - {skill.description} {Styles.reset}")
@@ -58,6 +62,13 @@ class CombatSystem:
                 print(f"{i+1}. {Styles.fg.lightgreen} {skill.name} (Cost: {skill.mana_cost} MP) - {skill.description} {Styles.reset}")
         colorprint(f"Pick a skill...\n(1 - {len(self.player.skill_hand)}, 0 to cancel.)", "lightblue")
         chosen = input(f"{Styles.fg.pink}> {Styles.reset}")
+        options = [str(i) for i in range(len(self.player.skill_hand) + 1)]
+        while chosen not in options:
+            colorprint("Invalid selection. (0 to cancel).\nPlease try again", "red")
+            chosen = input(f"{Styles.fg.pink}> {Styles.reset}")
+        self.player.discard_skill(self.player.skill_hand[chosen-1])
+
+
 
     def _get_player_action(self):
         # Ask for input (with style :P)
@@ -80,15 +91,27 @@ class CombatSystem:
                 pink=Styles.fg.lightblue)).lower()
         return chosen
     
+    def _get_chosen_item(self):
+        for item, quantity in self.player.inventory.items(): # Convert it into a set to remove duplicate listings
+            print(f"{Styles.fg.green}{item.name} x{quantity} - {item.description} {Styles.reset}")
+        colorprint(f"Pick an item...\n(1 - {len(self.player.inventory)}, 0 to cancel.)", "lightblue")
+        chosen = input(f"{Styles.fg.pink}> {Styles.reset}")
+        options = [str(i) for i in range(len(self.player.inventory) + 1)]
+        while chosen not in options:
+            colorprint("Invalid selection. (0 to cancel).\nPlease try again", "red")
+            chosen = input(f"{Styles.fg.pink}> {Styles.reset}")
+
+        return chosen
+
     def _handle_player_action(self):
         command = self._get_player_action()
         match command:
             case CombatCommand.FIGHT.value: 
-                self._get_skills()
+                self._get_chosen_skill()
             case CombatCommand.REST.value: 
                 self.player.rest()
             case CombatCommand.ITEM.value: 
-                pass
+                self._get_chosen_item()
             case CombatCommand.RUN.value: 
                 pass
 
