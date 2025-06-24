@@ -12,12 +12,10 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Constants and other hardcoded stuff stored in enum classes"""
-# So I can refer to stuff more easily in the code, e.g. PlaceType.FIGHT instead of typing "Challenge Area"
 from enum import Enum
 
 class CarriageType(Enum):
-    HOME = "Home"
+    SAFE = "Safe Place"
     REST = "Resting Place"
     FIGHT = "Combat Area"
     CHALLENGE = "Challenge Area"
@@ -38,4 +36,7 @@ class CombatCommand(Enum):
     RUN = "retreat"
 
 class GeneralCommand(Enum):
-    pass
+    NEXT = "next"
+    BACK = "back"
+    BAG = ["inv", "inventory"] # Player can type shorthand 'inv' or 'inventory'
+    SEARCH = "search"

@@ -23,7 +23,6 @@ class Carriage:
         self.entities = []
         self.connected_places = []
         self.possible_events = possible_events
-        self.visited = False
 
     def generate_entities(self):
         # Run this on place generation

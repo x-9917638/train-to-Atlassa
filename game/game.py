@@ -35,14 +35,14 @@ class Game:
         # Create 4 floors, maybe if i add an infinite mode this may need to be changed
         self.floors = [Section(i+1) for i in range(4)]
         self.current_floor = self.floors[0]
-        self.current_place = self.current_floor.places[0]
+        self.current_place = self.current_floor.carriages[0]
         self.game_over = False
         self.victory = False
 
 
     def move_player(self, place_index: int):
         try: # Account for player trying to move past the final room.
-            self.current_place = self.current_floor.places[place_index]
+            self.current_place = self.current_floor.carriages[place_index]
             return (True, self.current_place)
         except IndexError:
             return (False, self.current_place)

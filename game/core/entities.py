@@ -85,9 +85,10 @@ class Player(Entity):
         self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
 
 class Enemy(Entity):
-    def __init__(self, name: str, level:int, health: int, attack: int, defense: int, is_boss: bool = False):
+    def __init__(self, name: str, level:int, health: int, attack: int, defense: int, description: str, is_boss: bool = False):
         super().__init__(name, level, health, attack, defense)
-        self.mana = 999999 # Enemies have infinite mana to not overcomplicate stuff
+        self.mana = 999999 # Set to 999999 so that enemies can use Skill class methods
+        self.description = description
         self.is_boss = is_boss
         self.skills = self.create_enemy_skills(is_boss)
     
