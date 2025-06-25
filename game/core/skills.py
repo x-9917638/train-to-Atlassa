@@ -50,13 +50,10 @@ class Skill:
                 results.append(f"{target.name} is now {self.effect}!")
         
         return "\n".join(results), True
-    
-    def __str__(self):
-        # I didn't like seeing a random memory address.
-        return self.name
+
     
 
-# The list of hardcoded skills that players / enemy can use
+# The list of skills that players / enemy can use
 Skills = {
     "Basic Attack": Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY),
     "Power Strike": Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY)

@@ -38,6 +38,17 @@ class Styles:
         purple = "\033[45m"
         cyan = "\033[46m"
     
+    
 def colorprint(to_print:str, fgcolor: str, bgcolor: str = "", sep: str = "\n"):
     # Apply modifications, print text, then reset.
     print(f"{getattr(Styles.fg, fgcolor)}{getattr(Styles.bg, bgcolor, '')}{to_print}{Styles.reset}", sep=sep)
+
+
+def print_game_msg(to_print:str):
+    # Print a light blue string - for standard system messages or prompts
+    print(f"\033[94m{to_print}\033[0m")
+
+
+def print_error(to_print:str):
+    # Print a red colored string - for error messages on invalid actions from the user, etc.
+    print(f"\033[31m{to_print}\033[0m")
