@@ -78,7 +78,7 @@ class Player(Entity):
         if skill in self.skill_hand:
             self.skill_hand.remove(skill)
     
-    def rest(self):
+    def _rest(self):
         # When a player rests, they do not attack. 
         # Instead, they refresh skill cooldowns, heal, and generate mana
         self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
@@ -97,3 +97,6 @@ class Enemy(Entity):
         # Give more skills if boss
         skills = []
         return skills
+
+class Ally(Entity):
+    pass
