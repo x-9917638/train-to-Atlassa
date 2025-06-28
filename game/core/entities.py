@@ -13,19 +13,18 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from .items import Item
-from .skills import Skill, Skills
+from .skills import Skill, GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS, RANGER_SKILLS
+from..utils.enums import Professions
 import random, math
 
 class Entity:
-    def __init__(self, name: str, level:int, health: int, attack: int, defense: int):
+    def __init__(self, name: str, health: int, attack: int, defense: int):
         self.name = name
-        self.level = level
         self.max_health = health
         self.health = health
         self.attack = attack
         self.defense = defense
         self.skills: list[Skill] = []
-        self.inventory: dict[Item, int] = {} # Should store {<Item.name>: <NumItems>}
         self.effects = {} # Status effects
     
     def take_damage(self, amount: int) -> int:
@@ -48,23 +47,29 @@ class Entity:
 
 class Player(Entity):
     def __init__(self, name: str):
-        super().__init__(name, 1, 100, 10, 5)
+        super().__init__(name, 100, 5, 5) # Base player stats
+        self.level = 1
+        self.experience = 0
         self.max_mana = 50
         self.mana = 50
         self.current_floor = 0
         self.current_carriage = None
         self.armour = None
         self.weapon = None
+        self.inventory: dict[Item, int] = {} # Should store {<Item.name>: <NumItems>}
         self.skills = [
             # Player default skills
-            Skills["Basic Attack"], 
-            Skills["Power Strike"]
+            GENERAL_SKILLS["Basic Attack"], 
+            GENERAL_SKILLS["Power Strike"]
         ]
         self.skill_hand: list[Skill] = []
+        self.profession = None
     
+
     def add_skills_to_deck(self, skills:list[Skill]):
         self.skills.extend(skills)
     
+
     def draw_skills(self, num: int = 1) -> list[Skill]:
         available_skills = [skill for skill in self.skills if skill not in self.skill_hand] # Make sure we do not draw dupes
         if len(available_skills):
@@ -74,29 +79,47 @@ class Player(Entity):
         else: drawn = []
         return drawn
     
+
     def discard_skill(self, skill: Skill):
         if skill in self.skill_hand:
             self.skill_hand.remove(skill)
     
-    def _rest(self):
+    
+    def rest(self):
         # When a player rests, they do not attack. 
         # Instead, they refresh skill cooldowns, heal, and generate mana
         self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
         self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
 
 class Enemy(Entity):
-    def __init__(self, name: str, description: str, level:int, health: int, attack: int, defense: int, is_boss: bool = False):
-        super().__init__(name, level, health, attack, defense)
+    def __init__(self, name: str, description: str, health: int, attack: int, defense: int, num_skills):
+        super().__init__(name, health, attack, defense)
         self.mana = 999999 # Set to 999999 so that enemies can use Skill class methods
         self.description = description
-        self.is_boss = is_boss
-        self.skills = self.create_enemy_skills(is_boss)
+        self.skills = self.create_enemy_skills(num_skills)
     
-    def create_enemy_skills(self, is_boss: bool) -> list[Skill]:
-        # To implement: Randomly pick a few skills
-        # Give more skills if boss
-        skills = []
+    def create_enemy_skills(self, amount: int) -> list[Skill]:
+        skills = random.choices(ENEMY_SKILLS, k=amount)
         return skills
 
 class Ally(Entity):
-    pass
+    def __init__(self, name: str, health: int, attack: int, defense: int, profession: Professions):
+        super().__init__(name, health, attack, defense)
+        self.profession = profession
+
+    def generate_skills(self):
+        match self.profession:
+            case Professions.WARRIOR:
+                self.skills = [skill for skill in WARRIOR_SKILLS.values()]
+            case Professions.MAGE:
+                self.skills = [skill for skill in MAGE_SKILLS.values()]
+            case Professions.ROGUE:
+                self.skills = [skill for skill in ROGUE_SKILLS.values()]
+            case Professions.PRIEST:
+                self.skills = [skill for skill in PRIEST_SKILLS.values()]
+            case Professions.RANGER:
+                self.skills = [skill for skill in RANGER_SKILLS.values()]
+            case _:
+                raise ValueError(f"Unknown ally class: {self.ally_class}")
+    
+    
