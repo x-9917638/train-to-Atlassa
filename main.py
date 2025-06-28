@@ -23,7 +23,7 @@ apple = Item("Apple", "Big red apple")
 pear = Item("Pear", "A sour pear!")
 game = Game(input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}"))
 goblin = Enemy("Goblin", "Green thing", 10, 10, 10, 100)
-goblin.skills = [Skills["Basic Attack"], Skills["Power Strike"]]
-game.player.skill_hand = [Skills["Basic Attack"], Skills["Power Strike"]]
+goblin.skills = [GENERAL_SKILLS["Basic Attack"], GENERAL_SKILLS["Power Strike"]]
+game.player.skill_hand = [GENERAL_SKILLS["Basic Attack"], GENERAL_SKILLS["Power Strike"]]
 game.player.inventory = {banana: 2, apple:7, pear: 1}
 game.initiate_combat([goblin])

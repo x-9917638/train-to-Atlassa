@@ -57,19 +57,47 @@ class Skill:
     
 
 def attack_miss_message(name: str) -> str:
-    """Returns a random attack miss message."""
-    generic_messages = [
+    """Returns a random attack missed message."""
+    messages = [
         f"{name} misses, and accidentally hits a nearby seat. The seat is unimpressed.",
         f"{name} swings their weapon, but it gets stuck in the ground. Now they're just standing there awkwardly.",
         f"{name} tries to attack, but their weapon slips from their hands and lands in a nearby pond. Good job.",
         f"{name} charges at the enemy, but they trip over their feet and fall flat. The enemy laughs.",
         f"{name} attempts a strike, but their weapon bounces off the enemy's armor and hits them in the face. Ouch."
     ]
-    return rand.choice(generic_messages)
+    return rand.choice(messages)
 
-# The list of skills that players / enemy can use
-Skills = {
+
+
+
+# The list of skills that any entity can use
+GENERAL_SKILLS = {
     "Basic Attack": Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
     "Power Strike": Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY),
     "Basic Heal": Skill("Prayer", "A simple prayer for divine assitance", 30, 30, SkillTarget.ALL_ALLIES)
+}
+
+WARRIOR_SKILLS = {
+    #TODO
+}
+
+MAGE_SKILLS = {
+    #TODO
+}
+
+ROGUE_SKILLS = {
+    #TODO
+}
+
+PRIEST_SKILLS = {
+    "Holy Light": Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
+    "Divine Shield": Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect="shielded")
+}
+
+RANGER_SKILLS = {
+    #TODO
+}
+
+ENEMY_SKILLS = {
+    #TODO
 }
