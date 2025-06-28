@@ -28,6 +28,12 @@ class SkillTarget(Enum):
     SINGLE_ALLY = "single_ally"
     ALL_ALLIES = "all_allies"
 
+class Professions(Enum):
+    WARRIOR = "Warrior"
+    MAGE = "Mage"
+    ROGUE = "Rogue"
+    PRIEST = "Priest"
+    RANGER = "Ranger"
 
 class CombatCommand(Enum):
     FIGHT = "attack"
