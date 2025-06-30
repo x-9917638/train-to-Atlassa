@@ -17,7 +17,7 @@ from typing import Optional
 from .entities import *
 from .skills import Skill
 from .items import Item
-from ..utils.enums import CombatCommand, SkillTarget
+from ..utils.enums import CombatCommand, SkillTarget, Professions
 from ..utils.styles import Styles, colorprint, print_error, print_game_msg
 
 RETREAT_FAILURE_MESSAGES = [
@@ -70,14 +70,14 @@ class CombatSystem:
         colorprint(f"Health: {self.player.health}/{self.player.max_health}", "magenta")
         colorprint(f"Mana: {self.player.mana}/{self.player.max_mana}", "cyan")
         self.player.draw_skills() 
-        self._display_enemies()
+        print(self._display_enemies())
 
         # Handle player input
         self._handle_player_action()
 
 
     def _display_enemies(self):
-        print("\n".join([f"{i+1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if enemy.is_alive()]))
+        return "\n".join([f"{i+1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if enemy.is_alive()])
     
 
     def _display_skills(self):
@@ -103,14 +103,14 @@ class CombatSystem:
         # If not, ask again until a valid number is entered
         while not chosen:
             try:
-                chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}"))
+                chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}").strip())
             except ValueError:
                 print_error("Invalid input. Please enter a number.")
         
         while chosen not in options:
             print_error("Invalid selection (0 to cancel).\nPlease try again")
             try:
-                chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}"))
+                chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}").strip())
             except ValueError:
                 print_error("Invalid input. Please enter a digit.")
                 continue
@@ -151,9 +151,9 @@ class CombatSystem:
     def _get_targets(self, skill: Skill) -> list[Entity]:
         match skill.target:
             case SkillTarget.SINGLE_ENEMY:
-                chosen_enemy = int(input(f"{Styles.fg.lightblue}{skill.name} selected.\n"
-                                         f"Pick an enemy.\n{Styles.reset}" + "\n".join(self._display_enemies()) +
-                                         f"\n{Styles.fg.pink}> {Styles.reset}"))
+                print(f"{Styles.fg.lightblue}{skill.name} selected.{Styles.reset}")
+                colorprint(self._display_enemies(), "red")
+                chosen_enemy = int(input( f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
                 try:
                     target = [self.enemies[chosen_enemy - 1]]
                 except IndexError:
@@ -222,7 +222,7 @@ class CombatSystem:
             yellow=Styles.fg.yellow,
             green=Styles.fg.green,
             blue=Styles.fg.blue,
-            pink=Styles.fg.lightblue)).lower()
+            pink=Styles.fg.lightblue)).lower().strip()
 
         while chosen not in commands:
             chosen = input("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}\n{pink}>{reset} ".format(
@@ -231,7 +231,7 @@ class CombatSystem:
                 yellow=Styles.fg.yellow,
                 green=Styles.fg.green,
                 blue=Styles.fg.blue,
-                pink=Styles.fg.lightblue)).lower()
+                pink=Styles.fg.lightblue)).lower().strip()
         return chosen
     
 
@@ -249,4 +249,35 @@ class CombatSystem:
         
 
     def ally_turn(self):
-        pass
+        [self._ally_action(ally) for ally in self.allies if ally.is_alive]
+
+
+    def _ally_action(self, ally: Ally):
+        # TODO
+        results = self._use_ally_skill(ally)
+        
+        if results[1]:  # If hit
+            colorprint(results[0], "lightgreen")
+        else:
+            print_error(results[0]) 
+
+    
+    def _use_ally_skill(self, ally: Ally):
+        chosen_skill = rand.choice(ally.skills)
+        match ally.profession:
+            case Professions.PRIEST:
+                if chosen_skill.target == SkillTarget.SINGLE_ALLY:
+                    return chosen_skill.use(ally, [self.player])
+                elif chosen_skill.target == SkillTarget.ALL_ALLIES:
+                    allies = self.allies.copy()
+                    allies.append(self.player)
+                    return chosen_skill.use(ally, allies)
+                else: 
+                    return chosen_skill.use(ally, [ally])
+            case Professions.WARRIOR | Professions.ROGUE | Professions.MAGE:
+                if chosen_skill.target == SkillTarget.SINGLE_ENEMY:
+                    return chosen_skill.use(ally, [rand.choice(self.enemies)])
+                elif chosen_skill.target == SkillTarget.ALL_ENEMIES:
+                    return chosen_skill.use(ally, self.enemies)
+            case _:
+                raise ValueError(f"Unknown profession: {ally.profession}")
