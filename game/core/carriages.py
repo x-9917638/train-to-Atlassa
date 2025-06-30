@@ -17,7 +17,7 @@ from ..utils.enums import CarriageType
 import random as rand
 
 class Carriage:
-    def __init__(self, carriage_type: CarriageType, name: str, possible_events:list[Event]=None):
+    def __init__(self, carriage_type: CarriageType, name: str, possible_events:list[Event] | None = None):
         self.type = carriage_type
         self.name = name
         self.entities = []

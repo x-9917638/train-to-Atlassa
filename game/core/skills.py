@@ -94,10 +94,6 @@ PRIEST_SKILLS = {
     "Divine Shield": Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect="shielded")
 }
 
-RANGER_SKILLS = {
-    #TODO
-}
-
 ENEMY_SKILLS = {
     #TODO
 }

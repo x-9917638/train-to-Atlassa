@@ -33,7 +33,6 @@ class Professions(Enum):
     MAGE = "Mage"
     ROGUE = "Rogue"
     PRIEST = "Priest"
-    RANGER = "Ranger"
 
 class CombatCommand(Enum):
     FIGHT = "attack"
