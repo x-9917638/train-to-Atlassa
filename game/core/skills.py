@@ -14,19 +14,19 @@
 
 import random as rand
 from typing import Optional # So I don't get annoying type hints
+from .status_effects import StatusEffect, status_effects
 from ..utils.enums import SkillTarget
 
 class Skill:
     def __init__(self, name: str, description: str, power: int, 
                  mana_cost: int, target: SkillTarget, accuracy: float = 1.0,
-                 effect: Optional[str] = None):
+                 effect: Optional[StatusEffect] = None):
         self.name = name
         self.description = description
         self.power = power
         self.mana_cost = mana_cost
         self.target = target
         self.accuracy = accuracy
-        self.current_cooldown = 0
         self.effect = effect
     
     def use(self, user, targets: list) -> tuple[str, bool]:
@@ -50,13 +50,14 @@ class Skill:
 
             if self.effect:
                 for target in targets:
-                    results.append(f"{target.name} is now {self.effect}!")
+                    target.effects.append(self.effect)
+                    results.append(f"{target.name} is now {self.effect.name}!")
 
             return "\n".join(results), hit
-        return (attack_miss_message(user.name), miss)
+        return (_attack_miss_message(user.name), miss)
     
 
-def attack_miss_message(name: str) -> str:
+def _attack_miss_message(name: str) -> str:
     """Returns a random attack missed message."""
     messages = [
         f"{name} misses, and accidentally hits a nearby seat. The seat is unimpressed.",
@@ -70,11 +71,12 @@ def attack_miss_message(name: str) -> str:
 
 
 
+
 # The list of skills that any entity can use
 GENERAL_SKILLS = {
     "Basic Attack": Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
     "Power Strike": Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY),
-    "Basic Heal": Skill("Prayer", "A simple prayer for divine assitance", 30, 30, SkillTarget.ALL_ALLIES)
+    "Basic Heal": Skill("Prayer", "A simple prayer for divine assitance", 30, 30, SkillTarget.SINGLE_ALLY)
 }
 
 WARRIOR_SKILLS = {
@@ -91,7 +93,7 @@ ROGUE_SKILLS = {
 
 PRIEST_SKILLS = {
     "Holy Light": Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
-    "Divine Shield": Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect="shielded")
+    "Divine Shield": Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=status_effects["shield"])
 }
 
 ENEMY_SKILLS = {

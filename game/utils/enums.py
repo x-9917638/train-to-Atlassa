@@ -22,11 +22,11 @@ class CarriageType(Enum):
     BOSS = "Boss Room"
 
 class SkillTarget(Enum):
-    SELF = "self"
-    SINGLE_ENEMY = "single_enemy"
-    ALL_ENEMIES = "all_enemies"
-    SINGLE_ALLY = "single_ally"
-    ALL_ALLIES = "all_allies"
+    SELF = "Self"
+    SINGLE_ENEMY = "Single Enemy"
+    ALL_ENEMIES = "All Enemies"
+    SINGLE_ALLY = "Single Ally"
+    ALL_ALLIES = "All Allies"
 
 class Professions(Enum):
     WARRIOR = "Warrior"
@@ -45,3 +45,7 @@ class GeneralCommand(Enum):
     BACK = "back"
     BAG = ["inv", "inventory"] # Player can type shorthand 'inv' or 'inventory'
     SEARCH = "search"
+
+class ItemType(Enum):
+    ARMOR = "armor"
+    WEAPON = "weapon"

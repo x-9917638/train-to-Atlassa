@@ -48,7 +48,7 @@ class Game:
             return (False, self.current_place)
     
     def handle_place_events(self):
-        # Implementation of place events
+        # TODO
         pass
     
     def initiate_combat(self, allies:list, enemies:list):
@@ -56,5 +56,5 @@ class Game:
         combat_system.start_combat()
     
     def handle_boss_defeat(self):
-        # Implementation of boss defeat logic
+        # TODO
         pass

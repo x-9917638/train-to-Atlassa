@@ -14,6 +14,7 @@
 
 from .items import Item
 from .skills import Skill, GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS
+from .status_effects import StatusEffect
 from..utils.enums import Professions
 import random, math
 
@@ -25,7 +26,7 @@ class Entity:
         self.attack = attack
         self.defense = defense
         self.skills: list[Skill] = []
-        self.effects = [] # Status effects
+        self.effects: list[StatusEffect] = [] # Status effects
     
     def take_damage(self, amount: int) -> int:
         """Calculate the damage the character takes, after defense."""
@@ -64,6 +65,7 @@ class Player(Entity):
         ]
         self.skill_hand: list[Skill] = []
         self.profession = None
+        self.stats = [self.attack, self.defense, self.health, self.max_health, self.mana, self.max_mana]
     
 
     def add_skills_to_deck(self, skills:list[Skill]):
@@ -79,6 +81,7 @@ class Player(Entity):
         else: drawn = []
         return drawn
     
+
     def check_level_up(self):
         if self.experience >= self.level * 100:
             self._level_up()
@@ -97,7 +100,7 @@ class Player(Entity):
             case Professions.MAGE:
                 # High mana, High attack
                 self.max_health += random.randrange(30, 60)
-                self.max_mana += random.randrange(20, 40)
+                self.max_mana += random.randrange(30, 50)
                 self.attack += random.randrange(5, 10)
                 self.defense += random.randrange(1, 5)
             case Professions.ROGUE:
@@ -109,7 +112,7 @@ class Player(Entity):
             case Professions.PRIEST:
                 # High health, high mana
                 self.max_health += random.randrange(70, 100)
-                self.max_mana += random.randrange(20, 40)
+                self.max_mana += random.randrange(30, 50)
                 self.attack += random.randrange(1, 5)
                 self.defense += random.randrange(3, 8)
             case _:
@@ -117,8 +120,6 @@ class Player(Entity):
         self.health = self.max_health
         self.mana = self.max_mana
         self.effects = [] 
-
-
 
 
     def discard_skill(self, skill: Skill):
@@ -132,6 +133,7 @@ class Player(Entity):
         self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
         self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
 
+
 class Enemy(Entity):
     def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int):
         health, attack, defense = (level * 100, level * 5, level * 5)
@@ -141,9 +143,11 @@ class Enemy(Entity):
         self.skills = self.create_enemy_skills(num_skills)
         self.exp_amt = exp_amt
     
+
     def create_enemy_skills(self, amount: int) -> list[Skill]:
         skills = random.choices(ENEMY_SKILLS, k=amount)
         return skills
+
 
 class Ally(Entity):
     def __init__(self, name: str, level:int, profession: Professions):
@@ -151,6 +155,7 @@ class Ally(Entity):
         super().__init__(name, health, attack, defense)
         self.mana = 999999
         self.profession = profession
+
 
     def generate_skills(self):
         match self.profession:
