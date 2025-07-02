@@ -5,3 +5,4 @@ from .events import *
 from .items import *
 from .section import *
 from .skills import *
+from .status_effects import *
