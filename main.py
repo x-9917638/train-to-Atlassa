@@ -19,6 +19,14 @@ from game.core import *
 from game.utils.styles import Styles, colorprint
 import os, subprocess
 
+try:
+    # Make sure can use match-case
+    match "":
+        case _: pass
+except:
+    raise NotImplementedError("Please use Python >=3.10.0")
+
+
 def clear_stdout():
     if os.name == "posix":
         subprocess.run(['clear'])
@@ -44,7 +52,7 @@ clear_stdout()
 print(GAME_BANNER)
 
 
-game = Game(input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}"))
+game = Game(input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").title())
 colorprint("Available Professions:", "lightgreen")
 for i in Professions:
     colorprint(i.value, "lightgreen")

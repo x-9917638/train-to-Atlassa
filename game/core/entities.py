@@ -142,7 +142,7 @@ class Enemy(Entity):
     def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int):
         health, attack, defense = (level * 100, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
-        self.mana = 999999 # Set to 999999 so that enemies can use Skill class methods
+        self.mana = float("inf")
         self.description = description
         self.skills = self.create_enemy_skills(num_skills)
         self.exp_amt = exp_amt
@@ -158,7 +158,7 @@ class Ally(Entity):
         health, attack, defense = (level * 100, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
         self.description = description
-        self.mana = 999999
+        self.mana = float("inf")
         self.profession = profession
 
 

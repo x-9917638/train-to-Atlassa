@@ -23,7 +23,6 @@ import os, subprocess
 import time
 import cmd
 
-
 def clear_stdout():
     if os.name == "posix":
         subprocess.run(['clear'])
@@ -31,6 +30,7 @@ def clear_stdout():
         subprocess.run(['cls'], shell=True)
     else:
         raise NotImplementedError("Unsupported platform. How did you even get here?")
+
 
 
 RETREAT_FAILURE_MESSAGES = [
@@ -63,20 +63,18 @@ class CombatSystem(cmd.Cmd):
         self.enemies = enemies
 
     def postcmd(self, stop, line):
-        if not any(enemy.is_alive() for enemy in self.enemies):
-            colorprint("Room Clear", "lightgreen")
-            return True
         self.enemy_turn()
         if not self.player.is_alive():
             print_error("You died...\nGame Over!")
             return True
-        self.ally_turn()
         self._allocate_experience()
+        self.ally_turn()
         self.player.check_level_up()
-        input(f"{Styles.fg.lightblue}Press Enter to continue...{Styles.reset}")
-        self._player_turn_setup()
-        return False
-
+        if not any(enemy.is_alive() for enemy in self.enemies):
+            colorprint("Room Clear", "lightgreen")
+            return True
+        return not self.player.is_alive() # Not alive because cmdloop breaks when True returned
+    
     def do_attack(self, arg):
         skill = self._get_skill()
         try:
@@ -87,13 +85,12 @@ class CombatSystem(cmd.Cmd):
             else:
                 print_error(results[0])
         except AttributeError:
-            pass
-
+            return False
 
     def do_rest(self, arg):
         colorprint(f"{self.player.name} takes a nap.", "lightgreen")
         self.player.rest()
-
+    
     def do_items(self, arg):
         items = list(self.player.inventory.keys())
         self._display_items()
@@ -109,31 +106,35 @@ class CombatSystem(cmd.Cmd):
             pass
 
         print_error("Invalid selection \nPlease try again")
-        return self.do_items(arg)  # If invalid input then we ask again
+        return self.do_items() # If invalid input then we ask again
 
     def do_retreat(self, arg):
         self._run_away()
-
+        
     def start_combat(self):
         self._player_turn_setup()
         self.cmdloop()
 
+    
+
     def _player_turn_setup(self):
         clear_stdout()
-        colorprint(Styles.bold + PLAYER_TURN, "green")
-        time.sleep(0.3)
+        print(PLAYER_TURN)
+        time.sleep(0.5)
         clear_stdout()
         colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "magenta")
         colorprint(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}\n", "cyan")
-
+        
         [effect.apply(self.player) for effect in self.player.effects if self.player.effects]
         self.player.draw_skills()
 
-        print(f"{Styles.bold}Enemies:{Styles.reset}")
+        time.sleep(0.3)
+        print(f"{Styles.bold}Enemies:{Styles.reset}") 
         colorprint(self._display_enemies() + "\n", "red")
 
+        time.sleep(0.3)
         if self.allies:
-            print(f"{Styles.bold}Allies:{Styles.reset}")
+            print(f"{Styles.bold}Allies:{Styles.reset}") 
             colorprint(self._display_allies() + "\n", "green")
 
         colorprint("Choose an action...", "lightblue")
@@ -145,30 +146,31 @@ class CombatSystem(cmd.Cmd):
             blue=Styles.fg.blue,
             pink=Styles.fg.lightblue))
 
+
     def _display_enemies(self):
-        return "\n".join(
-            [f"{i + 1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if
-             enemy.is_alive()])
+        return "\n".join([f"{i+1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if enemy.is_alive()])
+    
 
     def _display_skills(self):
         for i, skill in enumerate(self.player.skill_hand):
             time.sleep(0.2)
             if skill.mana_cost > self.player.mana:
                 print(
-                    f"""{i + 1}. {Styles.fg.red} {skill.name} 
+f"""{i+1}. {Styles.fg.red} {skill.name} 
 (Cost: {skill.mana_cost} MP)
 {skill.description}
 Target: {skill.target.value}{Styles.reset}
 """
-                )
+                        )
             else:
                 print(
-                    f"""{i + 1}. {Styles.fg.lightgreen} {skill.name} 
+f"""{i+1}. {Styles.fg.lightgreen} {skill.name} 
 (Cost: {skill.mana_cost} MP)
 {skill.description}
 Target: {skill.target.value}{Styles.reset}
 """
-                )
+                    )
+
 
     def _get_skill(self) -> Optional[Skill]:
         if not self.player.skill_hand:
@@ -186,22 +188,24 @@ Target: {skill.target.value}{Styles.reset}
         except ValueError:
             print_error("Invalid input.")
             return self._get_skill()
-
+        
         while chosen not in options:
             print_error("Invalid input.")
             try:
                 chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}").strip())
             except ValueError:
                 pass
-        skill = self.player.skill_hand[chosen - 1]
+        skill = self.player.skill_hand[chosen-1]
         self.player.discard_skill(skill)
         return skill
+    
 
     def _display_items(self):
         items = list(self.player.inventory.keys())
         for i, item in enumerate(items, 1):
             quantity = self.player.inventory[item]
             print(f"{Styles.fg.green}{i}. {item.name} x{quantity} - {item.description} {Styles.reset}")
+
 
     def _get_item(self) -> Optional[Item]:
         items = list(self.player.inventory.keys())
@@ -217,6 +221,8 @@ Target: {skill.target.value}{Styles.reset}
         except ValueError:
             pass
 
+
+
     def _get_targets(self, skill: Skill) -> list[Entity]:
         clear_stdout()
         match skill.target:
@@ -224,9 +230,8 @@ Target: {skill.target.value}{Styles.reset}
                 print(f"{Styles.fg.lightblue}{Styles.bold}{skill.name} selected.{Styles.reset}")
                 colorprint(self._display_enemies(), "red")
                 try:
-                    chosen_enemy = int(input(
-                        f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
-                    target = [self.enemies[chosen_enemy - 1]]
+                    chosen_ally = int(input( f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
+                    target = [self.enemies[chosen_ally - 1]]
                 except IndexError:
                     print_error("Invalid target.")
                     return self._get_targets(skill)
@@ -241,31 +246,32 @@ Target: {skill.target.value}{Styles.reset}
                 colorprint(self._display_allies(), "lightgreen")
 
                 try:
-                    chosen_ally = int(input(
-                        f"{Styles.fg.lightblue}Pick an ally.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
+                    chosen_ally = int(input( f"{Styles.fg.lightblue}Pick an ally.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
                     target = [self.allies[chosen_ally - 1]]
                 except (IndexError, ValueError):
                     print_error("Invalid target.")
                     return self._get_targets(skill)
             case _:
-                raise ValueError(
-                    "Skill initialised incorrectly: error in target.\nThis should never happen. Please report this.")
-        return target  # type: ignore
+                raise ValueError("Skill initialised incorrectly: error in target.\nThis should never happen. Please report this.")
+        return target # type: ignore
+
 
     def _run_away(self):
         penalty = int(0.1 * self.player.health)
-
+        
         if rand.choice((0, 0, 1)):
-            print_game_msg(f"You manage to flee.")  # 33/66 chance of success when trying to run away
+            print_game_msg(f"You manage to flee.") # 33/66 chance of success when trying to run away
             for enemy in self.enemies:
-                enemy.health = 0
+                enemy.health = 0 
             return
-
+        
         self.player.health -= penalty
-        print_error(f"{rand.choice(RETREAT_FAILURE_MESSAGES)}\nYou lose: \u2014{penalty}HP")  # \u2014: em dash
+        print_error(f"{rand.choice(RETREAT_FAILURE_MESSAGES)}\nYou lose: \u2014{penalty}HP") # \u2014: em dash
+    
 
     def enemy_turn(self):
         [self._enemy_action(enemy) for enemy in self.enemies if enemy.is_alive]
+
 
     def _enemy_action(self, enemy: Enemy):
         # Check for any skills that will kill the player, if none found just choose a random skill
@@ -274,18 +280,21 @@ Target: {skill.target.value}{Styles.reset}
             print_error(rand.choice(fatal_skills).use(enemy, [self.player])[0])
         else:
             print_error(rand.choice(enemy.skills).use(enemy, [self.player])[0])
+        
 
     def ally_turn(self):
         [self._ally_action(ally) for ally in self.allies if ally.is_alive]
 
+
     def _ally_action(self, ally: Ally):
         results = self._use_ally_skill(ally)
-
+        
         if results[1]:  # If hit
             colorprint(results[0], "lightgreen")
         else:
-            print_error(results[0])
+            print_error(results[0]) 
 
+    
     def _use_ally_skill(self, ally: Ally):
         chosen_skill = rand.choice(ally.skills)
         match ally.profession:
@@ -296,7 +305,7 @@ Target: {skill.target.value}{Styles.reset}
                     allies = self.allies.copy()
                     allies.append(self.player)
                     return chosen_skill.use(ally, allies)
-                else:
+                else: 
                     return chosen_skill.use(ally, [ally])
             case Professions.WARRIOR | Professions.ROGUE | Professions.MAGE:
                 if chosen_skill.target == SkillTarget.SINGLE_ENEMY:
@@ -304,14 +313,13 @@ Target: {skill.target.value}{Styles.reset}
                 elif chosen_skill.target == SkillTarget.ALL_ENEMIES:
                     return chosen_skill.use(ally, self.enemies)
             case _:
-                raise ValueError(
-                    f"Unknown profession: {ally.profession}\n This should never happen. Please report this.")
+                raise ValueError(f"Unknown profession: {ally.profession}\n This should never happen. Please report this.")
+
 
     def _display_allies(self):
-        return "\n".join(
-            [f"{i + 1}. {ally.name} (HP: {ally.health}/{ally.max_health})" for i, ally in enumerate(self.allies) if
-             ally.is_alive()])
-
+        return "\n".join([f"{i+1}. {ally.name} (HP: {ally.health}/{ally.max_health})" for i, ally in enumerate(self.allies) if ally.is_alive()])
+    
+    
     def _allocate_experience(self):
         for enemy in self.enemies:
             if enemy.is_alive():

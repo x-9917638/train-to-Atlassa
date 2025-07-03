@@ -12,6 +12,7 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 from .core.entities import Player
 from .core.section import Section
 from .core.combat import CombatSystem
@@ -31,7 +32,7 @@ def clear_stdout():
 class Game(cmd.Cmd):
     """Main game class with command processing and autocompletion"""
     
-    prompt = "> "
+    prompt = f"{Styles.fg.pink}> {Styles.reset}"
     
     def __init__(self, player_name: str):
         super().__init__()
@@ -44,12 +45,10 @@ class Game(cmd.Cmd):
         self.intro = f"{Styles.fg.lightblue}Welcome to the game, {player_name}! [h]elp for commands.\n{Styles.reset}"
 
     def precmd(self, line):
-        """Hook method executed before the command is processed"""
         clear_stdout()
         return line
 
     def postcmd(self, stop, line):
-        """Hook method executed after a command dispatch"""
         if self.game_over or self.victory:
             return True  # This will stop the cmd loop
         return False
@@ -91,7 +90,6 @@ class Game(cmd.Cmd):
 
     # Interaction commands
     def do_interact(self, arg):
-        """Interact with allies: interact [ally]"""
         if not self.current_carriage.allies:
             print_error("No allies to interact with here.")
             return
@@ -108,7 +106,6 @@ class Game(cmd.Cmd):
 
     # System commands
     def do_help(self, arg):
-        """Show help message: help OR h"""
         if arg:
             # Show help for specific command
             cmd.Cmd.do_help(self, arg)
@@ -117,37 +114,25 @@ class Game(cmd.Cmd):
             self.show_help()
 
     def do_h(self, arg):
-        """Alias for help"""
         self.do_help(arg)
 
     def do_exit(self, arg):
-        """Exit the game: exit"""
         colorprint("Exiting... Byee", "lightgreen")
         self.game_over = True
         return True
 
     def do_EOF(self, arg):
-        """Handle Ctrl+D exit"""
         return self.do_exit(arg)
 
     # Tab completion methods
     def complete_interact(self, text, line, begidx, endidx):
-        """Auto-complete ally names during interaction"""
         if not self.current_carriage.allies:
             return []
         return [ally.name for ally in self.current_carriage.allies 
                 if ally.name.lower().startswith(text.lower())]
 
-    def complete_fight(self, text, line, begidx, endidx):
-        """Auto-complete enemy names during fight command"""
-        if not self.current_carriage.enemies:
-            return []
-        return [enemy.name for enemy in self.current_carriage.enemies 
-                if enemy.name.lower().startswith(text.lower())]
-
     # Game logic methods
     def _move_player(self, direction):
-        """Helper method for player movement"""
         current_index = self.current_section.carriages.index(self.current_carriage)
         new_index = current_index + direction
         
@@ -159,16 +144,18 @@ class Game(cmd.Cmd):
             print_error(f"You can't move {'forward' if direction > 0 else 'back'} - you're at the {'end' if direction > 0 else 'start'} of the floor.")
 
     def initiate_combat(self, allies: list, enemies: list):
-        """Start combat with given allies and enemies"""
         combat_system = CombatSystem(self.player, allies, enemies)
         combat_system.start_combat()
-        
+        self.current_carriage.enemies = []
+        print("\n\n")
         # Check if combat resulted in boss defeat
-        if (any(e.is_boss for e in enemies) and all(not e.is_alive() for e in enemies)):
+        if self.current_carriage.type.value == "Boss Room" and not any(enemy.is_alive() for enemy in enemies):
             self.handle_boss_defeat()
+        else:
+            self.do_info("") # Show info after combat
+
 
     def handle_boss_defeat(self):
-        """Handle logic after defeating a boss"""
         colorprint("You have defeated the boss!", "lightgreen")
         if self.current_section.number < len(self.sections):
             colorprint(f"Proceeding to floor {self.current_section.number + 1}...", "lightgreen")
@@ -180,44 +167,37 @@ class Game(cmd.Cmd):
             self.victory = True
 
     def show_help(self):
-        """Display general help information"""
         help_text = f"""
 {Styles.bold}Available commands:{Styles.reset}
-
 {Styles.bold}Movement:{Styles.reset}{Styles.fg.lightgreen}
   next, n           - Move to next carriage
   back, b           - Move to previous carriage{Styles.reset}
-
 {Styles.bold}Combat:{Styles.reset}{Styles.fg.lightgreen}
   fight             - Initiate combat{Styles.reset}
-
 {Styles.bold}Information:{Styles.reset}{Styles.fg.lightgreen}
   inv, inventory    - Show inventory
   skills            - Show skills
   status            - Show player status
   info              - Show current carriage info{Styles.reset}
-
 {Styles.bold}Interaction:{Styles.reset}{Styles.fg.lightgreen}
   interact [ally]   - Interact with allies (with specific ally if provided){Styles.reset}
-
 {Styles.bold}System:{Styles.reset}{Styles.fg.lightgreen}
   help, h           - Show this help
   exit              - Exit the game
-
 {Styles.italics}Autocompletions are supported.{Styles.reset}
 """
         print(help_text)
 
 
     def show_player_status(self):
-        print(f"{Styles.bold}Player: {self.player.name}")
-        print(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}")
-        print(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}")
-        print(f"{Styles.bold}Attack: {self.player.attack}")
-        print(f"{Styles.bold}Defense: {self.player.defense}")
-        print(f"{Styles.bold}Level: {self.player.level}")
-        print(f"{Styles.bold}Experience: {self.player.experience}/{self.player.experience * 50}")
-        print(f"{Styles.bold}Profession: {self.player.profession.value}")
+        colorprint(f"{Styles.bold}Player: {self.player.name}", "lightgreen")
+        colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "lightgreen")
+        colorprint(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}", "lightgreen")
+        colorprint(f"{Styles.bold}Attack: {self.player.attack}", "lightgreen")
+        colorprint(f"{Styles.bold}Defense: {self.player.defense}", "lightgreen")
+        colorprint(f"{Styles.bold}Level: {self.player.level}", "lightgreen")
+        colorprint(f"{Styles.bold}Experience: {self.player.experience}/{self.player.level * 50}", "lightgreen")
+        colorprint(f"{Styles.bold}Profession: {self.player.profession.value}", "lightgreen")
     
 
     def show_info(self):
@@ -287,3 +267,13 @@ class Game(cmd.Cmd):
                 return
             case _:
                 print_error("Invalid choice.")
+
+    def default(self, line):
+        """Called on an input line when the command prefix is not recognized.
+
+        If this method is not overridden, it prints an error message and
+        returns.
+
+        """
+        clear_stdout()
+        print_error('Unknown command: %s\n'%line)
