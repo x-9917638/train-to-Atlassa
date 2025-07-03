@@ -12,7 +12,6 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# TODO
 import random as rand
 from .status_effects import StatusEffect
 from ..utils.enums import ItemType
@@ -24,7 +23,6 @@ class Item(ABC):
         self.description = description
 
     
-
 class Weapon(Item):
     def __init__(self, name:str, description:str, boost_range: tuple[int, int]):
         """
@@ -80,6 +78,7 @@ class Armor(Item):
         player.max_health -= self.current_boost * 10 # type: ignore
         player.health -= self.current_boost * 10 # type: ignore
         self.current_boost = None
+
 
 class Consumable(Item): # TODO
     def __init__(self, name: str, description: str, effect: StatusEffect):

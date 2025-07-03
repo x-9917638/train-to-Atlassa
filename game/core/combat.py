@@ -26,7 +26,7 @@ def clear_stdout():
     if os.name == "posix":
         subprocess.run(['clear'])
     elif os.name == "nt":
-        subprocess.run(['cls'])
+        subprocess.run(['cls'], shell=True)
     else:
         raise NotImplementedError("Unsupported platform. How did you even get here?")
 
@@ -297,7 +297,6 @@ Target: {skill.target.value}{Styles.reset}
 
 
     def _ally_action(self, ally: Ally):
-        # TODO
         results = self._use_ally_skill(ally)
         
         if results[1]:  # If hit

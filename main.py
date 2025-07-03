@@ -23,7 +23,7 @@ def clear_stdout():
     if os.name == "posix":
         subprocess.run(['clear'])
     elif os.name == "nt":
-        subprocess.run(['cls'])
+        subprocess.run(['cls'], shell=True)
     else:
         raise NotImplementedError("Unsupported platform. How did you even get here?")
 
@@ -42,14 +42,32 @@ while os.get_terminal_size().columns <= 150 or os.get_terminal_size().lines <= 2
     time.sleep(1)
 clear_stdout()
 print(GAME_BANNER)
-banana = Consumable("Banana", "A cool banana", status_effects["poison"])
-apple = Consumable("Apple", "Big red apple", status_effects["burn"])
-pear = Consumable("Pear", "A sour pear!", status_effects["shield"])
+
+
 game = Game(input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}"))
-goblin = Enemy("Goblin", "Green thing", 10, 1000, 0)
-goblin.skills = [GENERAL_SKILLS["Basic Attack"], GENERAL_SKILLS["Power Strike"]]
-bobette = Ally("Bobette", 10, Professions.PRIEST)
-bobette.skills = [GENERAL_SKILLS["Basic Heal"], PRIEST_SKILLS["Divine Shield"], PRIEST_SKILLS["Holy Light"]]
-game.player.skill_hand = [GENERAL_SKILLS["Basic Attack"], GENERAL_SKILLS["Power Strike"], GENERAL_SKILLS["Basic Heal"], PRIEST_SKILLS["Divine Shield"], PRIEST_SKILLS["Holy Light"]]
-game.player.inventory = {banana: 2, apple:7, pear: 1}
-game.initiate_combat([bobette], [goblin])
+colorprint("Available Professions:", "lightgreen")
+for i in Professions:
+    colorprint(i.value, "lightgreen")
+player_profession = input(f"{Styles.bold}{Styles.fg.lightblue}Choose a profession: {Styles.reset}").upper()
+while True:
+    try:
+        game.player.profession = Professions[player_profession]
+        break
+    except KeyError:
+        print_error("Invalid profession.")
+        player_profession = input(f"{Styles.bold}{Styles.fg.lightblue}Choose a profession: {Styles.reset}").upper()
+clear_stdout()
+game.cmdloop()
+# game.player.skill_hand = GENERAL_SKILLS.copy()
+# game.initiate_combat(game.player.allies, test_carriage.enemies)
+
+
+
+
+
+# test_carriage = Carriage(CarriageType.FIGHT, "Test Fight Place", 2)
+# test_carriage.generate_entities()
+# banana = Consumable("Banana", "A cool banana", status_effects["poison"])
+# apple = Consumable("Apple", "Big red apple", status_effects["burn"])
+# pear = Consumable("Pear", "A sour pear!", status_effects["shield"])
+# game.player.inventory = {banana: 2, apple:7, pear: 1}

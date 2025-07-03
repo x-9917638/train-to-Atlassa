@@ -73,29 +73,30 @@ def _attack_miss_message(name: str) -> str:
 
 
 # The list of skills that any entity can use
-GENERAL_SKILLS = {
-    "Basic Attack": Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
-    "Power Strike": Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY),
-    "Basic Heal": Skill("Prayer", "A simple prayer for divine assitance", 30, 30, SkillTarget.SINGLE_ALLY)
-}
+GENERAL_SKILLS = [
+    Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
+    Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY),
+    Skill("Prayer", "A simple prayer for divine assitance", 30, 30, SkillTarget.SINGLE_ALLY)
+]
 
-WARRIOR_SKILLS = {
+WARRIOR_SKILLS = [
     #TODO
-}
+]
 
-MAGE_SKILLS = {
+MAGE_SKILLS = [
     #TODO
-}
+]
 
-ROGUE_SKILLS = {
+ROGUE_SKILLS = [
     #TODO
-}
+]
 
-PRIEST_SKILLS = {
-    "Holy Light": Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
-    "Divine Shield": Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=status_effects["shield"])
-}
+PRIEST_SKILLS = [
+    Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
+    Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=status_effects["shield"])
+]
 
-ENEMY_SKILLS = {
+ENEMY_SKILLS = [
     #TODO
-}
+    Skill("Enemy Basic Attack", "A basic attack from an enemy", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
+]

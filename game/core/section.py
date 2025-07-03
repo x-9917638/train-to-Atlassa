@@ -24,14 +24,14 @@ class Section:
     
     def generate_section(self):
         # Create the guaranteed home place
-        home = Carriage(CarriageType.SAFE, f"Floor {self.number} Home")
+        home = Carriage(CarriageType.SAFE, f"Floor {self.number} Home", self.number)
         self.carriages.append(home)
         
         # Generate other places
         self._generate_other_carriages()
         
         # Create the guaranteed boss room
-        boss_room = Carriage(CarriageType.BOSS, f"Floor {self.number} Boss Room")
+        boss_room = Carriage(CarriageType.BOSS, f"Floor {self.number} Boss Room", self.number)
         self.carriages.append(boss_room)
 
         # Connect places
@@ -44,10 +44,10 @@ class Section:
         
         for i in range(num_carriages):
             carriage_type = random.choices(place_types, k=1, weights=weights)[0]
-            carriage = Carriage(carriage_type, f"Floor {self.number} {carriage_type.value} {i+1}")
+            carriage = Carriage(carriage_type, f"Floor {self.number} {carriage_type.value} {i+1}", self.number)
             self.carriages.append(carriage)
     
     def _connect_carriages(self):
         for i in range(len(self.carriages) - 1):
-            self.carriages[i].add_connection(self.carriages[i+1])
-        self.carriages[-2].add_connection(self.carriages[-1])
+            self.carriages[i]._add_connection(self.carriages[i+1])
+        self.carriages[-2]._add_connection(self.carriages[-1])

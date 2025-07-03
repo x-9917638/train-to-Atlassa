@@ -1,5 +1,3 @@
-"""Game Logic"""
-
 #
 #       This program is free software: you can redistribute it and/or modify
 #       it under the terms of the GNU Affero General Public License as published
@@ -17,44 +15,275 @@
 from .core.entities import Player
 from .core.section import Section
 from .core.combat import CombatSystem
+from .utils.styles import *
+import os, subprocess
+import cmd
 
-NAMES = [
-    "Aelara", "Brialla", "Cyndra", "Drusila", "Elyndra",
-    "Feyra", "Gwyneth", "Haelia", "Ilythia", "Jasmina",
-    "Kythira", "Lunara", "Morgwen", "Nyssa", "Orianna",
-    "Phaedra", "Quinnara", "Ravena", "Sylria", "Thalindra",
-    "Aldric", "Baelthor", "Cedric", "Dain", "Eldrin",
-    "Fenris", "Gorion", "Haldor", "Ithil", "Jorund",
-    "Kael", "Lorath", "Maldrek", "Nyr", "Orin",
-    "Parthas", "Quillon", "Ragnar", "Soren", "Thrain"
-]
+def clear_stdout():
+    if os.name == "posix":
+        subprocess.run(['clear'])
+    elif os.name == "nt":
+        subprocess.run(['cls'], shell=True)
+    else:
+        raise NotImplementedError("Unsupported platform. How did you even get here?")
 
-class Game:
+
+class Game(cmd.Cmd):
+    """Main game class with command processing and autocompletion"""
+    
+    prompt = "> "
+    
     def __init__(self, player_name: str):
+        super().__init__()
         self.player = Player(player_name)
-        # Create 4 floors, maybe if i add an infinite mode this may need to be changed
-        self.floors = [Section(i+1) for i in range(4)]
-        self.current_floor = self.floors[0]
-        self.current_place = self.current_floor.carriages[0]
+        self.sections = [Section(i+1) for i in range(4)]
+        self.current_section = self.sections[0]
+        self.current_carriage = self.current_section.carriages[0]
         self.game_over = False
         self.victory = False
+        self.intro = f"{Styles.fg.lightblue}Welcome to the game, {player_name}! [h]elp for commands.\n{Styles.reset}"
 
+    def precmd(self, line):
+        """Hook method executed before the command is processed"""
+        clear_stdout()
+        return line
 
-    def move_player(self, place_index: int):
-        try: # Account for player trying to move past the final room.
-            self.current_place = self.current_floor.carriages[place_index]
-            return (True, self.current_place)
-        except IndexError:
-            return (False, self.current_place)
-    
-    def handle_place_events(self):
-        # TODO
-        pass
-    
-    def initiate_combat(self, allies:list, enemies:list):
+    def postcmd(self, stop, line):
+        """Hook method executed after a command dispatch"""
+        if self.game_over or self.victory:
+            return True  # This will stop the cmd loop
+        return False
+
+    # Movement commands
+    def do_next(self, arg):
+        self._move_player(1)
+    def do_n(self, arg):
+        self.do_next(arg)
+
+    def do_back(self, arg):
+        self._move_player(-1)
+    def do_b(self, arg):
+        self.do_back(arg)
+
+    # Combat commands
+    def do_fight(self, arg):
+        """Initiate combat with enemies in current carriage: fight [enemy]"""
+        if not self.current_carriage.enemies:
+            print_error("There are no enemies to fight here.")
+            return
+
+        self.initiate_combat(self.player.allies, self.current_carriage.enemies)
+
+    # Information commands
+    def do_inventory(self, arg):
+        self.show_inventory()
+    def do_inv(self, arg):
+        self.do_inventory(arg)
+
+    def do_skills(self, arg):
+        self.show_skills()
+
+    def do_status(self, arg):
+        self.show_player_status()
+
+    def do_info(self, arg):
+        self.show_info()
+
+    # Interaction commands
+    def do_interact(self, arg):
+        """Interact with allies: interact [ally]"""
+        if not self.current_carriage.allies:
+            print_error("No allies to interact with here.")
+            return
+            
+        if arg:  # If specific ally was provided
+            ally = next((a for a in self.current_carriage.allies 
+                        if a.name.lower().startswith(arg.lower())), None)
+            if ally:
+                self.hire_ally(ally)
+            else:
+                print_error(f"No ally named '{arg}' found.")
+        else:
+            self.interact_with_allies()
+
+    # System commands
+    def do_help(self, arg):
+        """Show help message: help OR h"""
+        if arg:
+            # Show help for specific command
+            cmd.Cmd.do_help(self, arg)
+        else:
+            # Show general help
+            self.show_help()
+
+    def do_h(self, arg):
+        """Alias for help"""
+        self.do_help(arg)
+
+    def do_exit(self, arg):
+        """Exit the game: exit"""
+        colorprint("Exiting... Byee", "lightgreen")
+        self.game_over = True
+        return True
+
+    def do_EOF(self, arg):
+        """Handle Ctrl+D exit"""
+        return self.do_exit(arg)
+
+    # Tab completion methods
+    def complete_interact(self, text, line, begidx, endidx):
+        """Auto-complete ally names during interaction"""
+        if not self.current_carriage.allies:
+            return []
+        return [ally.name for ally in self.current_carriage.allies 
+                if ally.name.lower().startswith(text.lower())]
+
+    def complete_fight(self, text, line, begidx, endidx):
+        """Auto-complete enemy names during fight command"""
+        if not self.current_carriage.enemies:
+            return []
+        return [enemy.name for enemy in self.current_carriage.enemies 
+                if enemy.name.lower().startswith(text.lower())]
+
+    # Game logic methods
+    def _move_player(self, direction):
+        """Helper method for player movement"""
+        current_index = self.current_section.carriages.index(self.current_carriage)
+        new_index = current_index + direction
+        
+        if 0 <= new_index < len(self.current_section.carriages):
+            self.current_carriage = self.current_section.carriages[new_index]
+            colorprint(f"Moved to {self.current_carriage.name}.", "lightgreen")
+            self.show_info()
+        else:
+            print_error(f"You can't move {'forward' if direction > 0 else 'back'} - you're at the {'end' if direction > 0 else 'start'} of the floor.")
+
+    def initiate_combat(self, allies: list, enemies: list):
+        """Start combat with given allies and enemies"""
         combat_system = CombatSystem(self.player, allies, enemies)
         combat_system.start_combat()
-    
+        
+        # Check if combat resulted in boss defeat
+        if (any(e.is_boss for e in enemies) and all(not e.is_alive() for e in enemies)):
+            self.handle_boss_defeat()
+
     def handle_boss_defeat(self):
-        # TODO
-        pass
+        """Handle logic after defeating a boss"""
+        colorprint("You have defeated the boss!", "lightgreen")
+        if self.current_section.number < len(self.sections):
+            colorprint(f"Proceeding to floor {self.current_section.number + 1}...", "lightgreen")
+            self.current_section = self.sections[self.current_section.number]
+            self.current_carriage = self.current_section.carriages[0]
+            self.show_info()
+        else:
+            colorprint("You have completed all floors! Congratulations!", "lightgreen")
+            self.victory = True
+
+    def show_help(self):
+        """Display general help information"""
+        help_text = f"""
+{Styles.bold}Available commands:{Styles.reset}
+
+{Styles.bold}Movement:{Styles.reset}{Styles.fg.lightgreen}
+  next, n           - Move to next carriage
+  back, b           - Move to previous carriage{Styles.reset}
+
+{Styles.bold}Combat:{Styles.reset}{Styles.fg.lightgreen}
+  fight             - Initiate combat{Styles.reset}
+
+{Styles.bold}Information:{Styles.reset}{Styles.fg.lightgreen}
+  inv, inventory    - Show inventory
+  skills            - Show skills
+  status            - Show player status
+  info              - Show current carriage info{Styles.reset}
+
+{Styles.bold}Interaction:{Styles.reset}{Styles.fg.lightgreen}
+  interact [ally]   - Interact with allies (with specific ally if provided){Styles.reset}
+
+{Styles.bold}System:{Styles.reset}{Styles.fg.lightgreen}
+  help, h           - Show this help
+  exit              - Exit the game
+
+{Styles.italics}Autocompletions are supported.{Styles.reset}
+"""
+        print(help_text)
+
+
+    def show_player_status(self):
+        print(f"{Styles.bold}Player: {self.player.name}")
+        print(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}")
+        print(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}")
+        print(f"{Styles.bold}Attack: {self.player.attack}")
+        print(f"{Styles.bold}Defense: {self.player.defense}")
+        print(f"{Styles.bold}Level: {self.player.level}")
+        print(f"{Styles.bold}Experience: {self.player.experience}/{self.player.experience * 50}")
+        print(f"{Styles.bold}Profession: {self.player.profession.value}")
+    
+
+    def show_info(self):
+        print_game_msg(f"You are at {self.current_carriage.name}.")
+
+        if self.current_carriage.enemies:
+            print_error("Enemies present:")
+            for enemy in self.current_carriage.enemies:
+                print_error(f"- {enemy.name}: {enemy.description}")
+        else:
+            print_error("There are no enemies in this carriage.")
+
+        if self.current_carriage.allies:
+            colorprint("Allies present:", "lightgreen")
+            for ally in self.current_carriage.allies:
+                colorprint(f"- {ally.name}: {ally.description}", "lightgreen")
+        else:
+            print_error("There are no allies in this carriage.")
+
+
+    def show_skills(self):
+        if self.player.skills:
+            print("Your skills:")
+            for skill in self.player.skills:
+                print(f"- {skill.name}: {skill.description}")
+        else:
+            print("You have no skills.")
+
+    def show_inventory(self):
+        if self.player.inventory:
+            print("Your inventory:")
+            for item in self.player.inventory:
+                quantity = self.player.inventory[item]
+                print(f"- {item.name}, x{quantity}: {item.description}")
+        else:
+            print("Your inventory is empty.")
+
+    def interact_with_allies(self):
+        if not self.current_carriage.allies:
+            print("No allies to interact with in this carriage.")
+            return
+        
+        print("You can interact with the following allies:")
+        for ally in self.current_carriage.allies:
+            print(f"- {ally.name}: {ally.description}")
+
+        ally_name = input("Enter a name: ")
+        for ally in self.current_carriage.allies:
+            if ally.name.lower() == ally_name.lower():
+                self.hire_ally(ally)
+            else:
+                print(f"No ally with the name {ally_name} found in this carriage.")
+                return
+            
+            
+    def hire_ally(self, ally):
+        choice = input(f"Do you wish to hire {ally.name} to join you on this conquest? ([Y]es/[n]o)")
+        match choice.lower():
+            case "y" | "yes" | "":
+                if len(self.player.allies) > 2:
+                    print("You already have the maximum number of allies. You cannot hire more.")
+                else:
+                    self.player.add_ally(ally)
+                    self.current_carriage.allies.remove(ally)
+                    print(f"{ally.name} has joined your party!")
+            case "n" | "no":
+                return
+            case _:
+                print_error("Invalid choice.")
