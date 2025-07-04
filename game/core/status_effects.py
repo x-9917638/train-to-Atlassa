@@ -23,12 +23,13 @@ class StatusEffect:
         self._effects = effects
         self.duration = duration
     
-    def apply(self, player):
+    def apply(self, entity):
         """
         Apply the status effect to the player. Should be called every turn while in combat
         :param player: The player to apply the status effect to.
         """
-        self._effects(player)
+        self._effects(entity)
+        print(f"{entity.name} is {self.name.lower()} for {self.duration} turns.")
         self.duration -= 1
         
 

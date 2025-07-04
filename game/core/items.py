@@ -14,7 +14,6 @@
 
 import random as rand
 from .status_effects import StatusEffect
-from ..utils.enums import ItemType
 from abc import ABC
 
 class Item(ABC):

@@ -15,7 +15,7 @@
 import random as rand
 from typing import Optional # So I don't get annoying type hints
 from .status_effects import StatusEffect, status_effects
-from ..utils.enums import SkillTarget
+from ..utils import SkillTarget
 
 class Skill:
     def __init__(self, name: str, description: str, power: int, 

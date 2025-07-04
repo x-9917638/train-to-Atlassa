@@ -13,7 +13,7 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import random
-from ..utils.enums import CarriageType
+from ..utils import CarriageType
 from .carriages import Carriage
 
 class Section:
@@ -24,14 +24,14 @@ class Section:
     
     def generate_section(self):
         # Create the guaranteed home place
-        home = Carriage(CarriageType.SAFE, f"Floor {self.number} Home", self.number)
+        home = Carriage(CarriageType.SAFE, f"Section {self.number} Carriage", self.number)
         self.carriages.append(home)
         
         # Generate other places
         self._generate_other_carriages()
         
         # Create the guaranteed boss room
-        boss_room = Carriage(CarriageType.BOSS, f"Floor {self.number} Boss Room", self.number)
+        boss_room = Carriage(CarriageType.BOSS, f"Floor {self.number} Carriage", self.number)
         self.carriages.append(boss_room)
 
         # Connect places
@@ -44,7 +44,7 @@ class Section:
         
         for i in range(num_carriages):
             carriage_type = random.choices(place_types, k=1, weights=weights)[0]
-            carriage = Carriage(carriage_type, f"Floor {self.number} {carriage_type.value} {i+1}", self.number)
+            carriage = Carriage(carriage_type, f"Floor {self.number} Carriage {i+1}", self.number)
             self.carriages.append(carriage)
     
     def _connect_carriages(self):

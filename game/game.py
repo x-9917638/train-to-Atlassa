@@ -16,22 +16,19 @@
 from .core.entities import Player
 from .core.section import Section
 from .core.combat import CombatSystem
-from .utils.styles import *
-import os, subprocess
-import cmd
+from .utils import Styles, colorprint, print_game_msg, print_error, typing_print
+from .utils import clear_stdout
+from .utils import BaseCommandHandler
+import time
 
-def clear_stdout():
-    if os.name == "posix":
-        subprocess.run(['clear'])
-    elif os.name == "nt":
-        subprocess.run(['cls'], shell=True)
-    else:
-        raise NotImplementedError("Unsupported platform. How did you even get here?")
+WARNING_MESSAGE = f"""{" " * 25}{Styles.fg.red}__        ___    ____  _   _ ___ _   _  ____ 
+{" " * 25}\ \      / / \  |  _ \| \ | |_ _| \ | |/ ___|
+ {" " * 25}\ \ /\ / / _ \ | |_) |  \| || ||  \| | |  _ 
+  {" " * 25}\ V  V / ___ \|  _ <| |\  || || |\  | |_| |
+   {" " * 25}\_/\_/_/   \_\_| \_\_| \_|___|_| \_|\____|{Styles.reset}"""
 
 
-class Game(cmd.Cmd):
-    """Main game class with command processing and autocompletion"""
-    
+class Game(BaseCommandHandler):    
     prompt = f"{Styles.fg.pink}> {Styles.reset}"
     
     def __init__(self, player_name: str):
@@ -106,12 +103,7 @@ class Game(cmd.Cmd):
 
     # System commands
     def do_help(self, arg):
-        if arg:
-            # Show help for specific command
-            cmd.Cmd.do_help(self, arg)
-        else:
-            # Show general help
-            self.show_help()
+        self.show_help()
 
     def do_h(self, arg):
         self.do_help(arg)
@@ -169,6 +161,7 @@ class Game(cmd.Cmd):
     def show_help(self):
         help_text = f"""
 {Styles.bold}Available commands:{Styles.reset}
+
 {Styles.bold}Movement:{Styles.reset}{Styles.fg.lightgreen}
   next, n           - Move to next carriage
   back, b           - Move to previous carriage{Styles.reset}
@@ -184,6 +177,7 @@ class Game(cmd.Cmd):
 {Styles.bold}System:{Styles.reset}{Styles.fg.lightgreen}
   help, h           - Show this help
   exit              - Exit the game
+  
 {Styles.italics}Autocompletions are supported.{Styles.reset}
 """
         print(help_text)
@@ -204,18 +198,22 @@ class Game(cmd.Cmd):
         print_game_msg(f"You are at {self.current_carriage.name}.")
 
         if self.current_carriage.enemies:
+            if self.current_carriage.type.value == "Boss Room":
+                print(WARNING_MESSAGE)
+                typing_print(f"{Styles.fg.red}{"=" * 30}A boss is present in this carriage!{"=" * 30}{Styles.reset}", delay=0.01)
+                time.sleep(0.2)
+                clear_stdout()
             print_error("Enemies present:")
             for enemy in self.current_carriage.enemies:
                 print_error(f"- {enemy.name}: {enemy.description}")
-        else:
-            print_error("There are no enemies in this carriage.")
-
-        if self.current_carriage.allies:
-            colorprint("Allies present:", "lightgreen")
-            for ally in self.current_carriage.allies:
-                colorprint(f"- {ally.name}: {ally.description}", "lightgreen")
-        else:
-            print_error("There are no allies in this carriage.")
+        else:            
+            # Intentionally in the else block, there will never be both an ally and enemy in one carriage
+            if self.current_carriage.allies:
+                colorprint("Allies present:", "lightgreen")
+                for ally in self.current_carriage.allies:
+                    colorprint(f"- {ally.name}: {ally.description}", "lightgreen")
+            else:
+                print_error("There are no allies in this carriage.")
 
 
     def show_skills(self):
@@ -268,12 +266,3 @@ class Game(cmd.Cmd):
             case _:
                 print_error("Invalid choice.")
 
-    def default(self, line):
-        """Called on an input line when the command prefix is not recognized.
-
-        If this method is not overridden, it prints an error message and
-        returns.
-
-        """
-        clear_stdout()
-        print_error('Unknown command: %s\n'%line)

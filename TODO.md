@@ -2,8 +2,9 @@
 ~~2. Implement battle system - player commands & enemy ai~~
 ~~3. Level scaling on all entities - maybe stat allocation on player~~
 ~~4. Random enemy generation~~
-    1. Autocompletions for all prompts
-    2. Bug fixing
-    3. Skill creation
-    4. Tutorial
-    5. Saving state
+    ~~1. Autocompletions for all prompts~~
+    2. Finish consumables class
+    3. Bug fixing
+    4. Skill creation
+    ~~5. Tutorial~~
+    6. Saving state

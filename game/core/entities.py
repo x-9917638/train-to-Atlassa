@@ -15,7 +15,7 @@
 from .items import Item
 from .skills import Skill, GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS
 from .status_effects import StatusEffect
-from..utils.enums import Professions
+from  ..utils import Professions
 import random, math
 
 class Entity:
@@ -133,7 +133,7 @@ class Player(Entity):
     
     def rest(self):
         # When a player rests, they do not attack. 
-        # Instead, they refresh skill cooldowns, heal, and generate mana
+        # Instead, they heal, and generate mana
         self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
         self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
 

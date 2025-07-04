@@ -16,24 +16,9 @@
 
 from game.game import Game
 from game.core import *
-from game.utils.styles import Styles, colorprint
-import os, subprocess
-
-try:
-    # Make sure can use match-case
-    match "":
-        case _: pass
-except:
-    raise NotImplementedError("Please use Python >=3.10.0")
-
-
-def clear_stdout():
-    if os.name == "posix":
-        subprocess.run(['clear'])
-    elif os.name == "nt":
-        subprocess.run(['cls'], shell=True)
-    else:
-        raise NotImplementedError("Unsupported platform. How did you even get here?")
+from game.utils import Styles
+from game.utils import clear_stdout, check_terminal_size
+from game.tutorial import start_tutorial
 
 GAME_BANNER = f"""{Styles.fg.lightblue}ooooooooooooo                     o8o                       .                        .o.           .   oooo                                        
 8'   888   `8                     `"'                     .o8                       .888.        .o8   `888                                        
@@ -44,38 +29,40 @@ GAME_BANNER = f"""{Styles.fg.lightblue}ooooooooooooo                     o8o    
     o888o     d888b    `Y888""8o o888o o888o o888o        "888" `Y8bod8P'      o88o     o8888o   "888" o888o `Y888""8o 8""888P' 8""888P' `Y888""8o{Styles.reset}"""
 
 
-clear_stdout()
-while os.get_terminal_size().columns <= 150 or os.get_terminal_size().lines <= 24:
-    print(f"{Styles.fg.red}{Styles.bold}Terminal size too small \nTry maximising the window.{Styles.reset}")
-    time.sleep(1)
-clear_stdout()
-print(GAME_BANNER)
-
-
-game = Game(input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").title())
-colorprint("Available Professions:", "lightgreen")
-for i in Professions:
-    colorprint(i.value, "lightgreen")
-player_profession = input(f"{Styles.bold}{Styles.fg.lightblue}Choose a profession: {Styles.reset}").upper()
-while True:
+def setup():
     try:
-        game.player.profession = Professions[player_profession]
-        break
-    except KeyError:
-        print_error("Invalid profession.")
-        player_profession = input(f"{Styles.bold}{Styles.fg.lightblue}Choose a profession: {Styles.reset}").upper()
-clear_stdout()
-game.cmdloop()
-# game.player.skill_hand = GENERAL_SKILLS.copy()
-# game.initiate_combat(game.player.allies, test_carriage.enemies)
+        # Make sure can use match-case otherwise the game won't run
+        match "":
+            case _: pass
+    except:
+        raise NotImplementedError("Please use Python >= 3.10")
+    clear_stdout()
+    check_terminal_size()
+    clear_stdout()
+
+
+def tutorial():
+    start_tutorial()
+    clear_stdout()
+
+
+def start_game():
+    player_name = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
+    print(GAME_BANNER)
+    # insert save file check here
+    game = Game(player_name)
+    ProfessionChooser(game).cmdloop()
+    game.cmdloop()
+    
+
+def main():
+    setup()
+    tutorial()
+    start_game()
+
+
+if __name__ == "__main__":
+    main()
 
 
 
-
-
-# test_carriage = Carriage(CarriageType.FIGHT, "Test Fight Place", 2)
-# test_carriage.generate_entities()
-# banana = Consumable("Banana", "A cool banana", status_effects["poison"])
-# apple = Consumable("Apple", "Big red apple", status_effects["burn"])
-# pear = Consumable("Pear", "A sour pear!", status_effects["shield"])
-# game.player.inventory = {banana: 2, apple:7, pear: 1}

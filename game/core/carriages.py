@@ -12,7 +12,7 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from ..utils.enums import CarriageType, Professions
+from ..utils import CarriageType, Professions
 from .entities import Ally
 from .entities import SECTION_ONE_ENEMIES, SECTION_TWO_ENEMIES, SECTION_THREE_ENEMIES, SECTION_FOUR_ENEMIES
 from .entities import SECTION_ONE_BOSSES, SECTION_TWO_BOSSES, SECTION_THREE_BOSSES, SECTION_FOUR_BOSSES

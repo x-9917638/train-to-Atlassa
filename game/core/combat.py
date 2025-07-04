@@ -17,11 +17,11 @@ from typing import Optional
 from .entities import *
 from .skills import Skill
 from .items import Item
-from ..utils.enums import SkillTarget, Professions
-from ..utils.styles import Styles, colorprint, print_error, print_game_msg
+from ..utils import SkillTarget, Professions
+from ..utils import Styles, colorprint, print_error, print_game_msg
+from ..utils import BaseCommandHandler
 import os, subprocess
 import time
-import cmd
 
 
 def clear_stdout():
@@ -45,7 +45,8 @@ RETREAT_FAILURE_MESSAGES = [
     "You try to teleport but only succeed in swapping places with the enemy. This is ... not better.",
     "You cast 'Expeditious Retreat', but the spell misfires and now your legs are running ... in opposite directions.",
 ]
-PLAYER_TURN = """ ____  _                         _____                 
+
+PLAYER_TURN_BANNER = r""" ____  _                         _____                 
 |  _ \| | __ _ _   _  ___ _ __  |_   _|   _ _ __ _ __  
 | |_) | |/ _` | | | |/ _ \ '__|   | || | | | '__| '_ \ 
 |  __/| | (_| | |_| |  __/ |      | || |_| | |  | | | |
@@ -53,7 +54,8 @@ PLAYER_TURN = """ ____  _                         _____
                |___/                                   """
 
 
-class CombatSystem(cmd.Cmd):
+
+class CombatSystem(BaseCommandHandler):
     prompt = f"{Styles.fg.pink}> {Styles.reset}"
 
     def __init__(self, player: Player, allies: list[Ally], enemies: list[Enemy]):
@@ -61,8 +63,13 @@ class CombatSystem(cmd.Cmd):
         self.player = player
         self.allies = allies
         self.enemies = enemies
+        self.triggered_help = False
 
     def postcmd(self, stop, line):
+        if self.triggered_help: # If we got here because of help or error, skip the rest of postcmd.
+            self.triggered_help = False
+            return False
+
         if not any(enemy.is_alive() for enemy in self.enemies):
             colorprint("Room Clear", "lightgreen")
             return True
@@ -74,6 +81,9 @@ class CombatSystem(cmd.Cmd):
         self._allocate_experience()
         self.player.check_level_up()
         input(f"{Styles.fg.lightblue}Press Enter to continue...{Styles.reset}")
+        if not any(enemy.is_alive() for enemy in self.enemies):
+            colorprint("Room Clear", "lightgreen")
+            return True
         self._player_turn_setup()
         return False
 
@@ -83,9 +93,9 @@ class CombatSystem(cmd.Cmd):
             targets = self._get_targets(skill)
             results = skill.use(self.player, targets)
             if results[1]:  # If hit
-                colorprint(results[0], "lightgreen")
+                colorprint(results[0] + "\n", "lightgreen")
             else:
-                print_error(results[0])
+                print_error(results[0] + "\n")
         except AttributeError:
             pass
 
@@ -114,13 +124,32 @@ class CombatSystem(cmd.Cmd):
     def do_retreat(self, arg):
         self._run_away()
 
+    def do_help(self, arg):
+        help_text = f"""
+{Styles.bold}Available commands:{Styles.reset}
+{Styles.fg.lightgreen}
+  attack            - Use a skill
+  rest              - Heal 20% max HP, 10% max MP
+  items             - Use a consumable item
+  retreat           - Retreat (33% success rate)
+  help, h           - Show this help
+
+{Styles.italics}Autocompletions are supported.{Styles.reset}
+"""
+        print(help_text)
+        self.triggered_help = True
+        
+        
+    def do_h(self, arg):
+        self.do_help(arg)
+
     def start_combat(self):
         self._player_turn_setup()
         self.cmdloop()
 
     def _player_turn_setup(self):
         clear_stdout()
-        colorprint(Styles.bold + PLAYER_TURN, "green")
+        colorprint(Styles.bold + PLAYER_TURN_BANNER, "green")
         time.sleep(0.3)
         clear_stdout()
         colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "magenta")
@@ -227,7 +256,7 @@ Target: {skill.target.value}{Styles.reset}
                     chosen_enemy = int(input(
                         f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
                     target = [self.enemies[chosen_enemy - 1]]
-                except IndexError:
+                except (IndexError, ValueError):
                     print_error("Invalid target.")
                     return self._get_targets(skill)
             case SkillTarget.ALL_ENEMIES:
@@ -235,18 +264,23 @@ Target: {skill.target.value}{Styles.reset}
             case SkillTarget.SELF:
                 target = [self.player]
             case SkillTarget.ALL_ALLIES:
-                target = self.allies
+                if self.allies:
+                    target = self.allies
+                else:
+                    target = []
             case SkillTarget.SINGLE_ALLY:
                 print(f"{Styles.fg.lightblue}{skill.name} selected.{Styles.reset}")
                 colorprint(self._display_allies(), "lightgreen")
-
-                try:
-                    chosen_ally = int(input(
-                        f"{Styles.fg.lightblue}Pick an ally.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
-                    target = [self.allies[chosen_ally - 1]]
-                except (IndexError, ValueError):
-                    print_error("Invalid target.")
-                    return self._get_targets(skill)
+                if self.allies:
+                    try:
+                        chosen_ally = int(input(
+                            f"{Styles.fg.lightblue}Pick an ally.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
+                        target = [self.allies[chosen_ally - 1]]
+                    except (IndexError, ValueError):
+                        print_error("Invalid target.")
+                        return self._get_targets(skill)
+                else:
+                    target = []
             case _:
                 raise ValueError(
                     "Skill initialised incorrectly: error in target.\nThis should never happen. Please report this.")
@@ -318,3 +352,7 @@ Target: {skill.target.value}{Styles.reset}
                 continue
             self.player.experience += enemy.exp_amt
             self.enemies.remove(enemy)
+
+    def default(self, line):
+        self.triggered_help = True
+        return super().default(line)
