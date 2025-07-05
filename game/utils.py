@@ -106,6 +106,7 @@ def print_error(to_print:str):
     print(f"\033[31m{to_print}\033[0m")
 
 def clear_stdout():
+    """Clear standard output."""
     if os.name == "posix":
         subprocess.run(['clear'])
     elif os.name == "nt":
@@ -115,6 +116,7 @@ def clear_stdout():
 
 
 def check_terminal_size():
+    """Check to make sure terminal window size can fit the ASCII text bannerss"""
     try:
         while os.get_terminal_size().columns <= 150 or os.get_terminal_size().lines <= 24:
             print(f"{Styles.fg.red}{Styles.bold}Terminal size too small \nTry maximising the window.{Styles.reset}")

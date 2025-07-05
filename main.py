@@ -14,13 +14,20 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from game.game import Game
+from game.game import Game, GameData, GameCommandHandler
 from game.core import *
 from game.utils import Styles
 from game.utils import clear_stdout, check_terminal_size
 from game.tutorial import start_tutorial
+if os.name == "nt":
+    from msvcrt import getch
+else:
+    try:
+        from getch import getch
+    except ModuleNotFoundError:
+        raise ModuleNotFoundError(f"getch is not installed.\nPlease run{Styles.bold} pip install getch{Styles.reset}")
 
-GAME_BANNER = f"""{Styles.fg.lightblue}ooooooooooooo                     o8o                       .                        .o.           .   oooo                                        
+GAME_BANNER = f"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo                                        
 8'   888   `8                     `"'                     .o8                       .888.        .o8   `888                                        
      888      oooo d8b  .oooo.   oooo  ooo. .oo.        .o888oo  .ooooo.           .8"888.     .o888oo  888   .oooo.    .oooo.o  .oooo.o  .oooo.   
      888      `888""8P `P  )88b  `888  `888P"Y88b         888   d88' `88b         .8' `888.      888    888  `P  )88b  d88(  "8 d88(  "8 `P  )88b  
@@ -29,7 +36,7 @@ GAME_BANNER = f"""{Styles.fg.lightblue}ooooooooooooo                     o8o    
     o888o     d888b    `Y888""8o o888o o888o o888o        "888" `Y8bod8P'      o88o     o8888o   "888" o888o `Y888""8o 8""888P' 8""888P' `Y888""8o{Styles.reset}"""
 
 
-def setup():
+def setup() -> None:
     try:
         # Make sure can use match-case otherwise the game won't run
         match "":
@@ -39,26 +46,61 @@ def setup():
     clear_stdout()
     check_terminal_size()
     clear_stdout()
+    return None
+
+def prompt_load_save() -> Optional[GameData]:
+    if not os.path.exists("./saves/savegame.pkl"):
+        return None    
+    choice = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset}").strip().lower()
+    
+    match choice:
+        case "y" | "yes":
+            data = handle_load()
+            return data
+        case _:
+            print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
+            return None
 
 
-def tutorial():
+def tutorial() -> None:
+    clear_stdout()
     start_tutorial()
     clear_stdout()
+    return None
+
+def check_name(name:str) -> bool:
+    alphabet = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
+   
+    if not (all(char in alphabet or char.isspace() for char in name) and 0 < len(name) < 40):  
+        print_error(f"{Styles.fg.red}Invalid name: {name}. Please use only letters and spaces, and please keep it between 1 and 40 characters.{Styles.reset}")
+        return False
+    return True
 
 
-def start_game():
+def start_game() -> None:
     player_name = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
+    while not check_name(player_name):
+        player_name = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
+
     print(GAME_BANNER)
-    # insert save file check here
+
     game = Game(player_name)
     ProfessionChooser(game).cmdloop()
-    game.cmdloop()
+    GameCommandHandler(game).cmdloop()
+    
+    return None
     
 
 def main():
     setup()
-    tutorial()
-    start_game()
+    save_data: GameData = prompt_load_save()
+    time.sleep(0.3)
+    if save_data:
+        game = Game("", data=save_data)
+        GameCommandHandler(game).cmdloop()
+    else:
+        tutorial()
+        start_game()
 
 
 if __name__ == "__main__":

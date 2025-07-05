@@ -209,12 +209,12 @@ Target: {skill.target.value}{Styles.reset}
         print_game_msg(f"Pick a skill...\n")
 
         options = [i for i in range(1, len(self.player.skill_hand) + 1)]
-
-        try:
-            chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}").strip())
-        except ValueError:
-            print_error("Invalid input.")
-            return self._get_skill()
+        while True:
+            try:
+                chosen = int(input(f"{Styles.fg.pink}> {Styles.reset}").strip())
+                break
+            except ValueError:
+                print_error("Invalid input.")
 
         while chosen not in options:
             print_error("Invalid input.")

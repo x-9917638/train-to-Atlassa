@@ -136,6 +136,7 @@ class Player(Entity):
         # Instead, they heal, and generate mana
         self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
         self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
+        
 
 
 class Enemy(Entity):

@@ -23,18 +23,18 @@ class Section:
         self.generate_section()
     
     def generate_section(self):
-        # Create the guaranteed home place
+        # Create the guaranteed home carriage
         home = Carriage(CarriageType.SAFE, f"Section {self.number} Carriage", self.number)
         self.carriages.append(home)
         
-        # Generate other places
+        # Generate other carriage
         self._generate_other_carriages()
         
-        # Create the guaranteed boss room
-        boss_room = Carriage(CarriageType.BOSS, f"Floor {self.number} Carriage", self.number)
-        self.carriages.append(boss_room)
+        # Create the guaranteed boss
+        boss = Carriage(CarriageType.BOSS, f"Section {self.number} Carriage", self.number)
+        self.carriages.append(boss)
 
-        # Connect places
+        # Connect carriages
         self._connect_carriages()
     
     def _generate_other_carriages(self):
@@ -44,7 +44,7 @@ class Section:
         
         for i in range(num_carriages):
             carriage_type = random.choices(place_types, k=1, weights=weights)[0]
-            carriage = Carriage(carriage_type, f"Floor {self.number} Carriage {i+1}", self.number)
+            carriage = Carriage(carriage_type, f"Section {self.number} Carriage {i+1}", self.number)
             self.carriages.append(carriage)
     
     def _connect_carriages(self):

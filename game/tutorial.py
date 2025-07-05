@@ -92,15 +92,18 @@ class TutorialCombat(CombatSystem):
         super().__init__(tutorial_player, tutorial_player.allies, tutorial_enemy)
 
     def postcmd(self, stop, line):
-
+        if self.triggered_help: # If we got here because of help or error, skip the rest of postcmd.
+            self.triggered_help = False
+            return False
+        
         typing_print("After your turn, the enemies attack.", delay=0.01)
         self.enemy_turn()
-        typing_print("Press any key to continue...", delay=0.01)
+        typing_print("Press any key to continue...\n", delay=0.01)
         getch()
 
         typing_print("After the enemies' turn, your allies attack.", delay=0.01)
         self.ally_turn()
-        typing_print("Press any key to continue...", delay=0.01)
+        typing_print("Press any key to continue...\n", delay=0.01)
         getch()
 
         typing_print("And now it all repeats!\nCongratulations! Now you've finished the tutorial!", delay=0.01)
@@ -112,8 +115,24 @@ class TutorialCombat(CombatSystem):
         typing_print("It's your turn first!", delay=0.01)
         typing_print("Each turn, you randomly draw one skill that can be used from your \"deck\" of skills", delay=0.01)
         typing_print("This turn, lets attack!", delay=0.01)
-        time.sleep(2)
+        getch()
         return super().start_combat()
+    
+    # don't want the player doing anything other than atack in tutorial
+    def do_items(self, arg):
+        print_error("Woah there! You don't have any items right now. You need to attack!")
+        getch()
+        super().do_attack(arg) # Force them to attack
+    
+    def do_retreat(self, arg):
+        print_error("Woah there! You can't run from this! You need to attack!")
+        getch()
+        return super().do_attack(arg)
+    
+    def do_rest(self, arg):
+        print_error("Woah there! You aren't tired at all... Why not attack instead?")
+        getch()
+        return super().do_attack(arg)
 
 
 if __name__ == "__main__":
