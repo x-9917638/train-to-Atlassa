@@ -27,7 +27,7 @@ else:
     except ModuleNotFoundError:
         raise ModuleNotFoundError(f"getch is not installed.\nPlease run{Styles.bold} pip install getch{Styles.reset}")
 
-GAME_BANNER = f"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo                                        
+GAME_BANNER = fr"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo                                        
 8'   888   `8                     `"'                     .o8                       .888.        .o8   `888                                        
      888      oooo d8b  .oooo.   oooo  ooo. .oo.        .o888oo  .ooooo.           .8"888.     .o888oo  888   .oooo.    .oooo.o  .oooo.o  .oooo.   
      888      `888""8P `P  )88b  `888  `888P"Y88b         888   d88' `88b         .8' `888.      888    888  `P  )88b  d88(  "8 d88(  "8 `P  )88b  
