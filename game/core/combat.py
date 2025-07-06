@@ -65,25 +65,32 @@ class CombatSystem(BaseCommandHandler):
         self.enemies = enemies
         self.triggered_help = False
 
-    def postcmd(self, stop, line):
-        if self.triggered_help: # If we got here because of help or error, skip the rest of postcmd.
+    def postcmd(self, stop, line) -> bool:
+        if self.triggered_help: # If we got here because of help or unknown cmd, skip the rest of postcmd.
             self.triggered_help = False
             return False
+        
+        self._allocate_experience()
+        self.player.check_level_up()
 
         if not any(enemy.is_alive() for enemy in self.enemies):
             colorprint("Room Clear", "lightgreen")
             return True
+        
         self.enemy_turn()
+
         if not self.player.is_alive():
             print_error("You died...\nGame Over!")
             return True
+        
         self.ally_turn()
-        self._allocate_experience()
-        self.player.check_level_up()
+
         input(f"{Styles.fg.lightblue}Press Enter to continue...{Styles.reset}")
+
         if not any(enemy.is_alive() for enemy in self.enemies):
             colorprint("Room Clear", "lightgreen")
             return True
+        
         self._player_turn_setup()
         return False
 
@@ -98,6 +105,7 @@ class CombatSystem(BaseCommandHandler):
                 print_error(results[0] + "\n")
         except AttributeError:
             pass
+        return False
 
 
     def do_rest(self, arg):
@@ -133,9 +141,10 @@ class CombatSystem(BaseCommandHandler):
   items             - Use a consumable item
   retreat           - Retreat (33% success rate)
   help, h           - Show this help
-
-{Styles.italics}Autocompletions are supported.{Styles.reset}
+{Styles.reset}
 """
+        if os.name != "nt":
+            help_text += f"{Styles.fg.lightblue}  [TAB]            - Autocomplete commands{Styles.reset}"
         print(help_text)
         self.triggered_help = True
         
@@ -202,7 +211,7 @@ Target: {skill.target.value}{Styles.reset}
     def _get_skill(self) -> Optional[Skill]:
         if not self.player.skill_hand:
             print_error("You have no skills in your hand...")
-            return
+            return None
 
         clear_stdout()
         self._display_skills()
