@@ -7,4 +7,10 @@
     3. Bug fixing
     4. Skill creation
     ~~5. Tutorial~~
-    6. Saving state
+    ~~6. Saving state~~
+    7. Case-insensitive commands
+
+BUGS:
+- Game not ending
+~~- Windows autocompletions~~ # Just will not support it
+~~- Exp allocation~~

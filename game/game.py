@@ -24,8 +24,7 @@ from .core.save_handler import *
 import time
 
 # For saves
-import pickle
-import pathlib
+import os, pathlib
 
 
 
@@ -310,6 +309,8 @@ class GameCommandHandler(BaseCommandHandler):
   
 {Styles.italics}Autocompletions are supported.{Styles.reset}
 """
+        if os.name != "nt":
+            help_text += f"{Styles.fg.lightblue}  [TAB]            - Autocomplete commands{Styles.reset}"
         print(help_text)
         return None
     

@@ -1,6 +1,10 @@
 from enum import Enum
 import sys, time, subprocess, os
+if sys.platform == 'win32':
+    print("Windows bad, autocomplete not work")
 import cmd
+
+
 
 def typing_print(text, delay: float=0.05):
     for character in text:
@@ -135,9 +139,10 @@ class BaseCommandHandler(cmd.Cmd):
         """
         clear_stdout()
         print_error('Unknown command: %s\n'%line)
-    
+
+
     def emptyline(self):
-        self.do_help("") # Don't accept empty line = last cmd entered
+        self.do_help("") # empty line = help
     
 
         

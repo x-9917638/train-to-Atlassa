@@ -43,7 +43,10 @@ def start_tutorial():
    \_/\_/ \___|_|\___\___/|_| |_| |_|\___|   \__\___/    |_||_|  \__,_|_|_| |_|  \__\___/  /_/   \_\__|_|\__,_|___/___/\__,_(_)""")
     
     if getch() == ESC_KEY: return
-    print("Autocompletions for most commands are available!\nPress [ESC] to skip the tutorial at any time!\nPress any key to continue...")
+    if sys.platform == "win32":
+        print("Note: autocompletions are not available on Windows.\nPress any key to continue...")
+    else:
+        print("Autocompletions are available with [TAB]!\nPress [ESC] to skip the tutorial at any time!\nPress any key to continue...")
 
     
     if getch() == ESC_KEY: return
