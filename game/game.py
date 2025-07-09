@@ -79,7 +79,7 @@ class Game:
             print_error("There are no enemies to fight here.")
             return None
         self._initiate_combat(self.player.allies, self.current_carriage.enemies)
-
+        return None
 
     def _move_player(self, direction):
         current_index = self.current_section.carriages.index(self.current_carriage)
@@ -93,18 +93,23 @@ class Game:
             print_error(f"You can't move {'forward' if direction > 0 else 'back'} - you're at the {'end' if direction > 0 else 'start'} of this section.")
 
 
-    def _initiate_combat(self, allies: list, enemies: list):
+    def _initiate_combat(self, allies: list, enemies: list) -> None:
         combat_system = CombatSystem(self.player, allies, enemies)
         combat_system.start_combat()
         self.current_carriage.enemies = []
-        print("\n\n")
-        # Check if combat resulted in boss defeat
+        # Check if player died
+        if not combat_system.player.is_alive():
+            self.game_over = True
+            return None
 
+        # Check if combat resulted in boss defeat
         if self.current_carriage.type.value == "Boss Room" and not any(enemy.is_alive() for enemy in enemies):
             self._handle_boss_defeat()
+            return None
 
         self._show_info()
-
+        
+        return None
 
     def _handle_boss_defeat(self) -> None:
         colorprint("You have defeated the boss!", "lightgreen")
@@ -155,9 +160,9 @@ class Game:
 
 
     def _show_skills(self) -> None:
-        if self.player.skills:
+        if self.player.skill_deck:
             print("Your skills:")
-            for skill in self.player.skills:
+            for skill in self.player.skill_deck:
                 print(f"- {skill.name}: {skill.description}")
         else:
             print("You have no skills.")
@@ -229,6 +234,10 @@ class GameCommandHandler(BaseCommandHandler):
         clear_stdout()
         return line
     
+    def postcmd(self, stop: bool, line: str) -> bool:
+        if self.game.game_over or self.game.victory:
+           return True
+        return super().postcmd(stop, line)
 
     def postloop(self) -> None:
         # Will be called when the command loop ends

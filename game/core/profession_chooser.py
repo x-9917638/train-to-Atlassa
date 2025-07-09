@@ -13,7 +13,10 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Moved into its own class for autocompletions
-from ..utils import *
+from ..utils import BaseCommandHandler
+from ..utils import Styles, clear_stdout, print_error
+from ..utils import Professions
+
 
 class ProfessionChooser(BaseCommandHandler):
     

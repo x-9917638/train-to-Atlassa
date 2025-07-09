@@ -13,9 +13,13 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import random as rand
-from typing import Optional # So I don't get annoying type hints
+
 from .status_effects import StatusEffect, status_effects
 from ..utils import SkillTarget
+
+from typing import TYPE_CHECKING, Optional
+if TYPE_CHECKING:
+    from .entities import Entity, Player, Ally, Enemy
 
 class Skill:
     def __init__(self, name: str, description: str, power: int, 
@@ -29,7 +33,7 @@ class Skill:
         self.accuracy = accuracy
         self.effect = effect
     
-    def use(self, user, targets: list) -> tuple[str, bool]:
+    def use(self, user: "Player | Ally | Enemy", targets: list["Entity"]) -> tuple[str, bool]:
         hit, miss = True, False
         if user.mana < self.mana_cost:
             return f"Not enough mana to use {self.name}!", miss
@@ -108,5 +112,5 @@ PRIEST_SKILLS = [
 
 ENEMY_SKILLS = [
     #TODO
-    Skill("Enemy Basic Attack", "A basic attack from an enemy", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
+    Skill("Enemy Basic Attack", "A basic attack from an enemy", 1000000, 0, SkillTarget.SINGLE_ENEMY),
 ]

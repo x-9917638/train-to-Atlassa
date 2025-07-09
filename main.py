@@ -13,12 +13,18 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
+from typing import Optional
+import time
 
 from game.game import Game, GameData, GameCommandHandler
-from game.core import *
+from game.core.save_handler import handle_load
+from game.core.profession_chooser import ProfessionChooser
+from game.utils import print_error
 from game.utils import Styles
 from game.utils import clear_stdout, check_terminal_size
 from game.tutorial import start_tutorial
+
 if os.name == "nt":
     from msvcrt import getch
 else:
@@ -27,7 +33,7 @@ else:
     except ModuleNotFoundError:
         raise ModuleNotFoundError(f"getch is not installed.\nPlease run{Styles.bold} pip install getch{Styles.reset}")
 
-GAME_BANNER = fr"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo                                        
+GAME_BANNER = fr"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo
 8'   888   `8                     `"'                     .o8                       .888.        .o8   `888                                        
      888      oooo d8b  .oooo.   oooo  ooo. .oo.        .o888oo  .ooooo.           .8"888.     .o888oo  888   .oooo.    .oooo.o  .oooo.o  .oooo.   
      888      `888""8P `P  )88b  `888  `888P"Y88b         888   d88' `88b         .8' `888.      888    888  `P  )88b  d88(  "8 d88(  "8 `P  )88b  
@@ -51,11 +57,11 @@ def setup() -> None:
 def prompt_load_save() -> Optional[GameData]:
     if not os.path.exists("./saves/savegame.pkl"):
         return None    
-    choice = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset}").strip().lower()
+    choice: str = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset}").strip().lower()
     
     match choice:
         case "y" | "yes":
-            data = handle_load()
+            data: Optional[GameData] = handle_load()
             return data
         case _:
             print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
@@ -69,22 +75,22 @@ def tutorial() -> None:
     return None
 
 def check_name(name:str) -> bool:
-    alphabet = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
+    alphabet: list[str] = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
    
-    if not (all(char in alphabet or char.isspace() for char in name) and 0 < len(name) < 40):  
+    if not all(char in alphabet or char.isspace() for char in name) and 0 < len(name) < 40:  
         print_error(f"{Styles.fg.red}Invalid name: {name}. Please use only letters and spaces, and please keep it between 1 and 40 characters.{Styles.reset}")
         return False
     return True
 
 
 def start_game() -> None:
-    player_name = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
+    player_name: str = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
     while not check_name(player_name):
         player_name = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
 
     print(GAME_BANNER)
 
-    game = Game(player_name)
+    game: Game = Game(player_name)
     ProfessionChooser(game).cmdloop()
     GameCommandHandler(game).cmdloop()
     
@@ -93,10 +99,10 @@ def start_game() -> None:
 
 def main():
     setup()
-    save_data: GameData = prompt_load_save()
+    save_data: Optional[GameData] = prompt_load_save()
     time.sleep(0.3)
     if save_data:
-        game = Game("", data=save_data)
+        game: Game = Game("", data=save_data)
         GameCommandHandler(game).cmdloop()
     else:
         tutorial()

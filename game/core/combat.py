@@ -312,11 +312,11 @@ Target: {skill.target.value}{Styles.reset}
 
     def _enemy_action(self, enemy: Enemy):
         # Check for any skills that will kill the player, if none found just choose a random skill
-        fatal_skills = [skill for skill in enemy.skills if (enemy.attack + skill.power) >= self.player.health]
+        fatal_skills = [skill for skill in enemy.skill_deck if (enemy.attack + skill.power) >= self.player.health]
         if any(fatal_skills):
             print_error(rand.choice(fatal_skills).use(enemy, [self.player])[0])
         else:
-            print_error(rand.choice(enemy.skills).use(enemy, [self.player])[0])
+            print_error(rand.choice(enemy.skill_deck).use(enemy, [self.player])[0])
 
     def ally_turn(self):
         [self._ally_action(ally) for ally in self.allies if ally.is_alive]
@@ -330,7 +330,7 @@ Target: {skill.target.value}{Styles.reset}
             print_error(results[0])
 
     def _use_ally_skill(self, ally: Ally):
-        chosen_skill = rand.choice(ally.skills)
+        chosen_skill = rand.choice(ally.skill_deck)
         match ally.profession:
             case Professions.PRIEST:
                 if chosen_skill.target == SkillTarget.SINGLE_ALLY:

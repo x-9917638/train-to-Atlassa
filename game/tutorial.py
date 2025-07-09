@@ -87,10 +87,10 @@ class TutorialCombat(CombatSystem):
         tutorial_player.max_mana = 10000
         tutorial_player.health = 10000
         tutorial_player.max_health = 10000
-        tutorial_player.skills = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=status_effects["poison"])]
+        tutorial_player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=status_effects["poison"])]
         tutorial_ally = Ally("Blarj", "The System Guide", 1, Professions.MAGE)
         tutorial_player.add_ally(tutorial_ally)
-        tutorial_ally.skills = [(Skill("Smite", "", 100000000, 0, SkillTarget.ALL_ENEMIES))]
+        tutorial_ally.skill_deck = [(Skill("Smite", "", 100000000, 0, SkillTarget.ALL_ENEMIES))]
         tutorial_enemy = [Enemy("Goblin", "A typical goblin, weak but numerous.", 1, 10, 1)]
         super().__init__(tutorial_player, tutorial_player.allies, tutorial_enemy)
 

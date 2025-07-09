@@ -12,32 +12,36 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from .items import Item
-from .skills import Skill, GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS
-from .status_effects import StatusEffect
+from .skills import GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS
 from  ..utils import Professions
 import random, math
 
+from typing import TYPE_CHECKING, Optional
+if TYPE_CHECKING:
+    from .carriages import Carriage
+    from .items import Item, Weapon, Armor
+    from .skills import Skill
+    from .status_effects import StatusEffect
+    from .entities import Ally
+
 class Entity:
     def __init__(self, name: str, health: int, attack: int, defense: int):
-        self.name = name
-        self.max_health = health
-        self.health = health
-        self.attack = attack
-        self.defense = defense
-        self.skills: list[Skill] = []
-        self.effects: list[StatusEffect] = [] # Status effects
+        self.name: str = name
+        self.max_health: int = health
+        self.health: int = health
+        self.attack: int = attack
+        self.defense: int = defense
+        self.skill_deck: list["Skill"] = []
+        self.effects: list["StatusEffect"] = [] # Status effects
     
     def take_damage(self, amount: int) -> int:
         """Calculate the damage the character takes, after defense."""
-        actual_damage = max(1, amount - self.defense)
-        assert isinstance(actual_damage, int) # Make sure that it stays an integer after calculations
+        actual_damage: int = max(1, amount - self.defense)
         self.health -= actual_damage
         return actual_damage
     
     def heal(self, amount: int) -> int:
-        heal_amount = min(amount, self.max_health - self.health)
-        assert isinstance(heal_amount, int) # Make sure that it stays an integer after calculations
+        heal_amount: int = min(amount, self.max_health - self.health)
         self.health += heal_amount
         return heal_amount
     
@@ -49,49 +53,50 @@ class Entity:
 class Player(Entity):
     def __init__(self, name: str):
         super().__init__(name, 100, 5, 5) # Base player stats
-        self.level = 1
-        self.experience = 0
-        self.max_mana = 50
-        self.mana = 50
-        self.current_floor = 0
-        self.current_carriage = None
-        self.armour = None
-        self.weapon = None
-        self.inventory: dict[Item, int] = {} # Should store {<Item.name>: <NumItems>}
-        self.skills = GENERAL_SKILLS.copy()
-        self.skill_hand: list[Skill] = []
-        self.profession = None
-        self.allies = []
+        self.level: int = 1
+        self.experience: int = 0
+        self.max_mana: int = 50
+        self.mana: int = 50
+        self.current_floor: int = 0
+        self.current_carriage: Optional["Carriage"] = None
+        self.armor: Optional["Armor"] = None
+        self.weapon: Optional["Weapon"] = None
+        self.inventory: dict["Item", int] = {} # Should store {<Item.name>: <NumItems>}
+        self.skill_deck = GENERAL_SKILLS.copy() # Start with some default skills
+        self.skill_hand: list["Skill"] = []
+        self.profession: Optional[Professions] = None
+        self.allies: list[Ally] = []
     
 
-    def add_ally(self, ally):
-        if isinstance(ally, Ally):
-            self.allies.append(ally)
-            ally.generate_skills()
-        else:
-            raise TypeError("Ally must be an instance of the Ally class.\nThis should never happen, please report this.")
-
-
-    def add_skills_to_deck(self, skills:list[Skill]):
-        self.skills.extend(skills)
+    def add_ally(self, ally: Ally) -> None:
+        assert isinstance(ally, Ally), "Ally must be an instance of the Ally class.\nThis should never happen, please report this."
+        self.allies.append(ally)
+        ally.generate_skills()
+        return None
     
 
-    def draw_skills(self, num: int = 1) -> list[Skill]:
-        available_skills = [skill for skill in self.skills if skill not in self.skill_hand] # Make sure we do not draw dupes
+    def add_skills_to_deck(self, skills:list["Skill"]) -> None:
+        self.skill_deck.extend(skills)
+        return None
+    
+
+    def draw_skills(self, num: int = 1) -> list["Skill"]:
+        available_skills: list["Skill"] = [skill for skill in self.skill_deck if skill not in self.skill_hand] # Make sure we do not draw dupes
         if len(available_skills):
         # If there aren't any skills to draw, don't draw.
-            drawn = random.sample(available_skills, num)
+            drawn: list["Skill"] = random.sample(available_skills, num)
             self.skill_hand.extend(drawn)
         else: drawn = []
         return drawn
     
 
-    def check_level_up(self):
+    def check_level_up(self) -> None:
         if self.experience >= self.level * 50:
             self._level_up()
+        return None
 
 
-    def _level_up(self):
+    def _level_up(self) -> None:
         self.experience = 0
         self.level += 1
         match self.profession:
@@ -124,32 +129,34 @@ class Player(Entity):
         self.health = self.max_health
         self.mana = self.max_mana
         self.effects = [] 
+        return None
 
 
-    def discard_skill(self, skill: Skill):
+    def discard_skill(self, skill: "Skill") -> None:
         if skill in self.skill_hand:
             self.skill_hand.remove(skill)
+        return None
     
     
-    def rest(self):
+    def rest(self) -> None:
         # When a player rests, they do not attack. 
         # Instead, they heal, and generate mana
         self.mana += min(math.ceil(0.2 * self.max_mana), (self.max_mana - self.mana)) 
-        self.health += min(math.floor(0.1 * self.max_health), (self.max_health - self.health))
-        
+        self.heal(math.floor(0.1 * self.max_health))
+        return None
 
 
 class Enemy(Entity):
     def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int):
         health, attack, defense = (level * 100, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
-        self.mana = float("inf")
-        self.description = description
-        self.skills = self.create_enemy_skills(num_skills)
-        self.exp_amt = exp_amt
+        self.mana = 99999
+        self.description: str = description
+        self.skill_deck = self.create_enemy_skills(num_skills)
+        self.exp_amt: int = exp_amt # How much experience this enemy gives when defeated
     
 
-    def create_enemy_skills(self, amount: int) -> list[Skill]:
+    def create_enemy_skills(self, amount: int) -> list["Skill"]:
         skills = random.choices(ENEMY_SKILLS, k=amount)
         return skills
 
@@ -158,24 +165,25 @@ class Ally(Entity):
     def __init__(self, name: str, description:str, level:int, profession: Professions):
         health, attack, defense = (level * 100, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
-        self.description = description
-        self.mana = float("inf")
-        self.profession = profession
+        self.description: str = description
+        self.mana = 99999
+        self.profession: Professions = profession
 
 
-    def generate_skills(self):
+    def generate_skills(self) -> None:
         num_skills = random.randint(1, 3)
         match self.profession:
             case Professions.WARRIOR:
-                self.skills = random.choices(WARRIOR_SKILLS, k=num_skills)
+                self.skill_deck = random.choices(WARRIOR_SKILLS, k=num_skills)
             case Professions.MAGE:
-                self.skills = random.choices(MAGE_SKILLS, k=num_skills)
+                self.skill_deck = random.choices(MAGE_SKILLS, k=num_skills)
             case Professions.ROGUE:
-                self.skills = random.choices(ROGUE_SKILLS, k=num_skills)
+                self.skill_deck = random.choices(ROGUE_SKILLS, k=num_skills)
             case Professions.PRIEST:
-                self.skills = random.choices(PRIEST_SKILLS, k=num_skills)
+                self.skill_deck = random.choices(PRIEST_SKILLS, k=num_skills)
             case _:
-                raise ValueError(f"Unknown ally class: {self.ally_class}")
+                raise ValueError(f"Unknown ally profession: {self.profession}")
+        return None
 
 
 
