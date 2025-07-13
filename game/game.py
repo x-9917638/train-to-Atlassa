@@ -12,21 +12,22 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Optional
-from dataclasses import dataclass
 from .core.entities import Player
 from .core.section import Section
 from .core.combat import CombatSystem
+from .core.save_handler import handle_save
+
 from .utils import Styles, colorprint, print_game_msg, print_error, typing_print
 from .utils import clear_stdout
 from .utils import BaseCommandHandler
-from .core.save_handler import *
-import time
 
-# For saves
-import os, pathlib
+import time, os, pathlib, random, logging
 
+from typing import Optional, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .core.carriages import Carriage
 
+logger = logging.getLogger(__name__)
 
 WARNING_MESSAGE = f"""{" " * 25}{Styles.fg.red}__        ___    ____  _   _ ___ _   _  ____ 
 {" " * 25}\ \      / / \  |  _ \| \ | |_ _| \ | |/ ___|
@@ -34,14 +35,13 @@ WARNING_MESSAGE = f"""{" " * 25}{Styles.fg.red}__        ___    ____  _   _ ___ 
   {" " * 25}\ V  V / ___ \|  _ <| |\  || || |\  | |_| |
    {" " * 25}\_/\_/_/   \_\_| \_\_| \_|___|_| \_|\____|{Styles.reset}"""
 
-@dataclass
 class GameData:
     """Data class to hold game state for pickle / unpickle"""
     def __init__(self, player:Player, sections: list[Section], current_section: Section, current_carriage: 'Carriage'):
-        self.player = player
-        self.sections = sections
-        self.current_section = current_section
-        self.current_carriage = current_carriage
+        self.player: Player = player
+        self.sections: list[Section] = sections
+        self.current_section: Section = current_section
+        self.current_carriage: "Carriage" = current_carriage
 
 
 class Game:    
@@ -49,19 +49,19 @@ class Game:
     def __init__(self, player_name: str, data: Optional[GameData] = None):
         if data:
             # If we have saved data, load it
-            self.player = data.player
-            self.sections = data.sections
-            self.current_section = data.current_section
-            self.current_carriage = data.current_carriage
+            self.player: Player = data.player
+            self.sections: list[Section] = data.sections
+            self.current_section: Section = data.current_section
+            self.current_carriage: "Carriage" = data.current_carriage
 
         else:
-            self.player = Player(player_name)
-            self.sections = [Section(i+1) for i in range(4)]
-            self.current_section = self.sections[0]
-            self.current_carriage = self.current_section.carriages[0]
+            self.player: Player = Player(player_name)
+            self.sections: list[Section] = [Section(i+1) for i in range(4)]
+            self.current_section: Section = self.sections[0]
+            self.current_carriage: "Carriage" = self.current_section.carriages[0]
 
-        self.game_over = False
-        self.victory = False
+        self.game_over: bool = False
+        self.victory: bool = False
         
 
     def _to_data(self) -> GameData:
@@ -81,9 +81,10 @@ class Game:
         self._initiate_combat(self.player.allies, self.current_carriage.enemies)
         return None
 
-    def _move_player(self, direction):
-        current_index = self.current_section.carriages.index(self.current_carriage)
-        new_index = current_index + direction
+    def _move_player(self, direction: int) -> None:
+        # Only 2 ways to move: forward (1) or back (-1)
+        current_index: int = self.current_section.carriages.index(self.current_carriage)
+        new_index: int = current_index + direction
         
         if 0 <= new_index < len(self.current_section.carriages):
             self.current_carriage = self.current_section.carriages[new_index]
@@ -94,9 +95,12 @@ class Game:
 
 
     def _initiate_combat(self, allies: list, enemies: list) -> None:
-        combat_system = CombatSystem(self.player, allies, enemies)
-        combat_system.start_combat()
+        combat_system: CombatSystem = CombatSystem(self.player, allies, enemies)
+        
+        combat_system.start_combat() # Exits once combat is over
+
         self.current_carriage.enemies = []
+        
         # Check if player died
         if not combat_system.player.is_alive():
             self.game_over = True
@@ -113,25 +117,30 @@ class Game:
 
     def _handle_boss_defeat(self) -> None:
         colorprint("You have defeated the boss!", "lightgreen")
+
         if self.current_section.number < len(self.sections):
             colorprint(f"Proceeding to floor {self.current_section.number + 1}...", "lightgreen")
             self.current_section = self.sections[self.current_section.number]
             self.current_carriage = self.current_section.carriages[0]
+
         else:
             colorprint("You have completed all floors! Congratulations!", "lightgreen")
             self.victory = True
+
         return None
 
 
     def _show_player_status(self) -> None:
+
         colorprint(f"{Styles.bold}Player: {self.player.name}", "lightgreen")
         colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "lightgreen")
         colorprint(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}", "lightgreen")
         colorprint(f"{Styles.bold}Attack: {self.player.attack}", "lightgreen")
         colorprint(f"{Styles.bold}Defense: {self.player.defense}", "lightgreen")
         colorprint(f"{Styles.bold}Level: {self.player.level}", "lightgreen")
-        colorprint(f"{Styles.bold}Experience: {self.player.experience}/{self.player.level * 50}", "lightgreen")
+        colorprint(f"{Styles.bold}Experience: {self.player.experience}/{self.player.level * 30}", "lightgreen")
         colorprint(f"{Styles.bold}Profession: {self.player.profession.value}", "lightgreen")
+        
         return None
     
 
@@ -140,13 +149,16 @@ class Game:
 
         if self.current_carriage.enemies:
             if self.current_carriage.type.value == "Boss Room":
+                # WArnning banner
                 print(WARNING_MESSAGE)
                 typing_print(f"{Styles.fg.red}{"=" * 30}A boss is present in this carriage!{"=" * 30}{Styles.reset}", delay=0.01)
                 time.sleep(0.2)
                 clear_stdout()
+
             print_error("Enemies present:")
             for enemy in self.current_carriage.enemies:
                 print_error(f"- {enemy.name}: {enemy.description}")
+
         else: 
             print_error("There are no enemies in this carriage.")           
             # Intentionally in the else block, there should never be both an ally and enemy in one carriage
@@ -154,8 +166,10 @@ class Game:
                 colorprint("Allies present:", "lightgreen")
                 for ally in self.current_carriage.allies:
                     colorprint(f"- {ally.name}: {ally.description}", "lightgreen")
+
             else:
                 print_error("There are no allies in this carriage.")
+
         return None
 
 
@@ -164,8 +178,10 @@ class Game:
             print("Your skills:")
             for skill in self.player.skill_deck:
                 print(f"- {skill.name}: {skill.description}")
+        
         else:
             print("You have no skills.")
+        
         return None
 
 
@@ -175,8 +191,10 @@ class Game:
             for item in self.player.inventory:
                 quantity = self.player.inventory[item]
                 print(f"- {item.name}, x{quantity}: {item.description}")
+        
         else:
             print("Your inventory is empty.")
+        
         return None
 
 
@@ -193,9 +211,10 @@ class Game:
         for ally in self.current_carriage.allies:
             if ally.name.lower() == ally_name.lower():
                 self._hire_ally(ally)
+
             else:
                 print(f"No ally with the name {ally_name} found in this carriage.")
-                return None
+
         return None
             
             
@@ -205,14 +224,43 @@ class Game:
             case "y" | "yes" | "":
                 if len(self.player.allies) > 2:
                     print("You already have the maximum number of allies (2). You cannot hire more.")
+                
                 else:
                     self.player.add_ally(ally)
                     self.current_carriage.allies.remove(ally)
                     print(f"{ally.name} has joined your party!")
+            
             case "n" | "no":
-                return
+                return None
+            
             case _:
                 print_error("Invalid choice.")
+        return None
+
+
+    def _get_items(self) -> None:
+        logging.info("Player is exploring for items.")
+
+        if not self.current_carriage.items:
+            logging.debug("No items in carriage, search cancelled.")
+            print_error("There are no items in this carriage.")
+            return None
+        
+        success = random.randint(0, 1) # 50% to fail search
+        if not success: 
+            print_error("You found no items in this carriage.")
+            self.current_carriage.items = [] 
+            logger.debug("Player failed initial chance to find items in the carriage.")
+            return None
+        
+        logger.debug("Player passed initial chance for items in the carriage.")
+        if self.current_carriage.items:
+            colorprint("You found the following items in this carriage:", "green")
+            for item in self.current_carriage.items.copy():
+                colorprint(f"- {item.name}: {item.description}", "green")
+                self.player.add_item_to_inventory(item)
+                self.current_carriage.items.remove(item)
+        
         return None
 
 
@@ -226,23 +274,26 @@ class GameCommandHandler(BaseCommandHandler):
 
     def __init__(self, game: Game) -> None:
         super().__init__()
-        self.game = game
-        self.intro = f"{Styles.fg.lightblue}Welcome to the game, {self.game.player.name}! [h]elp for commands.\n{Styles.reset}"
+        self.game: Game = game
+        self.intro: str = f"{Styles.fg.lightblue}Welcome to the game, {self.game.player.name}! [h]elp for commands.\n{Styles.reset}"
 
 
-    def precmd(self, line) -> str:
+    def precmd(self, line: str) -> str:
         clear_stdout()
         return line
     
+
     def postcmd(self, stop: bool, line: str) -> bool:
         if self.game.game_over or self.game.victory:
            return True
         return super().postcmd(stop, line)
 
+
     def postloop(self) -> None:
         # Will be called when the command loop ends
         print_game_msg("Thank you for playing!")
         return super().postloop()
+
 
     # Movement
     def do_next(self, arg) -> None:
@@ -251,6 +302,7 @@ class GameCommandHandler(BaseCommandHandler):
     
     def do_n(self, arg) -> None:
         return self.do_next(arg)
+
 
     def do_back(self, arg) -> None:
         self.game._move_player(-1)
@@ -292,12 +344,12 @@ class GameCommandHandler(BaseCommandHandler):
 
     def do_explore(self, arg) -> None:
         # TODO: Check for items!
-        pass
+        self.game._get_items()
+        return None
 
     # Misc
     def show_help(self) -> None:
-        help_text = f"""
-{Styles.bold}Available commands:{Styles.reset}
+        help_text = f"""{Styles.bold}Available commands:{Styles.reset}
 
 {Styles.bold}Movement:{Styles.reset}{Styles.fg.lightgreen}
   next, n           - Move to next carriage
@@ -318,11 +370,10 @@ class GameCommandHandler(BaseCommandHandler):
   
 {Styles.italics}Autocompletions are supported.{Styles.reset}
 """
-        if os.name != "nt":
+        if os.name != "nt": # Autocomplete doesn't work because Windows doesn't have readline
             help_text += f"{Styles.fg.lightblue}  [TAB]            - Autocomplete commands{Styles.reset}"
         print(help_text)
         return None
-    
 
     def do_help(self, arg) -> None:
         return self.show_help()

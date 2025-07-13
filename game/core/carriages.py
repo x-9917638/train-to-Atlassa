@@ -13,11 +13,22 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from ..utils import CarriageType, Professions
+from .items import SECTION_ONE_ITEMS, SECTION_TWO_ITEMS, SECTION_THREE_ITEMS, SECTION_FOUR_ITEMS
 from .entities import Ally
 from .entities import SECTION_ONE_ENEMIES, SECTION_TWO_ENEMIES, SECTION_THREE_ENEMIES, SECTION_FOUR_ENEMIES
 from .entities import SECTION_ONE_BOSSES, SECTION_TWO_BOSSES, SECTION_THREE_BOSSES, SECTION_FOUR_BOSSES
-import random as rand
 
+import random as rand
+import logging
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .entities import Enemy
+    from .items import Item
+
+logger = logging.getLogger(__name__)
+
+# Descriptions and names for allies
 ALLY_NAMES = [
     "Aelara", "Brialla", "Cyndra", "Drusila", "Elyndra",
     "Feyra", "Gwyneth", "Haelia", "Ilythia", "Jasmina",
@@ -81,89 +92,111 @@ DESCRIPTIONS_PRIEST = [
     "A guardian of sacred knowledge, preserving ancient texts and teachings."
 ]
 
+# <https://stackoverflow.com/questions/43549515/weighted-random-sample-without-replacement-in-python>
+def weighted_sample_without_replacement(population, weights=None, k=1):
+    weights = list(weights) if weights else [1.0 for i in range(len(population))]
+    positions = range(len(population))
+    indices = []
+    while True:
+        needed = k - len(indices)
+        if not needed:
+            break
+        for i in rand.choices(positions, weights, k=needed):
+            if weights[i]:
+                weights[i] = 0.0
+                indices.append(i)
+    return [population[i-1] for i in indices]
+
 
 class Carriage:
+    num2word_map: dict[int, str] = {
+        1: "ONE",
+        2: "TWO",
+        3: "THREE",
+        4: "FOUR"
+    }
+
+
     def __init__(self, carriage_type: CarriageType, name: str, section:int):
-        self.type = carriage_type
-        self.name = name
+        self.type: CarriageType = carriage_type
+        self.name: str = name
         self.entities = []
-        self.allies = []
-        self.enemies = []
-        self.connected_places = []
-        self.items = []
-        self.section = section
+        self.allies: list[Ally] = []
+        self.enemies: list["Enemy"] = []
+        self.connected_places: list[Carriage] = []
+        self.items: list["Item"] = []
+        self.section: int = section
+        self.section_str: str = self.num2word_map[self.section] 
         self.generate_entities()
+        self.generate_items()
+        
 
-    def generate_entities(self):
-
+    def generate_entities(self) -> None:
         match self.type:
             case CarriageType.FIGHT:
-                for i in range(rand.randint(1, 3)):
-                    match self.section:
-                        case 1:
-                            enemy = rand.choice(SECTION_ONE_ENEMIES)
-                        case 2:
-                            enemy = rand.choice(SECTION_TWO_ENEMIES)
-                        case 3:
-                            enemy = rand.choice(SECTION_THREE_ENEMIES)
-                        case 4:
-                            enemy = rand.choice(SECTION_FOUR_ENEMIES)
-                        case _:
-                            raise ValueError(f"Invalid section: {self.section}.\n This should never happen, please report this.")
-                    self._add_enemy(enemy)
+                enemies: list["Enemy"] = self._choose_enemies(rand.randint(1, 3))
+                self._add_enemy(enemies)
 
-            case CarriageType.REST:
-                for i in range(rand.randint(0, 1)):
-                    ally_name = rand.choice(ALLY_NAMES)
-                    ally_profession = rand.choice(list(Professions))
+            case CarriageType.ALLY:
+                for _ in range(rand.randint(0, 1)):
+                    ally_name: str = rand.choice(ALLY_NAMES)
+                    ally_profession: Professions = rand.choice(list(Professions))
                     match ally_profession:
                         case Professions.WARRIOR:
-                            ally_description = rand.choice(DESCRIPTIONS_WARRIOR)
+                            ally_description: str = rand.choice(DESCRIPTIONS_WARRIOR)
                         case Professions.MAGE:
-                            ally_description = rand.choice(DESCRIPTIONS_MAGE)
+                            ally_description: str = rand.choice(DESCRIPTIONS_MAGE)
                         case Professions.ROGUE:
-                            ally_description = rand.choice(DESCRIPTIONS_ROGUE)
+                            ally_description: str = rand.choice(DESCRIPTIONS_ROGUE)
                         case Professions.PRIEST:
-                            ally_description = rand.choice(DESCRIPTIONS_PRIEST)
-                    self._add_ally(Ally(ally_name, ally_description, rand.randint(1, 8), ally_profession))
+                            ally_description: str = rand.choice(DESCRIPTIONS_PRIEST)
+                    self._add_ally(Ally(ally_name, ally_description, rand.randint(1, 8), ally_profession)) # Possibility of duplicate, but it's so low so whatever
 
             case CarriageType.CHALLENGE:
-                for i in range(rand.randint(3, 4)):
-                    match self.section:
-                        case 1:
-                            enemy = rand.choice(SECTION_ONE_ENEMIES)
-                        case 2:
-                            enemy = rand.choice(SECTION_TWO_ENEMIES)
-                        case 3:
-                            enemy = rand.choice(SECTION_THREE_ENEMIES)
-                        case 4:
-                            enemy = rand.choice(SECTION_FOUR_ENEMIES)
-                        case _:
-                            raise ValueError(f"Invalid section: {self.section}.\n This should never happen, please report this.")
-                    self._add_enemy(enemy)
+                enemies: list["Enemy"] = self._choose_enemies(rand.randint(3, 4))
+                self._add_enemy(enemies)
                     
             case CarriageType.BOSS:
-                for i in range(rand.choice([1, 1, 1, 1, 2])):
-                    match self.section:
-                        case 1:
-                            enemy = rand.choice(SECTION_ONE_BOSSES)
-                        case 2:
-                            enemy = rand.choice(SECTION_TWO_BOSSES)
-                        case 3:
-                            enemy = rand.choice(SECTION_THREE_BOSSES)
-                        case 4:
-                            enemy = rand.choice(SECTION_FOUR_BOSSES)
-                        case _:
-                            raise ValueError(f"Invalid section: {self.section}.\n This should never happen, please report this.")
-                    self._add_enemy(enemy)
+                num_bosses: int = rand.choice([1, 1, 1, 1, 2])
+                boss_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_BOSSES"]
+                bosses = weighted_sample_without_replacement(boss_pool, k=num_bosses)
+                self._add_enemy(bosses)
 
-    def _add_enemy(self, entity):
-        self.enemies.append(entity)
+        return None
 
-    def _add_ally(self, ally):
-        self.allies.append(ally)
+
+    def _choose_enemies(self, num_enemies: int) -> list["Enemy"]:
+        enemy_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_ENEMIES"]
+        enemies = weighted_sample_without_replacement(enemy_pool, k=num_enemies)
+        return enemies
+
+
+    def generate_items(self) -> None:
+        # Choose num items
+        num_items: int = rand.choice((0, 0, 0, 1, 2))
+        items = self._choose_items(num_items)
+        logger.debug(f"Generated {num_items} items for carriage {self.name} in section {self.section}.")
+        self.items.extend(items)
+
+
+    def _choose_items(self, num_items: int) -> list["Item"]:
+        item_pool: list[dict["Item", float]] = globals()[f"SECTION_{self.section_str}_ITEMS"]
+        category = rand.choice((0, 1, 2))  # 0: WEAPON, 1: ARMOR, 2: SCROLL
+        items: list["Item"] = rand.choices(list(item_pool[category].keys()), k=num_items, weights=list(item_pool[category].values()))
+        return items
     
-    def _add_connection(self, place):
-        self.connected_places.append(place)
 
+    def _add_enemy(self, enemies: list["Enemy"]) -> None:
+        self.enemies.extend(enemies)
+        return None
+
+
+    def _add_ally(self, ally: Ally) -> None:
+        self.allies.append(ally)
+        return None
+
+
+    def _add_connection(self, carriage: "Carriage") -> None:
+        self.connected_places.append(carriage)
+        return None
 

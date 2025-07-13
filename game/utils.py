@@ -1,7 +1,5 @@
 from enum import Enum
 import sys, time, subprocess, os
-if sys.platform == 'win32':
-    print("Windows bad, autocomplete not work")
 import cmd
 
 
@@ -23,7 +21,7 @@ def typing_input(text, delay: float=0.05):
 
 class CarriageType(Enum):
     SAFE = "Safe Place"
-    REST = "Resting Place"
+    ALLY = "Ally Stronghold"
     FIGHT = "Combat Area"
     CHALLENGE = "Challenge Area"
     BOSS = "Boss Room"
@@ -140,6 +138,11 @@ class BaseCommandHandler(cmd.Cmd):
         clear_stdout()
         print_error('Unknown command: %s\n'%line)
 
+    def onecmd(self, line):
+        line = line
+        # Clean up user input to allow for case-insensitivity + let user trigger EOF with ctrl+D
+        line = line.lower().strip() if not line == "EOF" else line
+        return super().onecmd(line)
 
     def emptyline(self):
         self.do_help("") # empty line = help

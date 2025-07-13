@@ -12,10 +12,20 @@
 #
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="game.log",
+    filemode="w",
+    encoding="utf-8",
+    format="%(asctime)s.%(filename)s:%(levelname)s - %(message)s",
+)
 
 import os
 from typing import Optional
 import time
+
 
 from game.game import Game, GameData, GameCommandHandler
 from game.core.save_handler import handle_load
@@ -25,13 +35,8 @@ from game.utils import Styles
 from game.utils import clear_stdout, check_terminal_size
 from game.tutorial import start_tutorial
 
-if os.name == "nt":
-    from msvcrt import getch
-else:
-    try:
-        from getch import getch
-    except ModuleNotFoundError:
-        raise ModuleNotFoundError(f"getch is not installed.\nPlease run{Styles.bold} pip install getch{Styles.reset}")
+
+
 
 GAME_BANNER = fr"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo
 8'   888   `8                     `"'                     .o8                       .888.        .o8   `888                                        
@@ -61,7 +66,7 @@ def prompt_load_save() -> Optional[GameData]:
     
     match choice:
         case "y" | "yes":
-            data: Optional[GameData] = handle_load()
+            data: GameData = handle_load()
             return data
         case _:
             print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")

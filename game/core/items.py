@@ -166,22 +166,96 @@ SECTION_ONE_ARMOR = { # <Armor>: <Weighted Chance>
 SECTION_ONE_SCROLLS = { # <Consumable>: <Weighted Chance>
     Consumable("Scroll of Healing", "A scroll that heals you for 50 health.", partial(heal, amount=50)): 0.4,
     Consumable("Scroll of Mana", "A scroll that restores 50 mana.", partial(mana_restore, amount=50)): 0.3,
+    # No skill scrolls in section one
+}
+#_______________________________________________PLACEHOLDER____________________________________________________
+SECTION_TWO_WEAPONS = { # <Weapon>: <Weighted Chance>
+    Weapon("Training Sword", "It's a sword, but not a very good one.", (3, 7)): 0.44,
+    Weapon("Rusty Sword", "A subpar sword.", (5, 10)): 0.3,
+    Weapon("Iron Sword", "A sturdy iron sword.", (8, 15)): 0.2,
+    Weapon("Steel Sword", "A sharp steel sword, fit for a knight.", (12, 20)): 0.05,
+    Weapon("Enchanted Sword", "A sword, imbued with magic.", (15, 25)): 0.01
 }
 
-SECTION_ONE_ITEMS = { # <Weighted Chance>: <Category>
-    0.1: SECTION_ONE_WEAPONS,
-    0.1: SECTION_ONE_ARMOR,
-    0.8: SECTION_ONE_SCROLLS
+SECTION_TWO_ARMOR = { # <Armor>: <Weighted Chance>
+    Armor("Leather Armor", "Basic leather armor.", (3, 7)): 0.39,
+    Armor("Chainmail Armor", "Capable of stopping arrows, but not much more.", (5, 10)): 0.3,
+    Armor("Plate Armor", "Of course large metal plates can protect your body.", (8, 15)): 0.2,
+    Armor("Dragon Scale Armor", "A set of armor said to be made from dragon scales.", (12, 20)): 0.1,
+    Armor("Mystic Armor", "Although designed for mages, it suprisingly presents a high resistance to physical damage.", (15, 25)): 0.01
 }
+
+SECTION_TWO_SCROLLS = { # <Consumable>: <Weighted Chance>
+    Consumable("Scroll of Healing", "A scroll that heals you for 50 health.", partial(heal, amount=50)): 0.4,
+    Consumable("Scroll of Mana", "A scroll that restores 50 mana.", partial(mana_restore, amount=50)): 0.3,
+    # No skill scrolls in section one
+}
+#_______________________________________________PLACEHOLDER____________________________________________________
+SECTION_THREE_WEAPONS = { # <Weapon>: <Weighted Chance>
+    Weapon("Training Sword", "It's a sword, but not a very good one.", (3, 7)): 0.44,
+    Weapon("Rusty Sword", "A subpar sword.", (5, 10)): 0.3,
+    Weapon("Iron Sword", "A sturdy iron sword.", (8, 15)): 0.2,
+    Weapon("Steel Sword", "A sharp steel sword, fit for a knight.", (12, 20)): 0.05,
+    Weapon("Enchanted Sword", "A sword, imbued with magic.", (15, 25)): 0.01
+}
+
+SECTION_THREE_ARMOR = { # <Armor>: <Weighted Chance>
+    Armor("Leather Armor", "Basic leather armor.", (3, 7)): 0.39,
+    Armor("Chainmail Armor", "Capable of stopping arrows, but not much more.", (5, 10)): 0.3,
+    Armor("Plate Armor", "Of course large metal plates can protect your body.", (8, 15)): 0.2,
+    Armor("Dragon Scale Armor", "A set of armor said to be made from dragon scales.", (12, 20)): 0.1,
+    Armor("Mystic Armor", "Although designed for mages, it suprisingly presents a high resistance to physical damage.", (15, 25)): 0.01
+}
+
+SECTION_THREE_SCROLLS = { # <Consumable>: <Weighted Chance>
+    Consumable("Scroll of Healing", "A scroll that heals you for 50 health.", partial(heal, amount=50)): 0.4,
+    Consumable("Scroll of Mana", "A scroll that restores 50 mana.", partial(mana_restore, amount=50)): 0.3,
+    # No skill scrolls in section one
+}
+#_____________________________________________PLACEHOLDER____________________________________________________
+SECTION_FOUR_WEAPONS = { # <Weapon>: <Weighted Chance>
+    Weapon("Training Sword", "It's a sword, but not a very good one.", (3, 7)): 0.44,
+    Weapon("Rusty Sword", "A subpar sword.", (5, 10)): 0.3,
+    Weapon("Iron Sword", "A sturdy iron sword.", (8, 15)): 0.2,
+    Weapon("Steel Sword", "A sharp steel sword, fit for a knight.", (12, 20)): 0.05,
+    Weapon("Enchanted Sword", "A sword, imbued with magic.", (15, 25)): 0.01
+}
+
+SECTION_FOUR_ARMOR = { # <Armor>: <Weighted Chance>
+    Armor("Leather Armor", "Basic leather armor.", (3, 7)): 0.39,
+    Armor("Chainmail Armor", "Capable of stopping arrows, but not much more.", (5, 10)): 0.3,
+    Armor("Plate Armor", "Of course large metal plates can protect your body.", (8, 15)): 0.2,
+    Armor("Dragon Scale Armor", "A set of armor said to be made from dragon scales.", (12, 20)): 0.1,
+    Armor("Mystic Armor", "Although designed for mages, it suprisingly presents a high resistance to physical damage.", (15, 25)): 0.01
+}
+
+SECTION_FOUR_SCROLLS = { # <Consumable>: <Weighted Chance>
+    Consumable("Scroll of Healing", "A scroll that heals you for 50 health.", partial(heal, amount=50)): 0.4,
+    Consumable("Scroll of Mana", "A scroll that restores 50 mana.", partial(mana_restore, amount=50)): 0.3,
+    # No skill scrolls in section one
+}
+
+
+SECTION_ONE_ITEMS = [ # <Weighted Chance>: <Category>
+    SECTION_ONE_WEAPONS,
+    SECTION_ONE_ARMOR,
+    SECTION_ONE_SCROLLS,
+]
 
 SECTION_TWO_ITEMS = [
-
+    SECTION_TWO_WEAPONS,
+    SECTION_TWO_ARMOR,
+    SECTION_TWO_SCROLLS,
 ]
 
 SECTION_THREE_ITEMS = [
-
+    SECTION_THREE_WEAPONS,
+    SECTION_THREE_ARMOR,
+    SECTION_THREE_SCROLLS,
 ]
 
 SECTION_FOUR_ITEMS = [
-
+    SECTION_FOUR_WEAPONS,
+    SECTION_FOUR_ARMOR,
+    SECTION_FOUR_SCROLLS,
 ]

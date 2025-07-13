@@ -18,16 +18,24 @@ from .core.entities import Player, Enemy, Ally
 from .core.skills import Skill
 from .core.status_effects import status_effects
 
-from .utils import *
+from .utils import Styles, typing_print, print_error
+from .utils import SkillTarget, Professions
 
-import os
-if os.name == "nt":
+import logging
+
+logger = logging.getLogger(__name__)
+
+import sys
+# ESC_KEY: Keycode for the escape key
+if sys.platform == "win32":
+    logging.debug("Windows detected, using msvcrt.getch().")
     from msvcrt import getch
-    ESC_KEY = b'\x1b'
+    ESC_KEY: bytes = b'\x1b'
 else:
     try:
+        logging.debug("Unix-like detected, using getch.getch.")
         from getch import getch
-        ESC_KEY = '\x1b'
+        ESC_KEY: str = '\x1b'
     except ModuleNotFoundError:
         raise ModuleNotFoundError(f"getch is not installed.\nPlease run{Styles.bold} pip install getch{Styles.reset}")
 
@@ -35,7 +43,7 @@ else:
 
 def start_tutorial():
     """Introduce the player to the game."""
-
+    logging.info("Starting tutorial...")
     print(r"""__        __   _                             _          _____          _         _             _   _   _                     _ 
 \ \      / /__| | ___ ___  _ __ ___   ___   | |_ ___   |_   _| __ __ _(_)_ __   | |_ ___      / \ | |_| | __ _ ___ ___  __ _| |
  \ \ /\ / / _ \ |/ __/ _ \| '_ ` _ \ / _ \  | __/ _ \    | || '__/ _` | | '_ \  | __/ _ \    / _ \| __| |/ _` / __/ __|/ _` | |
@@ -74,13 +82,16 @@ def start_tutorial():
     typing_print("Lets test your skills with a small tutorial battle.\nThis is your last chance to skip the tutorial: [ESC]", delay=0.01)
     if getch() == ESC_KEY: return
 
-    tutor_battle = TutorialCombat()
+    logging.info("Starting tutorial combat.")
+    tutor_battle: TutorialCombat = TutorialCombat()
     tutor_battle.start_combat()
+    logging.info("Tutorial combat finished.")
 
 class TutorialCombat(CombatSystem):
     """A combat system for the tutorial battle."""
     def __init__(self):
-        tutorial_player = Player("Hero")
+        # Hardcode stats for tutorial
+        tutorial_player: Player = Player("Hero")
         tutorial_player.level = 100
         tutorial_player.attack = 5 # Don't one shot the enmy
         tutorial_player.mana = 10000
@@ -88,13 +99,18 @@ class TutorialCombat(CombatSystem):
         tutorial_player.health = 10000
         tutorial_player.max_health = 10000
         tutorial_player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=status_effects["poison"])]
-        tutorial_ally = Ally("Blarj", "The System Guide", 1, Professions.MAGE)
+        
+        # Hardcode ally for tutorial
+        tutorial_ally: Ally = Ally("Blarj", "The System Guide", 1, Professions.MAGE)
         tutorial_player.add_ally(tutorial_ally)
         tutorial_ally.skill_deck = [(Skill("Smite", "", 100000000, 0, SkillTarget.ALL_ENEMIES))]
-        tutorial_enemy = [Enemy("Goblin", "A typical goblin, weak but numerous.", 1, 10, 1)]
+
+        # Hardcode enemy for tutorial
+        tutorial_enemy: list[Enemy] = [Enemy("Goblin", "A typical goblin, weak but numerous.", 1, 10, 1)]
+
         super().__init__(tutorial_player, tutorial_player.allies, tutorial_enemy)
 
-    def postcmd(self, stop, line):
+    def postcmd(self, stop, line) -> bool:
         if self.triggered_help: # If we got here because of help or error, skip the rest of postcmd.
             self.triggered_help = False
             return False
@@ -114,7 +130,7 @@ class TutorialCombat(CombatSystem):
 
         return True
 
-    def start_combat(self):
+    def start_combat(self) -> None:
         typing_print("It's your turn first!", delay=0.01)
         typing_print("Each turn, you randomly draw one skill that can be used from your \"deck\" of skills", delay=0.01)
         typing_print("This turn, lets attack!", delay=0.01)
@@ -122,21 +138,18 @@ class TutorialCombat(CombatSystem):
         return super().start_combat()
     
     # don't want the player doing anything other than atack in tutorial
-    def do_items(self, arg):
+    def do_items(self, arg) -> bool:
         print_error("Woah there! You don't have any items right now. You need to attack!")
         getch()
         super().do_attack(arg) # Force them to attack
     
-    def do_retreat(self, arg):
+    def do_retreat(self, arg) -> bool:
         print_error("Woah there! You can't run from this! You need to attack!")
         getch()
         return super().do_attack(arg)
     
-    def do_rest(self, arg):
+    def do_rest(self, arg) -> bool:
         print_error("Woah there! You aren't tired at all... Why not attack instead?")
         getch()
         return super().do_attack(arg)
 
-
-if __name__ == "__main__":
-    start_tutorial()

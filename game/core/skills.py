@@ -112,5 +112,5 @@ PRIEST_SKILLS = [
 
 ENEMY_SKILLS = [
     #TODO
-    Skill("Enemy Basic Attack", "A basic attack from an enemy", 1000000, 0, SkillTarget.SINGLE_ENEMY),
+    Skill("Enemy Basic Attack", "A basic attack from an enemy", 1000000, 0, SkillTarget.SINGLE_ENEMY, 0),
 ]

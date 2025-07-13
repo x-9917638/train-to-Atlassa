@@ -21,7 +21,7 @@ from ..utils import Professions
 class ProfessionChooser(BaseCommandHandler):
     
     # Priest is excluded - only npcs should have preist profession
-    prompt = f"""\n{Styles.bold}{Styles.fg.lightblue}Available Professions:{Styles.reset}
+    prompt: str = f"""\n{Styles.bold}{Styles.fg.lightblue}Available Professions:{Styles.reset}
 {Styles.fg.lightgreen}Rogue{Styles.reset} - {Styles.fg.lightblue}Stealthy and agile.
 {Styles.fg.lightgreen}Warrior{Styles.reset} - {Styles.fg.lightblue}Strong and resilient.
 {Styles.fg.lightgreen}Mage{Styles.reset} - {Styles.fg.lightblue}Masters of the arcane.
@@ -36,30 +36,31 @@ class ProfessionChooser(BaseCommandHandler):
         clear_stdout()
         return super().postloop()
 
-    def do_rogue(self, arg):
+    def do_rogue(self, arg) -> bool:
         """Choose the Rogue profession."""
         self.game.player.profession = Professions.ROGUE
         print(f"{Styles.fg.lightgreen}You have chosen the Rogue profession!{Styles.reset}")
         return True
 
-    def do_warrior(self, arg):
+    def do_warrior(self, arg) -> bool:
         """Choose the Warrior profession."""
         self.game.player.profession = Professions.WARRIOR
         print(f"{Styles.fg.lightgreen}You have chosen the Warrior profession!{Styles.reset}")
         return True
     
-    def do_mage(self, arg):
+    def do_mage(self, arg) -> bool:
         """Choose the Mage profession."""
         self.game.player.profession = Professions.MAGE
         print(f"{Styles.fg.lightgreen}You have chosen the Mage profession!{Styles.reset}")
         return True
     
-    def default(self, line):
+    def default(self, line) -> None:
         """Handle invalid input."""
         clear_stdout()
         print_error(f"{Styles.fg.lightred}Invalid profession. Please choose Rogue, Warrior, or Mage.{Styles.reset}")
-        return
+        return None
 
-    def emptyline(self):
+    def emptyline(self) -> None:
         self.default("") 
+        return None
     
