@@ -13,10 +13,13 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from ..utils import CarriageType, Professions
-from .items import SECTION_ONE_ITEMS, SECTION_TWO_ITEMS, SECTION_THREE_ITEMS, SECTION_FOUR_ITEMS
+
+from ..data import SECTION_ONE_ITEMS, SECTION_TWO_ITEMS, SECTION_THREE_ITEMS, SECTION_FOUR_ITEMS
+from ..data import SECTION_ONE_ENEMIES, SECTION_TWO_ENEMIES, SECTION_THREE_ENEMIES, SECTION_FOUR_ENEMIES
+from ..data import SECTION_ONE_BOSSES, SECTION_TWO_BOSSES, SECTION_THREE_BOSSES, SECTION_FOUR_BOSSES
+
 from .entities import Ally
-from .entities import SECTION_ONE_ENEMIES, SECTION_TWO_ENEMIES, SECTION_THREE_ENEMIES, SECTION_FOUR_ENEMIES
-from .entities import SECTION_ONE_BOSSES, SECTION_TWO_BOSSES, SECTION_THREE_BOSSES, SECTION_FOUR_BOSSES
+
 
 import random as rand
 import logging

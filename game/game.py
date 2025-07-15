@@ -89,7 +89,7 @@ class Game:
         
         if 0 <= new_index < len(self.current_section.carriages):
             self.current_carriage = self.current_section.carriages[new_index]
-            colorprint(f"Moved to {self.current_carriage.name}.", "lightgreen")
+            colorprint(f"Moved to {self.current_carriage.name}.", "lightgreen", delay=0.02)
             self._show_info()
         else:
             print_error(f"You can't move {'forward' if direction > 0 else 'back'} - you're at the {'end' if direction > 0 else 'start'} of this section.")
@@ -133,17 +133,17 @@ class Game:
 
     def _show_player_status(self) -> None:
 
-        colorprint(f"{Styles.bold}Player: {self.player.name}", "lightgreen")
-        colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "lightgreen")
-        colorprint(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}", "lightgreen")
-        colorprint(f"{Styles.bold}Attack: {self.player.attack}", "lightgreen")
-        colorprint(f"{Styles.bold}Defense: {self.player.defense}", "lightgreen")
-        colorprint(f"{Styles.bold}Level: {self.player.level}", "lightgreen")
-        colorprint(f"{Styles.bold}Experience: {self.player.experience}/{self.player.level * 30}", "lightgreen")
-        colorprint(f"{Styles.bold}Profession: {self.player.profession.value}", "lightgreen")
-        colorprint(f"{Styles.bold}Weapon: {self.player.weapon.name if self.player.weapon else 'None'}", "lightgreen")
-        colorprint(f"{Styles.bold}Armor: {self.player.armor.name if self.player.armor else 'None'}", "lightgreen")
-        colorprint(f"{Styles.bold}Allies: {', '.join(ally.name for ally in self.player.allies) if self.player.allies else 'None'}", "lightgreen")
+        colorprint(f"{Styles.bold}Player: {self.player.name}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Attack: {self.player.attack}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Defense: {self.player.defense}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Level: {self.player.level}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Experience: {self.player.experience}/{self.player.level * 30}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Profession: {self.player.profession.value}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Weapon: {self.player.weapon.name if self.player.weapon else 'None'}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Armor: {self.player.armor.name if self.player.armor else 'None'}", "lightgreen", delay=0.005)
+        colorprint(f"{Styles.bold}Allies: {', '.join(ally.name for ally in self.player.allies) if self.player.allies else 'None'}", "lightgreen", delay=0.005)
 
         return None
     
@@ -169,7 +169,7 @@ class Game:
             if self.current_carriage.allies:
                 colorprint("Allies present:", "lightgreen")
                 for ally in self.current_carriage.allies:
-                    colorprint(f"- {ally.name}: {ally.description}", "lightgreen")
+                    colorprint(f"- {ally.name}: {ally.description}", "lightgreen", delay=0.01)
 
             else:
                 print_error("There are no allies in this carriage.")
@@ -362,7 +362,7 @@ class Game:
         logger.debug("Player passed initial chance for items in the carriage.")
         colorprint("You found the following items in this carriage:", "green")
         for item in self.current_carriage.items.copy():
-            colorprint(f"- {item.name}: {item.description}", "green")
+            colorprint(f"- {item.name}: {item.description}", "green", delay=0.01)
             self.player.add_item_to_inventory(item)
             self.current_carriage.items.remove(item)
         

@@ -14,6 +14,7 @@
 
 from ..utils import SkillTarget, Professions
 from ..utils import Styles, colorprint, print_error, print_game_msg
+from ..utils import typing_print
 from ..utils import BaseCommandHandler
 from ..utils import clear_stdout
 
@@ -112,7 +113,7 @@ class CombatSystem(BaseCommandHandler):
             logger.debug(f"Skill used: {skill.name}, hit: {results[1]}.")
 
             if results[1]:  # If hit
-                colorprint(results[0] + "\n", "lightgreen")
+                colorprint(results[0] + "\n", "lightgreen", delay=0.01)
             else:
                 print_error(results[0] + "\n")
         return False
@@ -195,7 +196,7 @@ class CombatSystem(BaseCommandHandler):
     def _player_turn_setup(self) -> None:
         logger.info(f"Player {self.player.name}'s turn begins.")
         clear_stdout()
-        colorprint(Styles.bold + PLAYER_TURN_BANNER, "green")
+        colorprint(Styles.bold + PLAYER_TURN_BANNER, "green", delay=0)
         time.sleep(0.3)
         clear_stdout()
         colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "magenta")
