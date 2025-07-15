@@ -15,6 +15,9 @@ from ..utils import Styles, print_error
 import pathlib
 import pickle, hashlib, hmac
 
+import logging
+logger = logging.getLogger(__name__)
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..game import GameData
@@ -35,6 +38,7 @@ def handle_load() -> 'GameData':
     tag: bytes = hmac.new(secret, digestmod=hashlib.sha256).digest()
 
     # Warning
+    logger.debug("Displayed save loading warning & disclaimer.")
     print_error(f"{Styles.bold}WARNING! Loading external files is dangerous!{Styles.reset}")
     print("""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -47,6 +51,7 @@ See the GNU Affero General Public License for more details.""")
         untrusted_tag: bytes = save_file.read(32)
         if not hmac.compare_digest(untrusted_tag, tag):
             raise ValueError(f"{Styles.fg.red}The save file may have been tampered with or is corrupted.{Styles.reset}")
+        logger.debug("Successfully loaded game data")
         game_data: "GameData" = pickle.load(save_file)
     return game_data
         
@@ -66,4 +71,5 @@ def handle_save(data: 'GameData') -> None:
     with open(pathlib.Path("./saves/savegame.pkl"), "wb") as f:
         f.write(tag) # Add hmac tag for integrity checking
         pickle.dump(data, f) # Save the game data
+    logger.debug("Successfully saved game data")
     return None

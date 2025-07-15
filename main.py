@@ -62,13 +62,13 @@ def setup() -> None:
 def prompt_load_save() -> Optional[GameData]:
     if not os.path.exists("./saves/savegame.pkl"):
         return None    
-    choice: str = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset}").strip().lower()
+    choice: str = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset} ").strip().lower()
     
     match choice:
         case "y" | "yes":
             data: GameData = handle_load()
             return data
-        case _:
+        case _: # If it's not an explicit yes then we assume no
             print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
             return None
 

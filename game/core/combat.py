@@ -143,17 +143,15 @@ class CombatSystem(BaseCommandHandler):
             chosen_index = int(chosen) - 1
             item = items[chosen_index]
             item.consume(self.player)
-            logger.debug(f"Player {self.player.name} used item: {item.name}.")
-            print_game_msg(f"{Styles.fg.lightgreen}{self.player.name} used {item.name}!{Styles.reset}")
             
-            inv = self.player.inventory
-            logger.debug(f"Player {self.player.name} inventory before item use: {inv}.")
-            if inv[item] != 1:  # If they have more than one of the item remove 1
-                inv[item] -= 1
+            inv = self.player.inventory.keys()
 
-            else:
-                del inv[item] # If they only had one, remove it from inventory
+            logger.debug(f"Player {self.player.name} inventory before item use: {inv}.")
+
+            self.player.remove_item_from_inventory(item)
+
             logger.debug(f"Player {self.player.name} inventory after item use: {inv}.")
+            
 
         except (ValueError, IndexError):
             logger.info(f"Player {self.player.name} made an invalid selection.")
@@ -333,7 +331,7 @@ Target: {skill.target.value}{Styles.reset}
     def _run_away(self) -> None:
         penalty = int(0.1 * self.player.health)
 
-        if rand.choice((0, 0, 1)):
+        if rand.choice((False, False, True)): # 33% success
             print_game_msg(f"You manage to flee.")  # 33/66 chance of success when trying to run away
             for enemy in self.enemies:
                 enemy.health = 0
@@ -353,12 +351,13 @@ Target: {skill.target.value}{Styles.reset}
     def _enemy_action(self, enemy: "Enemy") -> None:
         # Check for any skills that will kill the player, if none found just choose a random skill
         fatal_skills = [skill for skill in enemy.skill_deck if (enemy.attack + skill.power) >= self.player.health]
+        DESCRIPTION = 0 # No magic numbers!
         if any(fatal_skills):
             logger.debug(f"Enemy {enemy.name} detected and used a fatal skill")
-            print_error(rand.choice(fatal_skills).use(enemy, [self.player])[0])
+            print_error(rand.choice(fatal_skills).use(enemy, [self.player])[DESCRIPTION])
         else:
             logger.debug(f"Enemy {enemy.name} chose a random skill.")
-            print_error(rand.choice(enemy.skill_deck).use(enemy, [self.player])[0])
+            print_error(rand.choice(enemy.skill_deck).use(enemy, [self.player])[DESCRIPTION])
         return None
 
 

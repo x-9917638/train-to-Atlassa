@@ -84,6 +84,14 @@ class Player(Entity):
         logger.debug(f"Adding item {item.name} to inventory for player {self.name}.")
         self.inventory[item] = self.inventory.get(item, 0) + 1
     
+    def remove_item_from_inventory(self, item: "Item") -> None:
+        if self.inventory[item] > 1:
+            self.inventory[item] -= 1
+        else:
+            del self.inventory[item]
+        logger.debug(f"Removing item {item.name} from inventory for player {self.name}.")
+        return None
+    
     
     def draw_skills(self, num: int = 1) -> list["Skill"]:
         available_skills: list["Skill"] = [skill for skill in self.skill_deck if skill not in self.skill_hand] # Make sure we do not draw dupes
@@ -112,24 +120,24 @@ class Player(Entity):
                 self.max_mana += random.randrange(10, 20)
                 self.attack += random.randrange(1, 5)
                 self.defense += random.randrange(5, 10)
+                new_skill = random.choice(WARRIOR_SKILLS)
+                self.skill_deck.append(new_skill)
             case Professions.MAGE:
                 # High mana, High attack
                 self.max_health += random.randrange(30, 60)
                 self.max_mana += random.randrange(30, 50)
                 self.attack += random.randrange(5, 10)
                 self.defense += random.randrange(1, 5)
+                new_skill = random.choice(MAGE_SKILLS)
+                self.skill_deck.append(new_skill)
             case Professions.ROGUE:
                 # High attack
                 self.max_health += random.randrange(50, 80)
                 self.max_mana += random.randrange(10, 20)
                 self.attack += random.randrange(8, 15)
                 self.defense += random.randrange(1, 5)
-            case Professions.PRIEST:
-                # High health, high mana
-                self.max_health += random.randrange(70, 100)
-                self.max_mana += random.randrange(30, 50)
-                self.attack += random.randrange(1, 5)
-                self.defense += random.randrange(3, 8)
+                new_skill = random.choice(ROGUE_SKILLS)
+                self.skill_deck.append(new_skill)
             case _:
                 raise ValueError(f"Unknown profession: {self.profession}")
         self.health = self.max_health

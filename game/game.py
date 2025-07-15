@@ -35,6 +35,7 @@ WARNING_MESSAGE = f"""{" " * 25}{Styles.fg.red}__        ___    ____  _   _ ___ 
   {" " * 25}\ V  V / ___ \|  _ <| |\  || || |\  | |_| |
    {" " * 25}\_/\_/_/   \_\_| \_\_| \_|___|_| \_|\____|{Styles.reset}"""
 
+
 class GameData:
     """Data class to hold game state for pickle / unpickle"""
     def __init__(self, player:Player, sections: list[Section], current_section: Section, current_carriage: 'Carriage'):
@@ -140,7 +141,10 @@ class Game:
         colorprint(f"{Styles.bold}Level: {self.player.level}", "lightgreen")
         colorprint(f"{Styles.bold}Experience: {self.player.experience}/{self.player.level * 30}", "lightgreen")
         colorprint(f"{Styles.bold}Profession: {self.player.profession.value}", "lightgreen")
-        
+        colorprint(f"{Styles.bold}Weapon: {self.player.weapon.name if self.player.weapon else 'None'}", "lightgreen")
+        colorprint(f"{Styles.bold}Armor: {self.player.armor.name if self.player.armor else 'None'}", "lightgreen")
+        colorprint(f"{Styles.bold}Allies: {', '.join(ally.name for ally in self.player.allies) if self.player.allies else 'None'}", "lightgreen")
+
         return None
     
 
@@ -185,15 +189,114 @@ class Game:
         return None
 
 
-    def _show_inventory(self) -> None:
+    def _show_inventory(self) -> bool:
+        """
+        :return: True if inventory is not empty, False otherwise
+        """
         if self.player.inventory:
             print("Your inventory:")
             for item in self.player.inventory:
-                quantity = self.player.inventory[item]
-                print(f"- {item.name}, x{quantity}: {item.description}")
-        
+                quantity: int = self.player.inventory[item]
+                print(f"{Styles.fg.green}- {item.name}, x{quantity}: {item.description}{Styles.reset}")
+            return True
         else:
             print("Your inventory is empty.")
+        return False
+
+    def _interact_inventory(self) -> None:
+        choice = "".join(input(f"{Styles.fg.lightblue}Do you want to [e]quip, [u]se, or [d]rop an item? (Enter to cancel) {Styles.reset} ").strip().lower())
+        match choice:
+            case "e" | "equip":
+                self._equip_item()
+            case "u" | "use":
+                self._use_item()
+            case "d" | "drop":
+                self._drop_item()
+            case _:
+                print_error("Cancelled.")
+        return None
+
+
+    def _equip_item(self) -> None:
+        equipment = [item for item in self.player.inventory if hasattr(item, "boost")]
+        
+        print("Available items to equip:")
+        for i, item in enumerate(equipment, 1):
+            print(f"{Styles.fg.green}{i}. {item.name} - {item.description}{Styles.reset}")
+        
+        print(f"{Styles.fg.lightblue}Enter the number of the item to equip: {Styles.reset}")
+        choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
+        
+        try:
+            index = int(choice) - 1
+            item = equipment[index]
+            item.equip(self.player)
+            print(f"{Styles.fg.green}Equipped {item.name}!{Styles.reset}")
+        
+        except (ValueError, IndexError):
+            print_error("Invalid input.")
+            return self._equip_item()
+        
+        return None
+    
+    
+    def _use_item(self) -> None:
+        consumables = [item for item in self.player.inventory if hasattr(item, "effect")]
+        if not consumables:
+            print_error("You have no consumables to use.")
+            return None
+        
+        print_game_msg(f"Pick an item...\n")
+        choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
+
+        try:
+            chosen_index = int(choice) - 1
+            item = consumables[chosen_index]
+            item.consume(self.player)
+            
+            inv = self.player.inventory.keys()
+
+            logger.debug(f"Player {self.player.name} inventory before item use: {inv}.")
+
+            self.player.remove_item_from_inventory(item)
+
+            logger.debug(f"Player {self.player.name} inventory after item use: {inv}.")
+            
+        except (ValueError, IndexError):
+            logger.info(f"Player {self.player.name} made an invalid selection.")
+            print_error("Invalid selection \nPlease try again")
+            return self._use_item() # If invalid input then we ask again
+        return None
+
+
+    def _drop_item(self) -> None:
+        if not self.player.inventory:
+            print_error("You have no items to drop.")
+            return None
+        
+        print("Your inventory:")
+        for i, item in enumerate(self.player.inventory, 1):
+            print(f"{Styles.fg.green}{i}. {item.name} - {item.description}{Styles.reset}")
+        
+        print_game_msg(f"Pick an item...\n")
+        choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
+
+        
+        try:
+            index = int(choice) - 1
+            item = list(self.player.inventory.keys())[index]
+            quantity = self.player.inventory[item]
+
+            # Check how many items player want to drop
+            num_items = int(input(f"{Styles.fg.lightblue}How many of {item.name} do you want to drop? (1-{quantity}){Styles.reset} ")) if quantity > 1 else 1
+            
+            for i in range(num_items):
+                self.player.remove_item_from_inventory(item)
+            print(f"{Styles.fg.green}Dropped {num_items} of {item.name}!{Styles.reset}")
+        
+        except (ValueError, IndexError):
+            print_error("Invalid input.")
+            return self._drop_item()
         
         return None
 
@@ -238,7 +341,7 @@ class Game:
         return None
 
 
-    def _get_items(self) -> None:
+    def _explore_for_items(self) -> None:
         logging.info("Player is exploring for items.")
 
         if not self.current_carriage.items:
@@ -246,7 +349,7 @@ class Game:
             print_error("There are no items in this carriage.")
             return None
         
-        success = random.randint(0, 1) # 50% to fail search
+        success = random.choice((True, True)) # 50% to fail search
         if not success: 
             print_error("You found no items in this carriage.")
             self.current_carriage.items = [] 
@@ -254,12 +357,11 @@ class Game:
             return None
         
         logger.debug("Player passed initial chance for items in the carriage.")
-        if self.current_carriage.items:
-            colorprint("You found the following items in this carriage:", "green")
-            for item in self.current_carriage.items.copy():
-                colorprint(f"- {item.name}: {item.description}", "green")
-                self.player.add_item_to_inventory(item)
-                self.current_carriage.items.remove(item)
+        colorprint("You found the following items in this carriage:", "green")
+        for item in self.current_carriage.items.copy():
+            colorprint(f"- {item.name}: {item.description}", "green")
+            self.player.add_item_to_inventory(item)
+            self.current_carriage.items.remove(item)
         
         return None
 
@@ -321,6 +423,7 @@ class GameCommandHandler(BaseCommandHandler):
     # Information 
     def do_inventory(self, arg) -> None:
         self.game._show_inventory()
+        self.game._interact_inventory()
         return None
 
     def do_inv(self, arg):
@@ -344,7 +447,7 @@ class GameCommandHandler(BaseCommandHandler):
 
     def do_explore(self, arg) -> None:
         # TODO: Check for items!
-        self.game._get_items()
+        self.game._explore_for_items()
         return None
 
     # Misc
@@ -418,3 +521,5 @@ class GameCommandHandler(BaseCommandHandler):
         self.game._save_game()
         colorprint(f"Game saved to {pathlib.Path("./saves/savegame.pkl").absolute()}!", "lightgreen")
         return None
+
+

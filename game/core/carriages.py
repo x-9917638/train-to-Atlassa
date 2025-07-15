@@ -92,6 +92,7 @@ DESCRIPTIONS_PRIEST = [
     "A guardian of sacred knowledge, preserving ancient texts and teachings."
 ]
 
+
 # <https://stackoverflow.com/questions/43549515/weighted-random-sample-without-replacement-in-python>
 def weighted_sample_without_replacement(population, weights=None, k=1):
     weights = list(weights) if weights else [1.0 for i in range(len(population))]
@@ -138,7 +139,7 @@ class Carriage:
                 self._add_enemy(enemies)
 
             case CarriageType.ALLY:
-                for _ in range(rand.randint(0, 1)):
+                if rand.choice((True, False)):
                     ally_name: str = rand.choice(ALLY_NAMES)
                     ally_profession: Professions = rand.choice(list(Professions))
                     match ally_profession:
@@ -150,7 +151,7 @@ class Carriage:
                             ally_description: str = rand.choice(DESCRIPTIONS_ROGUE)
                         case Professions.PRIEST:
                             ally_description: str = rand.choice(DESCRIPTIONS_PRIEST)
-                    self._add_ally(Ally(ally_name, ally_description, rand.randint(1, 8), ally_profession)) # Possibility of duplicate, but it's so low so whatever
+                    self._add_ally(Ally(name=ally_name, description=ally_description, level=rand.randint(1, 8), profession=ally_profession)) # Possibility of duplicate, but it's so low so whatever
 
             case CarriageType.CHALLENGE:
                 enemies: list["Enemy"] = self._choose_enemies(rand.randint(3, 4))
@@ -181,8 +182,11 @@ class Carriage:
 
     def _choose_items(self, num_items: int) -> list["Item"]:
         item_pool: list[dict["Item", float]] = globals()[f"SECTION_{self.section_str}_ITEMS"]
-        category = rand.choice((0, 1, 2))  # 0: WEAPON, 1: ARMOR, 2: SCROLL
-        items: list["Item"] = rand.choices(list(item_pool[category].keys()), k=num_items, weights=list(item_pool[category].values()))
+        items = []
+        WEAPONS, ARMORS, SCROLLS = 0, 1, 2 # No magic numbers!
+        for _ in range(num_items):
+            category = rand.choice((WEAPONS, ARMORS, SCROLLS)) 
+            items.extend(rand.choices(list(item_pool[category].keys()), k=1, weights=list(item_pool[category].values())))
         return items
     
 
