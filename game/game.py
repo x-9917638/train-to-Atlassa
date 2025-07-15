@@ -204,7 +204,7 @@ class Game:
         return False
 
     def _interact_inventory(self) -> None:
-        choice = "".join(input(f"{Styles.fg.lightblue}Do you want to [e]quip, [u]se, or [d]rop an item? (Enter to cancel) {Styles.reset} ").strip().lower())
+        choice = input(f"{Styles.fg.lightblue}Do you want to [e]quip, [u]se, or [d]rop an item? (Enter to cancel) {Styles.reset} ").strip().lower()
         match choice:
             case "e" | "equip":
                 self._equip_item()
@@ -212,8 +212,11 @@ class Game:
                 self._use_item()
             case "d" | "drop":
                 self._drop_item()
+            case "":
+                print_game_msg("Cancelled.")
             case _:
-                print_error("Cancelled.")
+                print_error("Invalid choice.")
+                return self._interact_inventory()
         return None
 
 
