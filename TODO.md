@@ -10,6 +10,8 @@
     ~~6. Saving state~~
     ~~7. Case-insensitive commands~~
     8. Item creation
+    9. Finish README/User Manual
+    10. Improve tutorial
 
 BUGS:
 ~~- Game not ending~~
