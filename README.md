@@ -4,5 +4,5 @@ A text based adventure game with turn based combat.
 # Requirements
 ## Windows:
 None!
-## MacOS/Other POSIX Systems
+## MacOS/Other *nix Systems
 `getch>=1.0`
