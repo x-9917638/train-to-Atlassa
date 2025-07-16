@@ -52,7 +52,7 @@ def setup() -> None:
         # Make sure can use match-case otherwise the game won't run
         match "":
             case _: pass
-    except:
+    except SyntaxError:
         raise NotImplementedError("Please use Python >= 3.10")
     clear_stdout()
     check_terminal_size()
