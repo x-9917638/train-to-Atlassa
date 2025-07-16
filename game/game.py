@@ -513,6 +513,7 @@ class GameCommandHandler(BaseCommandHandler):
 {Styles.bold}System:{Styles.reset}{Styles.fg.lightgreen}
   help, h           - Show this help
   exit              - Exit the game
+  save              - Save the game
   
 {Styles.italics}Autocompletions are supported.{Styles.reset}
 """
