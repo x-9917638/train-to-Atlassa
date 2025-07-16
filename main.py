@@ -22,7 +22,7 @@ logging.basicConfig(
     format="%(asctime)s.%(filename)s:%(levelname)s - %(message)s",
 )
 
-import os
+import os, sys
 from typing import Optional
 import time
 
@@ -48,11 +48,7 @@ GAME_BANNER = fr"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                
 
 
 def setup() -> None:
-    try:
-        # Make sure can use match-case otherwise the game won't run
-        match "":
-            case _: pass
-    except SyntaxError:
+    if sys.version_info.major != 3 or sys.version_info.minor < 10:
         raise NotImplementedError("Please use Python >= 3.10")
     clear_stdout()
     check_terminal_size()
