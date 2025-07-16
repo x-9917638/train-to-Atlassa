@@ -44,11 +44,11 @@ class Skill:
             results = []
             for target in targets:
                 if self.target in [SkillTarget.SINGLE_ENEMY, SkillTarget.ALL_ENEMIES]:
-                    damage = max(1, user.attack + self.power)
+                    damage = (user.attack // 4) * self.power
                     damage = target.take_damage(damage)
                     results.append(f"{user.name} uses {self.name} on {target.name} for {damage} damage!")
                 elif self.target in [SkillTarget.SELF, SkillTarget.SINGLE_ALLY, SkillTarget.ALL_ALLIES]:
-                    heal_amount = self.power + (user.defense // 2)
+                    heal_amount = self.power * (user.defense // 2)
                     actual_heal = target.heal(heal_amount)
                     results.append(f"{user.name} uses {self.name} on {target.name}, healing {actual_heal} health!")
 

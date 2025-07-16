@@ -18,17 +18,24 @@ from .effects import STATUS_EFFECTS
 import random
 
 GENERAL_SKILLS = [
+    # Skill(
+    #     name="Testing Skill",
+    #     description="",
+    #     power=99999999,
+    #     mana_cost=0,
+    #     target=SkillTarget.ALL_ENEMIES,
+    # ),
     Skill(
         name="Basic Attack | <Tier 0>", 
         description="A basic attack that deals damage to a single enemy.", 
-        power=5, 
+        power=40, 
         mana_cost=0, 
         target=SkillTarget.SINGLE_ENEMY
     ),
     Skill(
         name="God of gambling | <Tier ???>", 
         description="Good Luck!", 
-        power=random.randint(-1000, 1000), 
+        power=random.randint(-8000, 8000), 
         mana_cost=random.randint(0, 100), 
         target=random.choice(list(SkillTarget)), 
         accuracy=random.random(), 
@@ -40,7 +47,7 @@ SECTION_ONE_WARRIOR: list[Skill] = [
     Skill(
         name="Bash | <Tier 1>",
         description="A powerful bash",
-        power=20,
+        power=160,
         mana_cost=15,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.8,
@@ -48,14 +55,14 @@ SECTION_ONE_WARRIOR: list[Skill] = [
     Skill(
         name="Power Strike | <Tier 1>",
         description="A powerful strike",
-        power=15,
+        power=120,
         mana_cost=10,
         target=SkillTarget.SINGLE_ENEMY,
     ),
     Skill(
         name="Slash | <Tier 1>",
         description="A quick sword attack.",
-        power=8,
+        power=64,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY
     ),
@@ -65,7 +72,7 @@ SECTION_TWO_WARRIOR: list[Skill] = [
     Skill(
         name="Heavy Blow | <Tier 2>",
         description="A powerful attack, utilising the weight of the weapon.",
-        power=40,
+        power=320,
         mana_cost=20,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.85
@@ -84,7 +91,7 @@ SECTION_THREE_WARRIOR: list[Skill] = [
     Skill(
         name="Whirlwind | <Tier 3>",
         description="Attack all enemies with spinning blades.",
-        power=60,
+        power=480,
         mana_cost=40,
         target=SkillTarget.ALL_ENEMIES
     ),
@@ -102,14 +109,14 @@ SECTION_FOUR_WARRIOR: list[Skill] = [
     Skill(
         name="Earthshaker | <Tier 4>",
         description="Devastating attack that hits all enemies and may lower their defense.",
-        power=120,
+        power=960,
         mana_cost=50,
         target=SkillTarget.ALL_ENEMIES
     ),
     Skill(
         name="World Breaker | <Tier 4>",
         description="An all-out attack that deals heavy damage to one enemy, but leaves you with little defense.",
-        power=150,
+        power=1200,
         mana_cost=120,
         target=SkillTarget.SINGLE_ENEMY,
         effect=STATUS_EFFECTS["vulnerable"],
@@ -129,7 +136,7 @@ SECTION_ONE_MAGE: list[Skill] = [
     Skill(
         name="Firebolt | <Tier 1>",
         description="A small bolt of fire that hits a single enemy.",
-        power=18,
+        power=144,
         mana_cost=30,
         target=SkillTarget.SINGLE_ENEMY,
         effect=STATUS_EFFECTS["burn"]
@@ -137,7 +144,7 @@ SECTION_ONE_MAGE: list[Skill] = [
     Skill(
         name="Magic Missile | <Tier 1>",
         description="A basic magical attack.",
-        power=10,
+        power=80,
         mana_cost=16,
         target=SkillTarget.SINGLE_ENEMY
     ),
@@ -155,7 +162,7 @@ SECTION_TWO_MAGE: list[Skill] = [
     Skill(
         name="Ice Shard | <Tier 2>",
         description="Launch a shard of ice at the enemy.",
-        power=30,
+        power=240,
         mana_cost=40,
         target=SkillTarget.SINGLE_ENEMY,
         effect=STATUS_EFFECTS["frostbite"]
@@ -174,7 +181,7 @@ SECTION_THREE_MAGE: list[Skill] = [
     Skill(
         name="Chain Lightning | <Tier 3>",
         description="Lightning arcs between multiple enemies.",
-        power=45,
+        power=360,
         mana_cost=100,
         target=SkillTarget.ALL_ENEMIES
     ),
@@ -192,7 +199,7 @@ SECTION_FOUR_MAGE: list[Skill] = [
     Skill(
         name="Meteor | <Tier 4>",
         description="Call down a meteor to devastate an enemy, but leaves one vulnerable.",
-        power=300,
+        power=2400,
         mana_cost=200,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.75,
@@ -201,7 +208,7 @@ SECTION_FOUR_MAGE: list[Skill] = [
     Skill(
         name="Tsunami | <Tier 4>",
         description="Conjure enormous waves to wash away all enemies.",
-        power=100,
+        power=800,
         mana_cost=300,
         target=SkillTarget.ALL_ENEMIES
     ),
@@ -218,14 +225,14 @@ SECTION_ONE_ROGUE: list[Skill] = [
     Skill(
         name="Quick Stab | <Tier 1>",
         description="A fast, precise attack.",
-        power=14,
+        power=112,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY
     ),
     Skill(
         name="Throwing Knife | <Tier 1>",
         description="Throw a knife at an enemy.",
-        power=20,
+        power=160,
         mana_cost=5,
         target=SkillTarget.SINGLE_ENEMY
     ),
@@ -235,7 +242,7 @@ SECTION_TWO_ROGUE: list[Skill] = [
     Skill(
         name="Poison Strike | <Tier 2>",
         description="Attack with a poisoned blade.",
-        power=22,
+        power=176,
         mana_cost=15,
         target=SkillTarget.SINGLE_ENEMY,
         effect=STATUS_EFFECTS["poison"]
@@ -243,7 +250,7 @@ SECTION_TWO_ROGUE: list[Skill] = [
     Skill(
         name="Shadow Sneak | <Tier 2>",
         description="Melt into the shadows and appear behind an enemy, dealing massive damage if not spotted.",
-        power=65,
+        power=520,
         mana_cost=30,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.5
@@ -254,14 +261,14 @@ SECTION_THREE_ROGUE: list[Skill] = [
     Skill(
         name="Fan of Knives | <Tier 3>",
         description="Attack all enemies with thrown knives.",
-        power=40,
+        power=320,
         mana_cost=40,
         target=SkillTarget.ALL_ENEMIES
     ),
     Skill(
         name="Ambush | <Tier 3>",
         description="Deal extra damage when attacking from stealth.",
-        power=40,
+        power=320,
         mana_cost=20,
         target=SkillTarget.SINGLE_ENEMY
     ),
@@ -271,14 +278,14 @@ SECTION_FOUR_ROGUE: list[Skill] = [
     Skill(
         name="Death Blooom | <Tier 4>",
         description="A deadly spinning attack that hits all enemies.",
-        power=100,
+        power=800,
         mana_cost=120,
         target=SkillTarget.ALL_ENEMIES
     ),
     Skill(
         name="Shadow Bomb | <Tier 4>",
         description="Engulf the battlefield in shadow, poisoning enemies.",
-        power=80,
+        power=640,
         mana_cost=120,
         target=SkillTarget.ALL_ENEMIES,
         effect=STATUS_EFFECTS["poison"]
@@ -293,9 +300,59 @@ ROGUE_SKILLS: dict[int, list[Skill]] = {
 }
 
 PRIEST_SKILLS = [
-    Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
-    Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=STATUS_EFFECTS["shield"]),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY)
+    Skill(
+        name="Holy Light",
+        description="A light that heals",
+        power=160,
+        mana_cost=15,
+        target=SkillTarget.SINGLE_ALLY
+    ),
+    Skill(
+        name="Divine Shield",
+        description="Protects an ally from damage",
+        power=0,
+        mana_cost=20,
+        target=SkillTarget.SINGLE_ALLY,
+        effect=STATUS_EFFECTS["shield"]
+    ),
+    Skill(
+        name="Mass Heal",
+        description="Heals all allies.",
+        power=120,
+        mana_cost=30,
+        target=SkillTarget.ALL_ALLIES
+    ),
+    Skill(
+        name="Purify",
+        description="Removes all negative effects from an ally.",
+        power=0,
+        mana_cost=10,
+        target=SkillTarget.SINGLE_ALLY,
+        effect=STATUS_EFFECTS["purify"]
+    ),
+    Skill(
+        name="Smite",
+        description="A holy attack that deals damage to a single enemy.",
+        power=200,
+        mana_cost=12,
+        target=SkillTarget.SINGLE_ENEMY
+    ),
+    Skill(
+        name="Sanctuary",
+        description="Greatly reduces damage taken by all allies for a short time.",
+        power=0,
+        mana_cost=40,
+        target=SkillTarget.ALL_ALLIES,
+        effect=STATUS_EFFECTS["shield"]
+    ),
+    Skill(
+        name="Full Heal",
+        description="Heals a single ally to full health.",
+        power=0,
+        mana_cost=50,
+        target=SkillTarget.SINGLE_ALLY,
+        effect=STATUS_EFFECTS["full_heal"]
+    ),
 ]
 
 ENEMY_SKILLS = [

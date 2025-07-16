@@ -49,7 +49,6 @@ class StatusEffect:
             :param entity: The entity to remove the status effect on.
         """
         self._remove(entity)
-        typing_print(f"{entity.name} is no longer {self.name.lower()}!")
         entity.effects.remove(self)
         return None
         

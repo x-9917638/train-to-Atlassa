@@ -255,11 +255,14 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
 
 
     def _equip_item(self) -> None:
+        clear_stdout()
         equipment = [item for item in self.player.inventory if hasattr(item, "boost")]
         
         typing_print("Available items:")
         for i, item in enumerate(equipment, 1):
-            print(f"{Styles.fg.green}{i}. {item.name} - {item.description}{Styles.reset}")
+            print(f"""{Styles.fg.green}{i}. {item.name}
+Description: {item.description}
+Boost: {item.boost}{Styles.reset}""")
             time.sleep(0.01)
         
         typing_print(f"{Styles.fg.lightblue}Enter the number of the item to equip: {Styles.reset}")
@@ -279,11 +282,17 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
     
     
     def _use_item(self) -> None:
+        clear_stdout()
         consumables = [item for item in self.player.inventory if hasattr(item, "effect")]
         if not consumables:
             print_error("You have no consumables to use.")
             return None
         
+        for i, item in enumerate(consumables, 1):
+            print(f"""{Styles.fg.green}{i}. {item.name}
+Description: {item.description}{Styles.reset}""")
+            time.sleep(0.01)
+
         print_game_msg(f"Pick an item...\n")
         choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
 
@@ -392,7 +401,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             print_error("There are no items in this carriage.")
             return None
         
-        success = random.choice((True, True)) # 50% to fail search
+        success = random.choice((True, False)) # 50% to fail search
         if not success: 
             print_error("You found no items in this carriage.")
             self.current_carriage.items = [] 
@@ -489,7 +498,6 @@ class GameCommandHandler(BaseCommandHandler):
 
 
     def do_explore(self, arg) -> None:
-        # TODO: Check for items!
         self.game._explore_for_items()
         return None
 

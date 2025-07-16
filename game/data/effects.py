@@ -35,7 +35,7 @@ def shield_remove(entity: "Entity") -> None:
 
 
 def poison_effect(entity: "Entity") -> None:
-    entity.health -= 5
+    entity.health -= 15
     print_error(f"{entity.name} is poisoned and loses 5 health! Current health: {entity.health}")
     return None
 
@@ -45,7 +45,7 @@ def poison_remove(entity: "Entity") -> None:
 
 
 def burn_effect(entity: "Entity") -> None:
-    entity.health -= 10
+    entity.health -= 25
     print_error(f"{entity.name} is burned and loses 10 health! Current health: {entity.health}")
     return None
 
@@ -87,12 +87,32 @@ def mana_restore_effect(entity: "Entity") -> None:
 
 
 def frostbite_effect(entity: "Entity") -> None:
-    entity.health -= 8
+    entity.health -= 12
     colorprint(f"{entity.name} is frostbitten and takes 8 damage!", "red")
     return None
 
 def frostbite_remove(entity: "Entity") -> None:
     colorprint(f"{entity.name} thawed out.", "green")
+    return None
+
+
+def purify_effect(entity: "Entity") -> None:
+    entity.effects = []
+    colorprint(f"{entity.name} has been purified and all status effects have been removed!", "green")
+    return None
+
+def purify_remove(entity: "Entity") -> None:
+    # No need to do anything
+    return None
+
+
+def full_heal_effect(entity: "Entity") -> None:
+    entity.health = entity.max_health
+    colorprint(f"{entity.name} has been fully healed!", "green")
+    return None
+
+def full_heal_remove(entity: "Entity") -> None:
+    # No need to do anything
     return None
 
 
@@ -138,5 +158,17 @@ STATUS_EFFECTS = {
         duration=4,
         effects=frostbite_effect,
         on_remove=frostbite_remove
+    ),
+    "purify": StatusEffect(
+        name="Purified",
+        duration=1,
+        effects=purify_effect,
+        on_remove=purify_remove
+    ),
+    "full_heal": StatusEffect(
+        name="Full Heal",
+        duration=1,
+        effects=full_heal_effect,
+        on_remove=full_heal_remove
     )
 }

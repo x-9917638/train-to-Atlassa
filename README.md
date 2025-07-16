@@ -5,6 +5,8 @@ A text based adventure game with turn based combat.
 - [python>=3.10](https://python.org)
 - MacOS/Other *nix Systems: getch<br>
     `python3 -m pip install getch`
+- Note: Autocompletion of commands will not work on Windows due to the lack of readline.
+
 # Getting Started
 1. Make sure the required dependencies are installed
 2. Clone the repository: `git clone https://github.com/x-9917638/train-to-Atlassa.git`
@@ -20,7 +22,9 @@ There are 2 main modes:
 - Combat
 
 ## Default mode
-The player is placed into default mode for navigation, and managing their status. Autocompletions are supported.
+The player is placed into default mode for navigation, and managing their status. 
+<br>
+Autocompletions are supported.
 <br>
 Available Commands:
 - Movement:
@@ -42,10 +46,33 @@ Available Commands:
   - Save the game to local file | **save**
 
 ### Inventory
-TODO
+The inventory presents a simple menu to manage items.
+<br>
+Available Commands:
+- Equip a Weapon or Armor | **e, equip**
+- Use a Consumable | **u, use**
+- Drop (delete) an Item | **d, drop**
+- Cancel | **any other input**
 
 ## Combat
-TODO
+After initiating combat using the *fight* command, the player is sent into combat mode.
+<br>
+The interface displays the following:
+- Health
+- Mana
+- Enemies
+- Allies (If applicable)
+
+
+The player can choose one of five commands, and autocompletions are supported.
+<br>
+Available Commands:
+- Use a skill | **attack**
+- Rest (Heal 20% max HP, 10% max MP) | **rest**
+- Use a consusmable item | **items**        
+- Retreat (Clears the room) | **retreat**    
+- Show help | **help, h** or *empty command*
+
 
 # Mechanics
 TODO

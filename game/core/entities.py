@@ -41,7 +41,7 @@ class Entity: # Abstract base class for all entities in the game
     
     def take_damage(self, amount: int) -> int:
         """Calculate the damage the character takes, after defense."""
-        actual_damage: int = max(1, amount - self.defense)
+        actual_damage: int = max(1, amount - self.defense // 4)
         self.health -= actual_damage
         return actual_damage
     
@@ -125,24 +125,18 @@ class Player(Entity):
                 self.max_mana += random.randrange(10, 20)
                 self.attack += random.randrange(1, 5)
                 self.defense += random.randrange(5, 10)
-                new_skill = random.choice(WARRIOR_SKILLS)
-                self.skill_deck.append(new_skill)
             case Professions.MAGE:
                 # High mana, High attack
                 self.max_health += random.randrange(30, 60)
                 self.max_mana += random.randrange(30, 50)
                 self.attack += random.randrange(5, 10)
                 self.defense += random.randrange(1, 5)
-                new_skill = random.choice(MAGE_SKILLS)
-                self.skill_deck.append(new_skill)
             case Professions.ROGUE:
                 # High attack
                 self.max_health += random.randrange(50, 80)
                 self.max_mana += random.randrange(10, 20)
                 self.attack += random.randrange(8, 15)
                 self.defense += random.randrange(1, 5)
-                new_skill = random.choice(ROGUE_SKILLS)
-                self.skill_deck.append(new_skill)
             case _:
                 raise ValueError(f"Unknown profession: {self.profession}")
         self.health = self.max_health
