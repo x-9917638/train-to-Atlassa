@@ -13,8 +13,7 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from ..utils import SkillTarget, Professions
-from ..utils import Styles, colorprint, print_error, print_game_msg
-from ..utils import typing_print
+from ..utils import Styles, colorprint, print_error, print_game_msg, typing_print
 from ..utils import BaseCommandHandler
 from ..utils import clear_stdout
 
@@ -206,12 +205,12 @@ class CombatSystem(BaseCommandHandler):
         self.player.draw_skills()
         
 
-        print(f"{Styles.bold}Enemies:{Styles.reset}")
-        colorprint(self._display_enemies() + "\n", "red")
+        typing_print(f"{Styles.bold}Enemies:{Styles.reset}")
+        colorprint(self._display_enemies() + "\n", "red", delay=0.002)
 
         if self.allies:
-            print(f"{Styles.bold}Allies:{Styles.reset}")
-            colorprint(self._display_allies() + "\n", "green")
+            typing_print(f"{Styles.bold}Allies:{Styles.reset}")
+            colorprint(self._display_allies() + "\n", "green", delay=0.002)
 
         colorprint("Choose an action...", "lightblue")
         print("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}".format(
@@ -285,6 +284,7 @@ Target: {skill.target.value}{Styles.reset}
         for i, item in enumerate(items, 1):
             quantity = self.player.inventory[item]
             print(f"{Styles.fg.green}{i}. {item.name} x{quantity} - {item.description} {Styles.reset}")
+            time.sleep(0.01)
         return None
 
 
@@ -292,8 +292,8 @@ Target: {skill.target.value}{Styles.reset}
         clear_stdout()
         match skill.target:
             case SkillTarget.SINGLE_ENEMY:
-                print(f"{Styles.fg.lightblue}{Styles.bold}{skill.name} selected.{Styles.reset}")
-                colorprint(self._display_enemies(), "red")
+                typing_print(f"{Styles.fg.lightblue}{Styles.bold}{skill.name} selected.{Styles.reset}")
+                colorprint(self._display_enemies(), "red", delay=0.002)
                 try:
                     chosen_enemy = int(input(
                         f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
@@ -311,8 +311,8 @@ Target: {skill.target.value}{Styles.reset}
                 else:
                     target = []
             case SkillTarget.SINGLE_ALLY:
-                print(f"{Styles.fg.lightblue}{skill.name} selected.{Styles.reset}")
-                colorprint(self._display_allies(), "lightgreen")
+                typing_print(f"{Styles.fg.lightblue}{skill.name} selected.{Styles.reset}")
+                colorprint(self._display_allies(), "lightgreen", delay=0.002)
                 if self.allies:
                     try:
                         chosen_ally = int(input(
@@ -344,6 +344,10 @@ Target: {skill.target.value}{Styles.reset}
         return None
 
     def enemy_turn(self) -> None:
+        for enemy in self.enemies:
+            # Do status effects
+            [effect.apply(enemy) for effect in enemy.effects if enemy.effects]
+
         [self._enemy_action(enemy) for enemy in self.enemies if enemy.is_alive]
         logger.info("Enemies have taken their turn.")
         return None
@@ -363,7 +367,16 @@ Target: {skill.target.value}{Styles.reset}
 
 
     def ally_turn(self) -> None:
+        if not self.allies:
+            logger.info("No allies to take a turn.")
+            return None
+        
+        for ally in self.allies:
+            # Do status effects
+            [effect.apply(ally) for effect in ally.effects if ally.effects]
+
         [self._ally_action(ally) for ally in self.allies if ally.is_alive]
+        
         logger.info("Allies have taken their turn.")
         return None
 

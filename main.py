@@ -30,7 +30,7 @@ import time
 from game.game import Game, GameData, GameCommandHandler
 from game.core.save_handler import handle_load
 from game.core.profession_chooser import ProfessionChooser
-from game.utils import print_error
+from game.utils import print_error, typing_print
 from game.utils import Styles
 from game.utils import clear_stdout, check_terminal_size
 from game.tutorial import start_tutorial
@@ -69,7 +69,7 @@ def prompt_load_save() -> Optional[GameData]:
             data: GameData = handle_load()
             return data
         case _: # If it's not an explicit yes then we assume no
-            print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
+            typing_print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
             return None
 
 

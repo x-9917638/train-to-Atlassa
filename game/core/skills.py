@@ -14,12 +14,14 @@
 
 import random as rand
 
-from .status_effects import StatusEffect, status_effects
+from ..data.effects import STATUS_EFFECTS
+
 from ..utils import SkillTarget
 
 from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from .entities import Entity, Player, Ally, Enemy
+    from .status_effects import StatusEffect
 
 class Skill:
     def __init__(self, name: str, description: str, power: int, 
@@ -81,7 +83,7 @@ GENERAL_SKILLS = [
     Skill("Tester", "", 10000000, 0, SkillTarget.ALL_ENEMIES),
     Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
     Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY),
-    Skill("God of gambling", "Good Luck!", rand.randint(-1000, 1000), rand.randint(0, 100), rand.choice(list(SkillTarget)), rand.random(), rand.choice(list(status_effects.values())))
+    Skill("God of gambling", "Good Luck!", rand.randint(-1000, 1000), rand.randint(0, 100), rand.choice(list(SkillTarget)), rand.random(), rand.choice(list(STATUS_EFFECTS.values())))
 ]
 WARRIOR_SKILLS = [
     Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
@@ -106,7 +108,7 @@ ROGUE_SKILLS = [
 
 PRIEST_SKILLS = [
     Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
-    Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=status_effects["shield"]),
+    Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=STATUS_EFFECTS["shield"]),
     Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY)
 ]
 

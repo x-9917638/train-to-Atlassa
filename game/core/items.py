@@ -12,7 +12,7 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from ..utils import Styles
+from ..utils import Styles, typing_print
 
 from functools import partial
 import random as rand
@@ -120,5 +120,5 @@ class Consumable(Item):
         logger.debug(f"Consuming item {self.name} for player {player.name}.")
         player.remove_item_from_inventory(self)
         self.effect(player)
-        print(self.consume_msg)
+        typing_print(self.consume_msg)
         return None

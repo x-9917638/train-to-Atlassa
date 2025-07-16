@@ -179,12 +179,13 @@ class Game:
 
     def _show_skills(self) -> None:
         if self.player.skill_deck:
-            print("Your skills:")
+            typing_print("Your skills:")
             for skill in self.player.skill_deck:
                 print(f"- {skill.name}: {skill.description}")
+                time.sleep(0.01)
         
         else:
-            print("You have no skills.")
+            typing_print("You have no skills.")
         
         return None
 
@@ -194,13 +195,14 @@ class Game:
         :return: True if inventory is not empty, False otherwise
         """
         if self.player.inventory:
-            print("Your inventory:")
+            typing_print("Your inventory:")
             for item in self.player.inventory:
                 quantity: int = self.player.inventory[item]
                 print(f"{Styles.fg.green}- {item.name}, x{quantity}: {item.description}{Styles.reset}")
+                time.sleep(0.01)
             return True
         else:
-            print("Your inventory is empty.")
+            typing_print("Your inventory is empty.")
         return False
 
     def _interact_inventory(self) -> None:
@@ -223,18 +225,19 @@ class Game:
     def _equip_item(self) -> None:
         equipment = [item for item in self.player.inventory if hasattr(item, "boost")]
         
-        print("Available items to equip:")
+        typing_print("Available items:")
         for i, item in enumerate(equipment, 1):
             print(f"{Styles.fg.green}{i}. {item.name} - {item.description}{Styles.reset}")
+            time.sleep(0.01)
         
-        print(f"{Styles.fg.lightblue}Enter the number of the item to equip: {Styles.reset}")
+        typing_print(f"{Styles.fg.lightblue}Enter the number of the item to equip: {Styles.reset}")
         choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
         
         try:
             index = int(choice) - 1
             item = equipment[index]
             item.equip(self.player)
-            print(f"{Styles.fg.green}Equipped {item.name}!{Styles.reset}")
+            typing_print(f"{Styles.fg.green}Equipped {item.name}!{Styles.reset}")
         
         except (ValueError, IndexError):
             print_error("Invalid input.")
@@ -277,10 +280,11 @@ class Game:
             print_error("You have no items to drop.")
             return None
         
-        print("Your inventory:")
+        typing_print("Your inventory:")
         for i, item in enumerate(self.player.inventory, 1):
             print(f"{Styles.fg.green}{i}. {item.name} - {item.description}{Styles.reset}")
-        
+            time.sleep(0.01)
+
         print_game_msg(f"Pick an item...\n")
         choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
 
@@ -291,11 +295,14 @@ class Game:
             quantity = self.player.inventory[item]
 
             # Check how many items player want to drop
-            num_items = int(input(f"{Styles.fg.lightblue}How many of {item.name} do you want to drop? (1-{quantity}){Styles.reset} ")) if quantity > 1 else 1
+            if quantity > 1:
+                typing_print(f"{Styles.fg.lightblue}You have {quantity} of {item.name}. How many do you want to drop?{Styles.reset}")
+                num_items = int(input(f"{Styles.fg.pink}> {Styles.reset}").strip())
+            else: num_items = 1
             
             for i in range(num_items):
                 self.player.remove_item_from_inventory(item)
-            print(f"{Styles.fg.green}Dropped {num_items} of {item.name}!{Styles.reset}")
+            typing_print(f"{Styles.fg.green}Dropped {num_items} of {item.name}!{Styles.reset}")
         
         except (ValueError, IndexError):
             print_error("Invalid input.")
@@ -306,20 +313,21 @@ class Game:
 
     def _interact_with_allies(self) -> None:
         if not self.current_carriage.allies:
-            print("No allies to interact with in this carriage.")
+            typing_print("No allies to interact with in this carriage.")
             return None
         
-        print("You can interact with the following allies:")
+        typing_print("You can interact with the following allies:")
         for ally in self.current_carriage.allies:
             print(f"- {ally.name}: {ally.description}")
+            time.sleep(0.01)
 
-        ally_name = input("Enter a name: ")
+        chosen_name = input("Enter a name: ")
         for ally in self.current_carriage.allies:
-            if ally.name.lower() == ally_name.lower():
+            if ally.name.lower() == chosen_name.lower():
                 self._hire_ally(ally)
 
             else:
-                print(f"No ally with the name {ally_name} found in this carriage.")
+                typing_print(f"No ally with the name {chosen_name} found in this carriage.")
 
         return None
             
@@ -329,12 +337,12 @@ class Game:
         match choice.lower():
             case "y" | "yes" | "":
                 if len(self.player.allies) > 2:
-                    print("You already have the maximum number of allies (2). You cannot hire more.")
+                    typing_print("You already have the maximum number of allies (2). You cannot hire more.")
                 
                 else:
                     self.player.add_ally(ally)
                     self.current_carriage.allies.remove(ally)
-                    print(f"{ally.name} has joined your party!")
+                    typing_print(f"{ally.name} has joined your party!")
             
             case "n" | "no":
                 return None

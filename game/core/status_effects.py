@@ -13,7 +13,9 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from ..utils import print_error
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .entities import Entity
 
 class StatusEffect:
     def __init__(self, name:str, duration: int, effects: Callable) -> None:
@@ -28,52 +30,15 @@ class StatusEffect:
     
     def apply(self, entity: 'Entity') -> None:
         """
-        Apply the status effect to the player. Should be called every turn while in combat
-        :param player: The player to apply the status effect to.
+        Apply the status effect to the entity. Should be called every turn while in combat
+        :param entity: The entity to apply the status effect to.
         """
+        if self.duration <= 0:
+            print_error(f"{entity.name} is no longer {self.name.lower()}!")
+            entity.effects.remove(self)
+            return None
         self._effects(entity)
         print(f"{entity.name} is {self.name.lower()} for {self.duration} turns.")
         self.duration -= 1
         return None
         
-
-
-def shield_effect(player):
-    setattr(player, "defense", player.defense + 10) 
-    setattr(player, "health", player.health + 50)
-
-
-def poison_effect(player):
-        player.health -= 5
-        print_error(f"{player.name} is poisoned and loses 5 health! Current health: {player.health}")
-
-def burn_effect(player):
-    player.health -= 10
-    print_error(f"{player.name} is burned and loses 10 health! Current health: {player.health}")
-
-def weaken_effect(player):
-    player.attack = -999
-    print_error(f"{player.name} is weakened and has attack of 0!")
-
-status_effects = {
-    "poison": StatusEffect(
-        name="Poisoned",
-        duration=3,
-        effects=poison_effect
-    ),
-    "burn": StatusEffect(
-        name="Burned",
-        duration=2,
-        effects=burn_effect
-    ),
-    "weaken": StatusEffect(
-        name="Weakened",
-        duration=1,
-        effects=weaken_effect
-    ),
-    "shield": StatusEffect(
-        name="Shielded",
-        duration=1,
-        effects=shield_effect
-    )
-}

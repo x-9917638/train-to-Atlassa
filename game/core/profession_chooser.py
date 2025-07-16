@@ -18,7 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from ..utils import BaseCommandHandler
-from ..utils import Styles, clear_stdout, print_error
+from ..utils import Styles, clear_stdout, print_error, typing_print
 from ..utils import Professions
 
 
@@ -45,21 +45,21 @@ class ProfessionChooser(BaseCommandHandler):
         """Choose the Rogue profession."""
         self.game.player.profession = Professions.ROGUE
         logger.info("Player picked rogue profession.")
-        print(f"{Styles.fg.lightgreen}You have chosen the Rogue profession!{Styles.reset}")
+        typing_print(f"{Styles.fg.lightgreen}You have chosen the Rogue profession!{Styles.reset}")
         return True
 
     def do_warrior(self, arg) -> bool:
         """Choose the Warrior profession."""
         self.game.player.profession = Professions.WARRIOR
         logger.info("Player picked warrior profession.")
-        print(f"{Styles.fg.lightgreen}You have chosen the Warrior profession!{Styles.reset}")
+        typing_print(f"{Styles.fg.lightgreen}You have chosen the Warrior profession!{Styles.reset}")
         return True
     
     def do_mage(self, arg) -> bool:
         """Choose the Mage profession."""
         self.game.player.profession = Professions.MAGE
         logger.info("Player picked mage profession.")
-        print(f"{Styles.fg.lightgreen}You have chosen the Mage profession!{Styles.reset}")
+        typing_print(f"{Styles.fg.lightgreen}You have chosen the Mage profession!{Styles.reset}")
         return True
     
     def default(self, line) -> None:

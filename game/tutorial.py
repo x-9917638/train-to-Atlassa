@@ -16,7 +16,8 @@ from .game import Game
 from .core.combat import CombatSystem
 from .core.entities import Player, Enemy, Ally
 from .core.skills import Skill
-from .core.status_effects import status_effects
+
+from .data.effects import STATUS_EFFECTS
 
 from .utils import Styles, typing_print, print_error
 from .utils import SkillTarget, Professions
@@ -43,6 +44,10 @@ else:
 
 def start_tutorial():
     """Introduce the player to the game."""
+
+    typing_print("Press [ESC] to skip the tutorial at any time!")
+    if getch() == ESC_KEY: return
+
     logging.info("Starting tutorial...")
     print(r"""__        __   _                             _          _____          _         _             _   _   _                     _ 
 \ \      / /__| | ___ ___  _ __ ___   ___   | |_ ___   |_   _| __ __ _(_)_ __   | |_ ___      / \ | |_| | __ _ ___ ___  __ _| |
@@ -52,10 +57,9 @@ def start_tutorial():
     
     if getch() == ESC_KEY: return
     if sys.platform == "win32":
-        print("Note: autocompletions are not available on Windows.\nPress any key to continue...")
+        typing_print("Note: autocompletions are not available on Windows.\nPress any key to continue...")
     else:
-        print("Autocompletions are available with [TAB]!\nPress [ESC] to skip the tutorial at any time!\nPress any key to continue...")
-
+        typing_print("Autocompletions are available with [TAB]!\nPress any key to continue...")
     
     if getch() == ESC_KEY: return
     typing_print("After saving the Grand City of Citadel, you, the Hero, board the Train to Atlassa...", delay=0.01)
@@ -98,7 +102,7 @@ class TutorialCombat(CombatSystem):
         tutorial_player.max_mana = 10000
         tutorial_player.health = 10000
         tutorial_player.max_health = 10000
-        tutorial_player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=status_effects["poison"])]
+        tutorial_player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=STATUS_EFFECTS["poison"])]
         
         # Hardcode ally for tutorial
         tutorial_ally: Ally = Ally("Blarj", "The System Guide", 1, Professions.MAGE)
