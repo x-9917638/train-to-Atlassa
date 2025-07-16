@@ -21,11 +21,14 @@ from .utils import Styles, colorprint, print_game_msg, print_error, typing_print
 from .utils import clear_stdout
 from .utils import BaseCommandHandler
 
-import time, os, pathlib, random, logging
+from .data.skills import WARRIOR_SKILLS, ROGUE_SKILLS, MAGE_SKILLS
+
+import time, os, pathlib, random, logging, copy
 
 from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from .core.carriages import Carriage
+    from .core.skills import Skill
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +92,7 @@ class Game:
         
         if 0 <= new_index < len(self.current_section.carriages):
             self.current_carriage = self.current_section.carriages[new_index]
-            colorprint(f"Moved to {self.current_carriage.name}.", "lightgreen", delay=0.02)
+            colorprint(f"Moved to {self.current_carriage.name}.", "lightgreen")
             self._show_info()
         else:
             print_error(f"You can't move {'forward' if direction > 0 else 'back'} - you're at the {'end' if direction > 0 else 'start'} of this section.")
@@ -100,7 +103,7 @@ class Game:
         
         combat_system.start_combat() # Exits once combat is over
 
-        self.current_carriage.enemies = []
+        self.current_carriage.enemies = [] # Remove the dead enemies from the carriage
         
         # Check if player died
         if not combat_system.player.is_alive():
@@ -112,9 +115,32 @@ class Game:
             self._handle_boss_defeat()
             return None
 
+        num_skills: int = combat_system.num_skills_owed 
+        if num_skills > 0:
+            self._give_new_skills(num_skills)
+            
         self._show_info()
         
         return None
+
+
+    def _give_new_skills(self, num_skills: int) -> None:
+        colorprint(f"You have earned {num_skills} new skill{'s' if num_skills > 1 else ''}!", "lightgreen")
+        
+        profession: str = f"{self.player.profession.value.upper()}_SKILLS"
+        profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[profession])
+        
+        skill_pool: list["Skill"] = []
+        for i in range(1, self.current_section.number + 1):
+            skill_pool.extend(profession_skills[i])
+        
+        num_skills = min(num_skills, len(skill_pool))  # Ensure we don't try to get more skills than available
+
+        new_skills: list["Skill"] = random.sample(skill_pool, k=num_skills)
+        self.player.add_skills_to_deck(new_skills)
+        
+        return None
+
 
     def _handle_boss_defeat(self) -> None:
         colorprint("You have defeated the boss!", "lightgreen")
@@ -155,7 +181,7 @@ class Game:
             if self.current_carriage.type.value == "Boss Room":
                 # WArnning banner
                 print(WARNING_MESSAGE)
-                typing_print(f"{Styles.fg.red}{"=" * 30}A boss is present in this carriage!{"=" * 30}{Styles.reset}", delay=0.01)
+                typing_print(f"{Styles.fg.red}{"=" * 30}A boss is present in this carriage!{"=" * 30}{Styles.reset}")
                 time.sleep(0.2)
                 clear_stdout()
 
@@ -169,7 +195,7 @@ class Game:
             if self.current_carriage.allies:
                 colorprint("Allies present:", "lightgreen")
                 for ally in self.current_carriage.allies:
-                    colorprint(f"- {ally.name}: {ally.description}", "lightgreen", delay=0.01)
+                    colorprint(f"- {ally.name}: {ally.description}", "lightgreen")
 
             else:
                 print_error("There are no allies in this carriage.")
@@ -181,7 +207,13 @@ class Game:
         if self.player.skill_deck:
             typing_print("Your skills:")
             for skill in self.player.skill_deck:
-                print(f"- {skill.name}: {skill.description}")
+                print(f"""{Styles.fg.lightgreen}{skill.name} 
+Cost: {skill.mana_cost} MP
+Descripion: {skill.description}
+Power: {skill.power}
+Target: {skill.target.value}
+Accuracy: {skill.accuracy * 100}%{Styles.reset}
+""" + f"{Styles.fg.lightgreen}{"Effect: " + skill.effect.name if skill.effect else ""}{Styles.reset}")
                 time.sleep(0.01)
         
         else:
@@ -337,12 +369,12 @@ class Game:
         match choice.lower():
             case "y" | "yes" | "":
                 if len(self.player.allies) > 2:
-                    typing_print("You already have the maximum number of allies (2). You cannot hire more.")
+                    print_error("You already have the maximum number of allies (2). You cannot hire more.")
                 
                 else:
                     self.player.add_ally(ally)
                     self.current_carriage.allies.remove(ally)
-                    typing_print(f"{ally.name} has joined your party!")
+                    colorprint(f"{ally.name} has joined your party!", "green")
             
             case "n" | "no":
                 return None
@@ -370,7 +402,7 @@ class Game:
         logger.debug("Player passed initial chance for items in the carriage.")
         colorprint("You found the following items in this carriage:", "green")
         for item in self.current_carriage.items.copy():
-            colorprint(f"- {item.name}: {item.description}", "green", delay=0.01)
+            colorprint(f"- {item.name}: {item.description}", "green")
             self.player.add_item_to_inventory(item)
             self.current_carriage.items.remove(item)
         

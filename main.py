@@ -75,7 +75,7 @@ def tutorial() -> None:
     clear_stdout()
     return None
 
-def check_name(name:str) -> bool:
+def is_valid_name(name:str) -> bool:
     alphabet: list[str] = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
    
     if not all(char in alphabet or char.isspace() for char in name) and 0 < len(name) < 40:  
@@ -86,7 +86,7 @@ def check_name(name:str) -> bool:
 
 def start_game() -> None:
     player_name: str = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
-    while not check_name(player_name):
+    while not is_valid_name(player_name):
         player_name = input(f"{Styles.fg.lightgreen}Enter Player Name: {Styles.reset}").strip().title()
 
     print(GAME_BANNER)

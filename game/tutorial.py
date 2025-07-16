@@ -45,7 +45,7 @@ else:
 def start_tutorial():
     """Introduce the player to the game."""
 
-    typing_print("Press [ESC] to skip the tutorial at any time!")
+    typing_print("Press [ESC] to skip the tutorial at any time!", delay=0.01)
     if getch() == ESC_KEY: return
 
     logging.info("Starting tutorial...")
@@ -57,9 +57,9 @@ def start_tutorial():
     
     if getch() == ESC_KEY: return
     if sys.platform == "win32":
-        typing_print("Note: autocompletions are not available on Windows.\nPress any key to continue...")
+        typing_print("Note: autocompletions are not available on Windows.\nPress any key to continue...", delay=0.01)
     else:
-        typing_print("Autocompletions are available with [TAB]!\nPress any key to continue...")
+        typing_print("Autocompletions are available with [TAB]!\nPress any key to continue...", delay=0.01)
     
     if getch() == ESC_KEY: return
     typing_print("After saving the Grand City of Citadel, you, the Hero, board the Train to Atlassa...", delay=0.01)

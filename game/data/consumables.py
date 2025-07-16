@@ -63,8 +63,6 @@ def sloth_boost(player: "Player") -> None:
     player.health += 100
     return None
 
-def
-
 
 def devil_boost(player: "Player") -> None:
     player.attack += 30

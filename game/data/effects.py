@@ -20,9 +20,17 @@ if TYPE_CHECKING:
 
 
 def shield_effect(entity: "Entity") -> None:
-    setattr(entity, "defense", entity.defense + 10) 
-    setattr(entity, "health", entity.health + 50)
+    entity.defense += 10
+    entity.max_health += 50
+    entity.health += 50 
     colorprint(f"{entity.name} is shielded and gains 50 health and 10 defense!", "green")
+    return None
+
+def shield_remove(entity: "Entity") -> None:
+    entity.defense -= 10
+    entity.max_health -= min(entity.max_health - 1, 50)  # Prevents going below 1 health
+    entity.health -= min(entity.health - 1, 50)
+    colorprint(f"{entity.name}'s shield has worn off and they lose 50 health and 10 defense.", "red")
     return None
 
 
@@ -31,10 +39,60 @@ def poison_effect(entity: "Entity") -> None:
     print_error(f"{entity.name} is poisoned and loses 5 health! Current health: {entity.health}")
     return None
 
+def poison_remove(entity: "Entity") -> None:
+    print_error(f"{entity.name} is no longer poisoned. Current health: {entity.health}")
+    return None
+
 
 def burn_effect(entity: "Entity") -> None:
     entity.health -= 10
     print_error(f"{entity.name} is burned and loses 10 health! Current health: {entity.health}")
+    return None
+
+def burn_reverse(entity: "Entity") -> None:
+    colorprint(f"{entity.name} is no longer burned.", "green")
+    return None
+
+
+def war_cry_effect(entity: "Entity") -> None:
+    entity.attack += 5
+    entity.defense += 5
+    colorprint(f"{entity.name} is motivated and gains 5 attack!", "yellow")
+    return None
+
+def war_cry_remove(entity: "Entity") -> None:
+    entity.attack -= 10
+    entity.defense -= 10
+    colorprint(f"The war cry has worn off of {entity.name}...", "red")
+    return None
+
+
+def vulnerable_effect(entity: "Entity") -> None:
+    entity.defense -= 30
+    colorprint(f"{entity.name} has their defense lowered by 30...", "red")
+    return None
+
+def vulnerable_remove(entity: "Entity") -> None:
+    entity.defense += 30
+    colorprint(f"{entity.name} is no longer vulnerable.", "green")
+    return None
+
+
+def mana_restore_effect(entity: "Entity") -> None:
+    entity.mana += 100
+    if entity.mana > entity.max_mana:
+        entity.mana = entity.max_mana
+    colorprint(f"{entity.name} gained 100 mana! Current mana: {entity.mana}", "green")
+    return None
+
+
+def frostbite_effect(entity: "Entity") -> None:
+    entity.health -= 8
+    colorprint(f"{entity.name} is frostbitten and takes 8 damage!", "red")
+    return None
+
+def frostbite_remove(entity: "Entity") -> None:
+    colorprint(f"{entity.name} thawed out.", "green")
     return None
 
 
@@ -42,16 +100,43 @@ STATUS_EFFECTS = {
     "poison": StatusEffect(
         name="Poisoned",
         duration=3,
-        effects=poison_effect
+        effects=poison_effect,
+        on_remove=poison_remove
     ),
     "burn": StatusEffect(
         name="Burned",
         duration=2,
-        effects=burn_effect
+        effects=burn_effect,
+        on_remove=burn_reverse
     ),
     "shield": StatusEffect(
         name="Shielded",
         duration=1,
-        effects=shield_effect
+        effects=shield_effect,
+        on_remove=shield_remove
+    ),
+    "war_cry": StatusEffect(
+        name="Motivated",
+        duration=2,
+        effects=war_cry_effect,
+        on_remove=war_cry_remove
+    ),
+    "vulnerable": StatusEffect(
+        name="Vulnerable",
+        duration=1,
+        effects=vulnerable_effect,
+        on_remove=vulnerable_remove
+    ),
+    "mana_restore": StatusEffect(
+        name="Mana Restore",
+        duration=1,
+        effects=mana_restore_effect,
+        on_remove=lambda _: None # Do nothing
+    ),
+    "frostbite": StatusEffect(
+        name="Frostbite",
+        duration=4,
+        effects=frostbite_effect,
+        on_remove=frostbite_remove
     )
 }

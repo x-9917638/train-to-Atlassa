@@ -63,7 +63,7 @@ class CombatSystem(BaseCommandHandler):
         self.allies: list["Ally"] = allies
         self.enemies: list["Enemy"] = enemies
         self.triggered_help = False
-
+        self.num_skills_owed = 0 # Number of skills owed to the player after the battle, +1 skill per level
 
     def postcmd(self, stop, line) -> bool:
         if self.triggered_help: # If we got here because of help or unknown cmd, skip the rest of postcmd.
@@ -71,7 +71,8 @@ class CombatSystem(BaseCommandHandler):
             return False
         
         self._allocate_experience()
-        self.player.check_level_up()
+        if self.player.check_level_up():
+            self.num_skills_owed += 1
 
         if not any(enemy.is_alive() for enemy in self.enemies):
             logger.info("All enemies defeated.")
@@ -235,17 +236,21 @@ class CombatSystem(BaseCommandHandler):
             if skill.mana_cost > self.player.mana: # Print in red / green
                 print(
                     f"""{i + 1}. {Styles.fg.red} {skill.name} 
-(Cost: {skill.mana_cost} MP)
-{skill.description}
-Target: {skill.target.value}{Styles.reset}
+Cost: {skill.mana_cost} MP
+Description: {skill.description}
+Power: {skill.power}
+Target: {skill.target.value}
+Accuracy: {skill.accuracy * 100}%{Styles.reset}
 """
                 )
             else:
                 print(
                     f"""{i + 1}. {Styles.fg.lightgreen} {skill.name} 
-(Cost: {skill.mana_cost} MP)
-{skill.description}
-Target: {skill.target.value}{Styles.reset}
+Cost: {skill.mana_cost} MP
+Description: {skill.description}
+Power: {skill.power}
+Target: {skill.target.value}
+Accuracy: {skill.accuracy * 100}%{Styles.reset}
 """
                 )
         return None

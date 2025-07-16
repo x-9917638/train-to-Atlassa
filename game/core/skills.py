@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 class Skill:
     def __init__(self, name: str, description: str, power: int, 
                  mana_cost: int, target: SkillTarget, accuracy: float = 1.0,
-                 effect: Optional[StatusEffect] = None):
+                 effect: Optional['StatusEffect'] = None):
         self.name = name
         self.description = description
         self.power = power
