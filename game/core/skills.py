@@ -14,8 +14,6 @@
 
 import random as rand
 
-from ..data.effects import STATUS_EFFECTS
-
 from ..utils import SkillTarget
 
 from typing import TYPE_CHECKING, Optional
@@ -74,45 +72,3 @@ def _attack_miss_message(name: str) -> str:
     ]
     return rand.choice(messages)
 
-
-
-
-
-# The list of skills that any entity can use
-GENERAL_SKILLS = [
-    Skill("Tester", "", 10000000, 0, SkillTarget.ALL_ENEMIES),
-    Skill("Basic Attack", "A simple attack", 5, 0, SkillTarget.SINGLE_ENEMY, 0.1),
-    Skill("Power Strike", "A powerful strike", 15, 10, SkillTarget.SINGLE_ENEMY),
-    Skill("God of gambling", "Good Luck!", rand.randint(-1000, 1000), rand.randint(0, 100), rand.choice(list(SkillTarget)), rand.random(), rand.choice(list(STATUS_EFFECTS.values())))
-]
-WARRIOR_SKILLS = [
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-
-]
-
-MAGE_SKILLS = [
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-
-]
-
-ROGUE_SKILLS = [
-    #TODO
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY),
-]
-
-PRIEST_SKILLS = [
-    Skill("Holy Light", "A light that heals", 20, 15, SkillTarget.SINGLE_ALLY),
-    Skill("Divine Shield", "Protects an ally from damage", 0, 20, SkillTarget.SINGLE_ALLY, effect=STATUS_EFFECTS["shield"]),
-    Skill("Placeholder", "Placeholder", 1000, 0, SkillTarget.SINGLE_ENEMY)
-]
-
-ENEMY_SKILLS = [
-    #TODO
-    Skill("Enemy Basic Attack", "A basic attack from an enemy", 1000000, 0, SkillTarget.SINGLE_ENEMY, 0),
-]

@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..core.entities import Entity
 
+
 def shield_effect(entity: "Entity") -> None:
     setattr(entity, "defense", entity.defense + 10) 
     setattr(entity, "health", entity.health + 50)

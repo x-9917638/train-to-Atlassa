@@ -63,7 +63,7 @@ class Player(Entity):
         self.armor: Optional["Armor"] = None
         self.weapon: Optional["Weapon"] = None
         self.inventory: dict["Item", int] = {} # Should store {<Item.name>: <NumItems>}
-        self.skill_deck = GENERAL_SKILLS.copy() # Start with some default skills
+        self.skill_deck: list["Skill"] = GENERAL_SKILLS.copy() # Start with some default skills
         self.skill_hand: list["Skill"] = []
         self.profession: Optional[Professions] = None
         self.allies: list[Ally] = []
