@@ -11,6 +11,8 @@
 #
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# NOTE: Stores secret in file, not for real-world applications.
 from ..utils import Styles, print_error
 import pathlib
 import pickle, hashlib, hmac
@@ -50,6 +52,7 @@ See the GNU Affero General Public License for more details.""")
     with open("./saves/savegame.pkl", "rb") as save_file:
         untrusted_tag: bytes = save_file.read(32)
         if not hmac.compare_digest(untrusted_tag, tag):
+            logger.error("HMAC tag mismatch! Save file may have been tampered with or is corrupted.")
             raise ValueError(f"{Styles.fg.red}The save file may have been tampered with or is corrupted.{Styles.reset}")
         logger.debug("Successfully loaded game data")
         game_data: "GameData" = pickle.load(save_file)
@@ -68,8 +71,11 @@ def handle_save(data: 'GameData') -> None:
 
     # Ensure the saves directory exists
     pathlib.Path("./saves").mkdir(parents=True, exist_ok=True)
+
     with open(pathlib.Path("./saves/savegame.pkl"), "wb") as f:
         f.write(tag) # Add hmac tag for integrity checking
+        logger.debug("HMAC tag written.")
         pickle.dump(data, f) # Save the game data
+        logger.debug("Game data dumped to file.")
     logger.debug("Successfully saved game data")
     return None

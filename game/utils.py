@@ -4,14 +4,14 @@ import cmd
 
 
 
-def typing_print(text, delay: float=0.05):
+def typing_print(text, delay: float=0.01):
     for character in text:
         sys.stdout.write(character)
         sys.stdout.flush()
         time.sleep(delay)
     sys.stdout.write("\n")
     
-def typing_input(text, delay: float=0.05):
+def typing_input(text, delay: float=0.01):
     for character in text:
         sys.stdout.write(character)
         sys.stdout.flush()
