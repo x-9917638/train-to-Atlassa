@@ -412,7 +412,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
         chosen_skill: "Skill" = rand.choice(ally.skill_deck)
         logger.debug(f"Ally {ally.name} chose skill {chosen_skill.name}.")
         targets = self.npc_choose_target(chosen_skill, ally)
-        chosen_skill.use(ally, targets)
+        return chosen_skill.use(ally, targets)
 
 
     def npc_choose_target(self, skill: "Skill", user: "Entity") -> list["Entity"]:
