@@ -242,6 +242,10 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
         clear_stdout()
         equipment = [item for item in self.player.inventory if hasattr(item, "boost")]
         
+        if not equipment:
+            print_error("You have no items to equip.")
+            return None
+
         typing_print("Available items:")
         for i, item in enumerate(equipment, 1):
             print(f"""{Styles.fg.green}{i}. {item.name}

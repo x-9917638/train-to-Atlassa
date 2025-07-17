@@ -56,7 +56,7 @@ SECTION_TWO_ARMOR = { # <Armor>: <Weighted Chance>
     Armor(
         name="Serpentscale Hauberk | <Tier 2>",
         description="A coat of overlapping metallic scales that slithers to deflect blows.",
-        boost_range=(19, 40)
+        boost_range=(19, 20)
     ): 0.25,
     Armor(
         name="Dawnforged Plate | <Tier 2>",
