@@ -198,7 +198,7 @@ Descripion: {skill.description}
 Power: {skill.power}
 Target: {skill.target.value}
 Accuracy: {skill.accuracy * 100}%{Styles.reset}
-""" + f"{Styles.fg.lightgreen}{"Effect: " + skill.effect.name if skill.effect else ""}{Styles.reset}")
+""" + f"{Styles.fg.lightgreen}{"Effect: " + skill.effect.name if skill.effect else ""}{Styles.reset}\n")
                 time.sleep(0.01)
         
         else:
