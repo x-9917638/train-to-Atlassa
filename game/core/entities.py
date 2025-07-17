@@ -181,7 +181,7 @@ class Enemy(Entity):
         self.mana: int = 99999999
         self.description: str = description
         self.section: int = section # The section this enemy belongs to, used for scaling skills
-        self.profession = "ENEMY"
+        self.profession = Professions.ENEMY
         self.create_enemy_skills(num_skills)
         self.exp_amt: int = exp_amt # How much experience this enemy gives when defeated
         

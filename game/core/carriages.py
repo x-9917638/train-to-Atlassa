@@ -144,7 +144,7 @@ class Carriage:
             case CarriageType.ALLY:
                 if rand.choice((True, False)): # 50% chance to add an ally
                     ally_name: str = rand.choice(ALLY_NAMES)
-                    ally_profession: Professions = rand.choice(list(Professions))
+                    ally_profession: Professions = rand.choice([profession in Professions if profession != Professions.ENEMY]) # Exclude ENEMY profession
                     match ally_profession:
                         case Professions.WARRIOR:
                             ally_description: str = rand.choice(DESCRIPTIONS_WARRIOR)
