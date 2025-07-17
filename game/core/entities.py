@@ -15,7 +15,6 @@ from ..data.skills import GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKI
 from  ..utils import Professions
 
 import random, math, logging, copy
-from itertools import chain
 
 from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
