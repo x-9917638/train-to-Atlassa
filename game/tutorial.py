@@ -108,7 +108,7 @@ class TutorialCombat(CombatSystem):
         # Hardcode ally for tutorial
         tutorial_ally: Ally = Ally(name="Blarj",description="The System Guide", level=1, section=1, profession=Professions.MAGE)
         tutorial_player.add_ally(tutorial_ally)
-        tutorial_ally.skill_deck = [(Skill("Delete", "", float("inf"), 0, SkillTarget.ALL_ENEMIES))]
+        tutorial_ally.skill_deck = [(Skill("Delete", "", 9999999999999, 0, SkillTarget.ALL_ENEMIES))]
 
         # Hardcode enemy for tutorial
         tutorial_enemy: list[Enemy] = [Enemy(name="Goblin",description="A typical goblin, weak but numerous.", level=1, section=1, exp_amt=10, num_skills=1)]
