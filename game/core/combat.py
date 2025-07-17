@@ -373,7 +373,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
 
         results = chosen_skill.use(enemy, targets)
         if results[1]:  # If hit
-            colorprint(results[0], "green")
+            colorprint(results[0], "red")
         else:
             colorprint(results[0], "lightgreen")
         return None
