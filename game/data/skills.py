@@ -391,7 +391,7 @@ SECTION_ONE_ENEMY: list[Skill] = [
     Skill(
         name="Enemy Basic Attack",
         description="A basic attack from an enemy",
-        power=40,
+        power=30,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.9
@@ -399,7 +399,7 @@ SECTION_ONE_ENEMY: list[Skill] = [
     Skill(
         name="Ambush | <Tier 1>",
         description="A surprise attack that deals extra damage.",
-        power=80,
+        power=60,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.6
@@ -410,7 +410,7 @@ SECTION_TWO_ENEMY: list[Skill] = [
     Skill(
         name="Savage Bite",
         description="A vicious bite that deals heavy damage.",
-        power=200,
+        power=100,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.85
@@ -418,7 +418,7 @@ SECTION_TWO_ENEMY: list[Skill] = [
     Skill(
         name="Poison Spit",
         description="Spits poison at a single enemy, causing damage over time.",
-        power=300,
+        power=80,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         effect=STATUS_EFFECTS["poison"],
@@ -437,8 +437,8 @@ SECTION_THREE_ENEMY: list[Skill] = [
     ),
     Skill(
         name="Frenzy",
-        description="Attacks multiple times in a single turn.",
-        power=500,
+        description="Attack with a flurry of blows, dealing heavy damage to one enemy.",
+        power=150,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.7
@@ -449,7 +449,7 @@ SECTION_FOUR_ENEMY: list[Skill] = [
     Skill(
         name="Dark Pulse",
         description="A wave of dark energy hits all enemies.",
-        power=1200,
+        power=300,
         mana_cost=0,
         target=SkillTarget.ALL_ENEMIES,
         accuracy=0.75
