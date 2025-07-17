@@ -176,7 +176,7 @@ class Player(Entity):
 
 class Enemy(Entity):
     def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int, section: int):
-        health, attack, defense = (level * 100, level * 5, level * 5)
+        health, attack, defense = (level * 65, level * 3, level * 3)
         super().__init__(name, health, attack, defense)
         self.mana: int = 99999999
         self.description: str = description
@@ -197,7 +197,7 @@ class Enemy(Entity):
 
 class Ally(Entity):
     def __init__(self, name: str, description:str, level:int, section: int, profession: Professions):
-        health, attack, defense = (level * 100, level * 5, level * 5)
+        health, attack, defense = (level * 65, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
         self.description: str = description
         self.mana: int = 999999999
