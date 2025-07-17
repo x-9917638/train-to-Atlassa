@@ -360,14 +360,20 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
 
     def _enemy_action(self, enemy: "Enemy") -> None:
         # Check for any skills that will kill the player, if none found just choose a random skill
-        fatal_skills = [skill for skill in enemy.skill_deck if (enemy.attack + skill.power) >= self.player.health]
+        fatal_skills = [skill for skill in enemy.skill_deck if max(1, enemy.attack // 6) * skill.power >= self.player.health]
         DESCRIPTION = 0 # No magic numbers!
         if any(fatal_skills):
+            chosen_skill = rand.choice(fatal_skills)
+            targets = self.npc_choose_target(chosen_skill, enemy)
             logger.debug(f"Enemy {enemy.name} detected and used a fatal skill")
-            print_error(rand.choice(fatal_skills).use(enemy, [self.player])[DESCRIPTION])
+
         else:
+            chosen_skill = rand.choice(enemy.skill_deck)
+            targets = self.npc_choose_target(chosen_skill, enemy)
             logger.debug(f"Enemy {enemy.name} chose a random skill.")
-            print_error(rand.choice(enemy.skill_deck).use(enemy, [self.player])[DESCRIPTION])
+
+        results = chosen_skill.use(enemy, targets)
+        print_error(results[DESCRIPTION])
         return None
 
 
@@ -376,7 +382,11 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             logger.info("No allies to take a turn.")
             return None
         
-        for ally in self.allies:
+        for ally in self.allies.copy():
+            if not ally.is_alive:
+                self.allies.remove(ally)
+                self.player.allies.remove(ally)
+                continue
             # Do status effects
             [effect.apply(ally) for effect in ally.effects if ally.effects]
 
@@ -384,6 +394,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
         
         logger.info("Allies have taken their turn.")
         return None
+
 
     def _ally_action(self, ally: "Ally") -> None:
         results = self._use_ally_skill(ally)
@@ -400,35 +411,41 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
         """
         chosen_skill: "Skill" = rand.choice(ally.skill_deck)
         logger.debug(f"Ally {ally.name} chose skill {chosen_skill.name}.")
-        match ally.profession:
-            case Professions.PRIEST:
-                if chosen_skill.target == SkillTarget.SINGLE_ALLY:
-                    logger.debug(f"Ally {ally.name} chose target {self.player.name}.")
-                    return chosen_skill.use(ally, [self.player])
-                
-                elif chosen_skill.target == SkillTarget.ALL_ALLIES:
-                    allies = self.allies.copy()
-                    allies.append(self.player)
-                    logger.debug(f"Ally {ally.name} chose targets {" ".join(ally.name for ally in allies)}.")
-                    return chosen_skill.use(ally, allies)
-                
-                # Target = Self
-                logger.debug(f"Ally {ally.name} chose self as target.")
-                return chosen_skill.use(ally, [ally])
-                
-            case Professions.WARRIOR | Professions.ROGUE | Professions.MAGE:
-                if chosen_skill.target == SkillTarget.SINGLE_ENEMY:
-                    chosen_enemy = rand.choice(self.enemies)
-                    logger.debug(f"Ally {ally.name} chose target {chosen_enemy.name}.")
-                    return chosen_skill.use(ally, [chosen_enemy])
-                
-                # Target = All Enemies
-                logger.debug(f"Ally {ally.name} chose targets {" ".join(enemy.name for enemy in self.enemies)}.")
-                return chosen_skill.use(ally, self.enemies)
+        targets = self.npc_choose_target(chosen_skill, ally)
+        chosen_skill.use(ally, targets)
 
-            case _:
-                raise ValueError(
-                    f"Unknown profession: {ally.profession}\n This should never happen. Please report this.")
+
+    def npc_choose_target(self, skill: "Skill", user: "Entity") -> list["Entity"]:
+        allies = self.allies.copy()
+        allies.append(self.player)
+        match skill.target:
+            case SkillTarget.SINGLE_ALLY: # Only used by allies
+                logger.debug(f"Ally {user.name} chose target {self.player.name}.")
+                return [self.player]
+            
+            case SkillTarget.ALL_ALLIES: # Only used by allies
+                logger.debug(f"Ally {user.name} chose targets {" ".join(ally.name for ally in allies)}.")
+                return allies
+            
+            case SkillTarget.SELF: # Only used by allies
+                logger.debug(f"Ally {user.name} chose self as target.")
+                return [user]
+            
+            case SkillTarget.SINGLE_ENEMY:
+                if user.profession != Professions.ENEMY:
+                    chosen_enemy = rand.choice(self.enemies)
+                    logger.debug(f"Ally {user.name} chose target {chosen_enemy.name}.")
+                else:
+                    chosen_enemy = rand.choice([friendly_entity for friendly_entity in allies])
+                    logger.debug(f"Enemy {user.name} chose target {chosen_enemy.name}.")
+                return [chosen_enemy]
+            
+            case SkillTarget.ALL_ENEMIES:
+                if user.profession != Professions.ENEMY:
+                    return self.enemies
+                
+                logger.debug(f"Ally {user.name} chose targets {" ".join(enemy.name for enemy in self.enemies)}.")
+                return [friendly_entity for friendly_entity in allies]
 
 
     def _display_allies(self) -> str:

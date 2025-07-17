@@ -272,6 +272,7 @@ Boost: {item.boost}{Styles.reset}""")
     def _use_item(self) -> None:
         clear_stdout()
         consumables = [item for item in self.player.inventory if hasattr(item, "effect")]
+        
         if not consumables:
             print_error("You have no consumables to use.")
             return None
