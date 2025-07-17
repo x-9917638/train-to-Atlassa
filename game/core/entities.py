@@ -43,7 +43,7 @@ class Entity: # Abstract base class for all entities in the game
     
     def take_damage(self, amount: int) -> int:
         """Calculate the damage the character takes, after defense."""
-        actual_damage: int = max(1, amount - self.defense // 4)
+        actual_damage: int = max(1, amount - self.defense // 3)
         self.health -= actual_damage
         return actual_damage
     
