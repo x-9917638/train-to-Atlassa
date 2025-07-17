@@ -46,6 +46,7 @@ def start_tutorial():
     """Introduce the player to the game."""
 
     typing_print("Press [ESC] to skip the tutorial at any time!", delay=0.01)
+    typing_print("Press any key to continue...", delay=0.01)
     if getch() == ESC_KEY: return
 
     logging.info("Starting tutorial...")
@@ -57,9 +58,9 @@ def start_tutorial():
     
     if getch() == ESC_KEY: return
     if sys.platform == "win32":
-        typing_print("Note: autocompletions are not available on Windows.\nPress any key to continue...", delay=0.01)
+        typing_print("Note: autocompletions are not available on Windows.", delay=0.01)
     else:
-        typing_print("Autocompletions are available with [TAB]!\nPress any key to continue...", delay=0.01)
+        typing_print("Autocompletions are available with [TAB]!", delay=0.01)
     
     if getch() == ESC_KEY: return
     typing_print("After saving the Grand City of Citadel, you, the Hero, board the Train to Atlassa...", delay=0.01)
@@ -105,12 +106,12 @@ class TutorialCombat(CombatSystem):
         tutorial_player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=STATUS_EFFECTS["poison"])]
         
         # Hardcode ally for tutorial
-        tutorial_ally: Ally = Ally("Blarj", "The System Guide", 1, Professions.MAGE)
+        tutorial_ally: Ally = Ally(name="Blarj",description="The System Guide", level=1, section=1, profession=Professions.MAGE)
         tutorial_player.add_ally(tutorial_ally)
-        tutorial_ally.skill_deck = [(Skill("Smite", "", 100000000, 0, SkillTarget.ALL_ENEMIES))]
+        tutorial_ally.skill_deck = [(Skill("Delete", "", float("inf"), 0, SkillTarget.ALL_ENEMIES))]
 
         # Hardcode enemy for tutorial
-        tutorial_enemy: list[Enemy] = [Enemy("Goblin", "A typical goblin, weak but numerous.", 1, 10, 1)]
+        tutorial_enemy: list[Enemy] = [Enemy(name="Goblin",description="A typical goblin, weak but numerous.", level=1, section=1, exp_amt=10, num_skills=1)]
 
         super().__init__(tutorial_player, tutorial_player.allies, tutorial_enemy)
 

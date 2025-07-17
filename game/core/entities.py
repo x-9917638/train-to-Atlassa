@@ -55,8 +55,10 @@ class Entity: # Abstract base class for all entities in the game
     def is_alive(self) -> bool:
         return self.health > 0
     
-    def _give_new_skills(self, num_skills: int) -> None:        
-        profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[self.profession.value]) 
+    def _give_new_skills(self, num_skills: int) -> None:     
+        if not self.profession:
+            return None   
+        profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[f"{self.profession.value.upper()}_SKILLS"]) 
         skill_pool: list["Skill"] = []
         for i in range(1, self.section + 1):
             skill_pool.extend(profession_skills[i])
@@ -179,9 +181,10 @@ class Enemy(Entity):
         self.mana: int = 99999999
         self.description: str = description
         self.section: int = section # The section this enemy belongs to, used for scaling skills
+        self.profession = Professions.ENEMY
         self.create_enemy_skills(num_skills)
         self.exp_amt: int = exp_amt # How much experience this enemy gives when defeated
-        self.profession = Professions.ENEMY
+        
     
     
     def create_enemy_skills(self, amount: int) -> None:
