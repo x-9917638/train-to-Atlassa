@@ -179,7 +179,7 @@ class Carriage:
 
     def generate_items(self) -> None:
         # Choose num items
-        num_items: int = rand.choice((0, 0, 0, 1, 2))
+        num_items: int = rand.choice((3, 1, 2))
         items = self._choose_items(num_items)
         logger.debug(f"Generated {num_items} items for carriage {self.name} in section {self.section}.")
         self.items.extend(items)

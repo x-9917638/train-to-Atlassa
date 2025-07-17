@@ -118,7 +118,6 @@ class Consumable(Item):
 
     def consume(self, player: "Player") -> None:
         logger.debug(f"Consuming item {self.name} for player {player.name}.")
-        player.remove_item_from_inventory(self)
         self.effect(player)
         typing_print(self.consume_msg)
         return None
