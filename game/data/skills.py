@@ -387,19 +387,30 @@ PRIEST_SKILLS: dict[int, list[Skill]] = {
     4: SECTION_FOUR_PRIEST,
 }
 
-ENEMY_SKILLS = [
+SECTION_ONE_ENEMY: list[Skill] = [
     Skill(
         name="Enemy Basic Attack",
         description="A basic attack from an enemy",
-        power=400,
+        power=40,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.9
     ),
     Skill(
+        name="Ambush | <Tier 1>",
+        description="A surprise attack that deals extra damage.",
+        power=80,
+        mana_cost=0,
+        target=SkillTarget.SINGLE_ENEMY,
+        accuracy=0.6
+    )
+]
+
+SECTION_TWO_ENEMY: list[Skill] = [
+    Skill(
         name="Savage Bite",
         description="A vicious bite that deals heavy damage.",
-        power=2000,
+        power=200,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.85
@@ -407,19 +418,22 @@ ENEMY_SKILLS = [
     Skill(
         name="Poison Spit",
         description="Spits poison at a single enemy, causing damage over time.",
-        power=800,
+        power=300,
         mana_cost=0,
         target=SkillTarget.SINGLE_ENEMY,
         effect=STATUS_EFFECTS["poison"],
         accuracy=0.8
     ),
+]
+
+SECTION_THREE_ENEMY: list[Skill] = [
     Skill(
         name="Howl",
         description="A terrifying howl that lowers all enemies' defenses.",
         power=0,
         mana_cost=0,
         target=SkillTarget.ALL_ENEMIES,
-        effect=STATUS_EFFECTS["vulnerable"]
+        effect=STATUS_EFFECTS["long_vulnerable"],
     ),
     Skill(
         name="Frenzy",
@@ -429,6 +443,9 @@ ENEMY_SKILLS = [
         target=SkillTarget.SINGLE_ENEMY,
         accuracy=0.7
     ),
+]
+
+SECTION_FOUR_ENEMY: list[Skill] = [
     Skill(
         name="Dark Pulse",
         description="A wave of dark energy hits all enemies.",
@@ -438,3 +455,10 @@ ENEMY_SKILLS = [
         accuracy=0.75
     ),
 ]
+
+ENEMY_SKILLS: dict[int, list[Skill]] = {
+    1: SECTION_ONE_ENEMY,
+    2: SECTION_TWO_ENEMY,
+    3: SECTION_THREE_ENEMY,
+    4: SECTION_FOUR_ENEMY,
+}

@@ -181,11 +181,14 @@ class Enemy(Entity):
         self.section: int = section # The section this enemy belongs to, used for scaling skills
         self.create_enemy_skills(num_skills)
         self.exp_amt: int = exp_amt # How much experience this enemy gives when defeated
+        self.profession = Professions.ENEMY
     
     
     def create_enemy_skills(self, amount: int) -> None:
         self._give_new_skills(amount)
         return None
+    
+    
 
 
 

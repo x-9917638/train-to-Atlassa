@@ -187,5 +187,11 @@ STATUS_EFFECTS = {
         duration=3,
         effects=blessing_effect,
         on_remove=blessing_remove
-    )
+    ),
+    "long_vulnerable": StatusEffect(
+        name="Vulnerable",
+        duration=3,
+        effects=vulnerable_effect,
+        on_remove=vulnerable_remove
+    ),
 }
