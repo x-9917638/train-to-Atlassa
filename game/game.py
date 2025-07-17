@@ -110,16 +110,15 @@ class Game:
             self.game_over = True
             return None
 
-        # Check if combat resulted in boss defeat
-        if self.current_carriage.type.value == "Boss Room" and not any(enemy.is_alive() for enemy in enemies):
-            self._handle_boss_defeat()
-            return None
-
         num_skills: int = combat_system.num_skills_owed 
         if num_skills > 0:
             colorprint(f"You have earned {num_skills} new skill{'s' if num_skills > 1 else ''}!", "lightgreen")
             self.player._give_new_skills(num_skills)
-            
+     
+        # Check if combat resulted in boss defeat
+        if self.current_carriage.type.value == "Boss Room" and not any(enemy.is_alive() for enemy in enemies):
+            self._handle_boss_defeat()
+            return None       
         self._show_info()
         
         return None
