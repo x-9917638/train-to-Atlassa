@@ -14,7 +14,7 @@
 from ..data.skills import GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS
 from  ..utils import Professions
 
-import random, math, logging
+import random, math, logging, copy
 from itertools import chain
 
 from typing import TYPE_CHECKING, Optional
@@ -38,6 +38,8 @@ class Entity: # Abstract base class for all entities in the game
         self.max_mana: int = 0
         self.skill_deck: list["Skill"] = []
         self.effects: list["StatusEffect"] = [] # Status effects
+        self.profession: Optional[Professions] = None # Profession of the entity, if applicable
+        self.section: int = 1
     
     def take_damage(self, amount: int) -> int:
         """Calculate the damage the character takes, after defense."""
@@ -52,6 +54,18 @@ class Entity: # Abstract base class for all entities in the game
     
     def is_alive(self) -> bool:
         return self.health > 0
+    
+    def _give_new_skills(self, num_skills: int) -> None:        
+        profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[self.profession.value]) 
+        skill_pool: list["Skill"] = []
+        for i in range(1, self.section + 1):
+            skill_pool.extend(profession_skills[i])
+        
+        num_skills = min(num_skills, len(skill_pool))  # Ensure we don't try to get more skills than available
+
+        self.skill_deck.extend(random.sample(skill_pool, k=num_skills))
+        
+        return None
 
 
 
@@ -62,7 +76,6 @@ class Player(Entity):
         self.experience: int = 0
         self.max_mana: int = 50
         self.mana: int = 50
-        self.current_floor: int = 0
         self.current_carriage: Optional["Carriage"] = None
         self.armor: Optional["Armor"] = None
         self.weapon: Optional["Weapon"] = None
@@ -144,18 +157,6 @@ class Player(Entity):
         self.effects = [] 
         return None
 
-
-    def get_new_skill(self) -> "Skill":
-        """
-        Get a new skill from the general skills list.
-        This is used when the player levels up.
-        """
-        if not self.profession:
-            raise Exception
-        skill_pool = globals()[f"{self.profession.value.upper()}_SKILLS"]
-        new_skill: "Skill" = random.choice(skill_pool)
-        return new_skill
-
     
     def discard_skill(self, skill: "Skill") -> None:
         if skill in self.skill_hand:
@@ -172,48 +173,35 @@ class Player(Entity):
 
 
 class Enemy(Entity):
-    def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int):
+    def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int, section: int):
         health, attack, defense = (level * 100, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
-        self.mana = 99999
+        self.mana: int = 99999999
         self.description: str = description
-        self.skill_deck = self.create_enemy_skills(num_skills)
+        self.section: int = section # The section this enemy belongs to, used for scaling skills
+        self.create_enemy_skills(num_skills)
         self.exp_amt: int = exp_amt # How much experience this enemy gives when defeated
     
     
-    def create_enemy_skills(self, amount: int) -> list["Skill"]:
-        skills = random.choices(ENEMY_SKILLS, k=amount)
-        return skills
+    def create_enemy_skills(self, amount: int) -> None:
+        self._give_new_skills(amount)
+        return None
 
 
 
 class Ally(Entity):
-    def __init__(self, name: str, description:str, level:int, profession: Professions):
+    def __init__(self, name: str, description:str, level:int, section: int, profession: Professions):
         health, attack, defense = (level * 100, level * 5, level * 5)
         super().__init__(name, health, attack, defense)
         self.description: str = description
-        self.mana = 99999
+        self.mana: int = 999999999
         self.profession: Professions = profession
+        self.section: int = section
 
     
     def generate_skills(self) -> None:
-        
         num_skills = random.randint(1, 3)
-        
-        match self.profession:
-            case Professions.WARRIOR:
-                skill_pool: list["Skill"] = list(chain.from_iterable(WARRIOR_SKILLS.values())) # Flatten the dict values
-                self.skill_deck = random.choices(skill_pool, k=num_skills)
-            case Professions.MAGE:
-                skill_pool: list["Skill"] = list(chain.from_iterable(MAGE_SKILLS.values()))
-                self.skill_deck = random.choices(skill_pool, k=num_skills)
-            case Professions.ROGUE:
-                skill_pool: list["Skill"] = list(chain.from_iterable(ROGUE_SKILLS.values()))
-                self.skill_deck = random.choices(skill_pool, k=num_skills)
-            case Professions.PRIEST:
-                # Priest is only for allys so kept as a list and not dict seperated by floors
-                self.skill_deck = random.choices(PRIEST_SKILLS, k=num_skills)
-            case _:
-                raise ValueError(f"Unknown ally profession: {self.profession}")
+        self._give_new_skills(num_skills)
         return None
+
 

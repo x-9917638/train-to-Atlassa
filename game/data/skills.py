@@ -299,63 +299,142 @@ ROGUE_SKILLS: dict[int, list[Skill]] = {
     4: SECTION_FOUR_ROGUE,
 }
 
-PRIEST_SKILLS = [
+SECTION_ONE_PRIEST: list[Skill] = [
     Skill(
-        name="Holy Light",
-        description="A light that heals",
-        power=160,
-        mana_cost=15,
+        name="Holy Light | <Tier 1>",
+        description="A light that heals a single ally.",
+        power=80,
+        mana_cost=10,
         target=SkillTarget.SINGLE_ALLY
     ),
     Skill(
-        name="Divine Shield",
-        description="Protects an ally from damage",
+        name="Smite | <Tier 1>",
+        description="A holy attack that deals damage to a single enemy.",
+        power=100,
+        mana_cost=8,
+        target=SkillTarget.SINGLE_ENEMY
+    ),
+    Skill(
+        name="Blessing | <Tier 1>",
+        description="A blessing that increases an ally's defense.",
+        power=0,
+        mana_cost=5,
+        target=SkillTarget.SINGLE_ALLY,
+        effect=STATUS_EFFECTS["blessing"]
+    ),
+]
+
+SECTION_TWO_PRIEST: list[Skill] = [
+    Skill(
+        name="Mass Heal | <Tier 2>",
+        description="Heals all allies.",
+        power=160,
+        mana_cost=20,
+        target=SkillTarget.ALL_ALLIES
+    ),
+    Skill(
+        name="Divine Shield | <Tier 2>",
+        description="Protects an ally from damage.",
         power=0,
         mana_cost=20,
         target=SkillTarget.SINGLE_ALLY,
         effect=STATUS_EFFECTS["shield"]
     ),
+]
+
+SECTION_THREE_PRIEST: list[Skill] = [
     Skill(
-        name="Mass Heal",
-        description="Heals all allies.",
-        power=120,
-        mana_cost=30,
-        target=SkillTarget.ALL_ALLIES
+        name="Sanctuary | <Tier 3>",
+        description="Heals and greatly reduces damage taken by all allies.",
+        power=250,
+        mana_cost=40,
+        target=SkillTarget.ALL_ALLIES,
+        effect=STATUS_EFFECTS["shield"]
     ),
     Skill(
-        name="Purify",
+        name="Purify | <Tier 3>",
         description="Removes all negative effects from an ally.",
         power=0,
         mana_cost=10,
         target=SkillTarget.SINGLE_ALLY,
         effect=STATUS_EFFECTS["purify"]
     ),
+]
+
+SECTION_FOUR_PRIEST: list[Skill] = [
     Skill(
-        name="Smite",
-        description="A holy attack that deals damage to a single enemy.",
-        power=200,
-        mana_cost=12,
-        target=SkillTarget.SINGLE_ENEMY
-    ),
-    Skill(
-        name="Sanctuary",
-        description="Greatly reduces damage taken by all allies for a short time.",
-        power=0,
-        mana_cost=40,
-        target=SkillTarget.ALL_ALLIES,
-        effect=STATUS_EFFECTS["shield"]
-    ),
-    Skill(
-        name="Full Heal",
+        name="Full Heal | <Tier 4>",
         description="Heals a single ally to full health.",
         power=0,
         mana_cost=50,
         target=SkillTarget.SINGLE_ALLY,
         effect=STATUS_EFFECTS["full_heal"]
     ),
+    Skill(
+        name="Divine Retribution | <Tier 4>",
+        description="Calls upon the wrath of the gods to punish those that are evil.",
+        power=600,
+        mana_cost=100,
+        target=SkillTarget.ALL_ENEMIES,
+        effect=STATUS_EFFECTS["burn"]
+    ),
 ]
 
+PRIEST_SKILLS: dict[int, list[Skill]] = {
+    1: SECTION_ONE_PRIEST,
+    2: SECTION_TWO_PRIEST,
+    3: SECTION_THREE_PRIEST,
+    4: SECTION_FOUR_PRIEST,
+}
+
 ENEMY_SKILLS = [
-    #TODO
-    Skill("Enemy Basic Attack", "A basic attack from an enemy", 1000000, 0, SkillTarget.SINGLE_ENEMY, 0),
+    Skill(
+        name="Enemy Basic Attack",
+        description="A basic attack from an enemy",
+        power=400,
+        mana_cost=0,
+        target=SkillTarget.SINGLE_ENEMY,
+        accuracy=0.9
+    ),
+    Skill(
+        name="Savage Bite",
+        description="A vicious bite that deals heavy damage.",
+        power=2000,
+        mana_cost=0,
+        target=SkillTarget.SINGLE_ENEMY,
+        accuracy=0.85
+    ),
+    Skill(
+        name="Poison Spit",
+        description="Spits poison at a single enemy, causing damage over time.",
+        power=800,
+        mana_cost=0,
+        target=SkillTarget.SINGLE_ENEMY,
+        effect=STATUS_EFFECTS["poison"],
+        accuracy=0.8
+    ),
+    Skill(
+        name="Howl",
+        description="A terrifying howl that lowers all enemies' defenses.",
+        power=0,
+        mana_cost=0,
+        target=SkillTarget.ALL_ENEMIES,
+        effect=STATUS_EFFECTS["vulnerable"]
+    ),
+    Skill(
+        name="Frenzy",
+        description="Attacks multiple times in a single turn.",
+        power=500,
+        mana_cost=0,
+        target=SkillTarget.SINGLE_ENEMY,
+        accuracy=0.7
+    ),
+    Skill(
+        name="Dark Pulse",
+        description="A wave of dark energy hits all enemies.",
+        power=1200,
+        mana_cost=0,
+        target=SkillTarget.ALL_ENEMIES,
+        accuracy=0.75
+    ),
 ]

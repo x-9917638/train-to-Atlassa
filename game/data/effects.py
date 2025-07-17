@@ -101,7 +101,7 @@ def purify_effect(entity: "Entity") -> None:
     colorprint(f"{entity.name} has been purified and all status effects have been removed!", "green")
     return None
 
-def purify_remove(entity: "Entity") -> None:
+def purify_remove(entity: "Entity") -> None: # Param here is just for type hints to not scream at me
     # No need to do anything
     return None
 
@@ -111,8 +111,19 @@ def full_heal_effect(entity: "Entity") -> None:
     colorprint(f"{entity.name} has been fully healed!", "green")
     return None
 
-def full_heal_remove(entity: "Entity") -> None:
+def full_heal_remove(entity: "Entity") -> None: # Param here is just for type hints to not scream at me
     # No need to do anything
+    return None
+
+
+def blessing_effect(entity: "Entity") -> None:
+    entity.defense += 10
+    colorprint(f"{entity.name} is blessed by the gods and gains 10 defense!", "green")
+    return None
+
+def blessing_remove(entity: "Entity") -> None:
+    entity.defense -= 30
+    colorprint(f"{entity.name}'s blessing has worn off and they lose 30 defense.", "red")
     return None
 
 
@@ -170,5 +181,11 @@ STATUS_EFFECTS = {
         duration=1,
         effects=full_heal_effect,
         on_remove=full_heal_remove
+    ),
+    "blessing": StatusEffect(
+        name="Blessed",
+        duration=3,
+        effects=blessing_effect,
+        on_remove=blessing_remove
     )
 }

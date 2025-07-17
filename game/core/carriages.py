@@ -142,7 +142,7 @@ class Carriage:
                 self._add_enemy(enemies)
 
             case CarriageType.ALLY:
-                if rand.choice((True, False)):
+                if rand.choice((True, False)): # 50% chance to add an ally
                     ally_name: str = rand.choice(ALLY_NAMES)
                     ally_profession: Professions = rand.choice(list(Professions))
                     match ally_profession:
@@ -154,7 +154,7 @@ class Carriage:
                             ally_description: str = rand.choice(DESCRIPTIONS_ROGUE)
                         case Professions.PRIEST:
                             ally_description: str = rand.choice(DESCRIPTIONS_PRIEST)
-                    self._add_ally(Ally(name=ally_name, description=ally_description, level=rand.randint(1, 8), profession=ally_profession)) # Possibility of duplicate, but it's so low so whatever
+                    self._add_ally(Ally(name=ally_name, description=ally_description, level=rand.randint(1, 8), section=self.section, profession=ally_profession)) # Possibility of duplicate, but it's so low so whatever
 
             case CarriageType.CHALLENGE:
                 enemies: list["Enemy"] = self._choose_enemies(rand.randint(3, 4))

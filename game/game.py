@@ -117,29 +117,14 @@ class Game:
 
         num_skills: int = combat_system.num_skills_owed 
         if num_skills > 0:
-            self._give_new_skills(num_skills)
+            colorprint(f"You have earned {num_skills} new skill{'s' if num_skills > 1 else ''}!", "lightgreen")
+            self.player._give_new_skills(num_skills)
             
         self._show_info()
         
         return None
 
 
-    def _give_new_skills(self, num_skills: int) -> None:
-        colorprint(f"You have earned {num_skills} new skill{'s' if num_skills > 1 else ''}!", "lightgreen")
-        
-        profession: str = f"{self.player.profession.value.upper()}_SKILLS"
-        profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[profession])
-        
-        skill_pool: list["Skill"] = []
-        for i in range(1, self.current_section.number + 1):
-            skill_pool.extend(profession_skills[i])
-        
-        num_skills = min(num_skills, len(skill_pool))  # Ensure we don't try to get more skills than available
-
-        new_skills: list["Skill"] = random.sample(skill_pool, k=num_skills)
-        self.player.add_skills_to_deck(new_skills)
-        
-        return None
 
 
     def _handle_boss_defeat(self) -> None:
