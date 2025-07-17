@@ -154,6 +154,8 @@ class Carriage:
                             ally_description: str = rand.choice(DESCRIPTIONS_ROGUE)
                         case Professions.PRIEST:
                             ally_description: str = rand.choice(DESCRIPTIONS_PRIEST)
+                        case _:
+                            raise ValueError(f"Unknown profession: {ally_profession}")
                     self._add_ally(Ally(name=ally_name, description=ally_description, level=rand.randint(1, 8), section=self.section, profession=ally_profession)) # Possibility of duplicate, but it's so low so whatever
 
             case CarriageType.CHALLENGE:

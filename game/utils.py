@@ -38,7 +38,6 @@ class Professions(Enum):
     MAGE = "Mage"
     ROGUE = "Rogue"
     PRIEST = "Priest"
-    ENEMY = "Enemy"  # Special case for enemies, not a player profession
 
 class CombatCommand(Enum):
     FIGHT = "attack"
