@@ -361,7 +361,6 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
     def _enemy_action(self, enemy: "Enemy") -> None:
         # Check for any skills that will kill the player, if none found just choose a random skill
         fatal_skills = [skill for skill in enemy.skill_deck if max(1, enemy.attack // 6) * skill.power >= self.player.health]
-        DESCRIPTION = 0 # No magic numbers!
         if any(fatal_skills):
             chosen_skill = rand.choice(fatal_skills)
             targets = self.npc_choose_target(chosen_skill, enemy)
@@ -373,7 +372,10 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             logger.debug(f"Enemy {enemy.name} chose a random skill.")
 
         results = chosen_skill.use(enemy, targets)
-        print_error(results[DESCRIPTION])
+        if results[1]:  # If hit
+            colorprint(results[0], "green")
+        else:
+            colorprint(results[0], "lightgreen")
         return None
 
 
