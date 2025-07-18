@@ -126,20 +126,8 @@ class Carriage:
 
             case CarriageType.ALLY:
                 if rand.choice((True, False)): # 50% chance to add an ally
-                    ally_name: str = rand.choice(ALLY_NAMES)
-                    ally_profession: Professions = rand.choice([profession for profession in Professions if profession != Professions.ENEMY]) # Exclude ENEMY profession
-                    match ally_profession:
-                        case Professions.WARRIOR:
-                            ally_description: str = rand.choice(DESCRIPTIONS_WARRIOR)
-                        case Professions.MAGE:
-                            ally_description: str = rand.choice(DESCRIPTIONS_MAGE)
-                        case Professions.ROGUE:
-                            ally_description: str = rand.choice(DESCRIPTIONS_ROGUE)
-                        case Professions.PRIEST:
-                            ally_description: str = rand.choice(DESCRIPTIONS_PRIEST)
-                        case _:
-                            raise ValueError(f"Unknown profession: {ally_profession}")
-                    self._add_ally(Ally(name=ally_name, description=ally_description, level=rand.randint(1, 8), section=self.section, profession=ally_profession)) # Possibility of duplicate, but it's so low so whatever
+                    ally = self._make_ally()
+                    self._add_ally(ally) # Possibility of duplicate, but it's so low so whatever
 
             case CarriageType.CHALLENGE:
                 enemies: list["Enemy"] = self._choose_enemies(rand.randint(3, 4))
@@ -152,6 +140,34 @@ class Carriage:
                 self._add_enemy(bosses)
 
         return None
+
+
+    def _make_ally(self) -> Ally:
+        ally_name: str = rand.choice(ALLY_NAMES)
+        ally_profession: Professions = rand.choice([profession for profession in Professions if profession != Professions.ENEMY]) # Exclude ENEMY profession
+        match ally_profession:
+            case Professions.WARRIOR:
+                ally_description: str = rand.choice(DESCRIPTIONS_WARRIOR)
+            case Professions.MAGE:
+                ally_description: str = rand.choice(DESCRIPTIONS_MAGE)
+            case Professions.ROGUE:
+                ally_description: str = rand.choice(DESCRIPTIONS_ROGUE)
+            case Professions.PRIEST:
+                ally_description: str = rand.choice(DESCRIPTIONS_PRIEST)
+            case _:
+                raise ValueError(f"Unknown profession: {ally_profession}")
+        match self.section:
+            case 1:
+                ally_level: int = rand.randint(1, 2)
+            case 2:
+                ally_level: int = rand.randint(2, 4)
+            case 3:
+                ally_level: int = rand.randint(4, 6)
+            case 4:
+                ally_level: int = rand.randint(6, 8)
+            case _:
+                raise ValueError(f"Unknown section: {self.section}")
+        return Ally(name=ally_name, description=ally_description, level=ally_level, section=self.section, profession=ally_profession)
 
 
     def _choose_enemies(self, num_enemies: int) -> list["Enemy"]:

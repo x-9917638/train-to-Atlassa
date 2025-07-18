@@ -78,14 +78,17 @@ Available Commands:
 
 
 # Mechanics
-## General Mechanics
-### Professions
-### Skills
-### Items
-#### Weapons
-#### Consumables
-#### Armor
-## Combat Mechanics
+## Professions
+## Skills
+## Status Effects
+## Combat
+## Enemies
+## Allies
+## Items
+### Weapons
+### Consumables
+### Armor
+
 
 # Story
 TODO
