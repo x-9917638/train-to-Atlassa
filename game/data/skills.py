@@ -33,7 +33,7 @@ GENERAL_SKILLS = [
         target=SkillTarget.SINGLE_ENEMY
     ),
     Skill(
-        name="God of gambling | <Tier ???>", 
+        name="Gambling Fever | <Tier ???>", 
         description="Good Luck!", 
         power=random.randint(-8000, 8000), 
         mana_cost=random.randint(0, 100), 

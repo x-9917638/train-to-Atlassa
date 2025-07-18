@@ -79,12 +79,84 @@ Available Commands:
 
 # Mechanics
 ## Professions
+Train to Atlassa has 4 professions: Rogue, Warrior, Mage, Priest
+
+The priest profession is limited to NPC allys.
+
+Professions influence the stats and skills of the player.
+- Warrior: 
+  - High Defense, High Health
+  - Specialises in crowd control skills
+- Rogue:
+  - Very High Attack
+  - Specialises in high damage, single target skills
+- Mage:
+  - High mana, High Attack
+  - Skills are all-rounded
+
+
 ## Skills
+There are a variety of skills in Train to Atlasssa, and each class has their own dedicated skills
+
+The player also begins with 2 default skills: Gambling Fever, and Basic Attack
+
+Skills have 4 stats:
+- Power: Influences the amount of damage/healing done by the skill
+- Mana Cost: The amount of mana required to use the skills
+- Target(s): The targets of the skill. (Single Enemy/Ally, All Enemies/Allies, Self)
+- Accuracy: How likely the attack is to hit
+- Effect: Any additional effects that the skill inflicts.
+
+## Items
+Items are scattered amongst carriages in Train to Atlassa, and the player can attempt to find them using the *explore* command. 
+
+Items are split into 3 categories: Armor, Weapons, Consumables.
+
+Armor and weapons have a *boost* stat. This stat determines how effective the item is.
+- Armor: 
+  - Adds *boost* amount of defense
+  - Adds 100 x *boost* amount of max health
+- Weapons:
+  - Adds *boost* amount of attack
+  - Adds 100 x *boost* amount of max mana
+- Consumables:
+  - Each consumable has a unique effect. 
+  - In most cases, the description should tell the player what the consumable will do.
+
 ## Status Effects
+Status effects take effect at the start of the Entity's turn.
+Train to Atlassa implements multiple status effects:
+- Poison:
+  - Lasts 3 turns
+  - -5% max HP each turn
+- Burn:
+  - Lasts 2 turns
+  - -10% max HP each turn
+- Shield:
+  - Lasts 1 turn
+  - +10 Defense, +50 HP
+- Motivated:
+  - Lasts 2 turns
+  - Each turn, +5 Attack, +5 Defense
+- Vulnerable:
+  - Each turn, -30 Defense
+- Frostbite
+  - Lasts 
+  - -8% max HP each turn
+- Purified:
+  - Lasts 1 turn
+  - Removes all prior effects
+- Blessing:
+  - Lasts 3 turns
+  - Each turn, +10 Defense
+
 ## Combat
+### HP
+### MP
+### Items
 ## Enemies
 ## Allies
-## Items
+
 ### Weapons
 ### Consumables
 ### Armor

@@ -35,8 +35,8 @@ def shield_remove(entity: "Entity") -> None:
 
 
 def poison_effect(entity: "Entity") -> None:
-    entity.health -= 15
-    print_error(f"{entity.name} is poisoned and loses 5 health! Current health: {entity.health}")
+    entity.health -= entity.max_health // 20  # 5% of max health
+    print_error(f"{entity.name} is poisoned and loses health! Current health: {entity.health}")
     return None
 
 def poison_remove(entity: "Entity") -> None:
@@ -45,8 +45,8 @@ def poison_remove(entity: "Entity") -> None:
 
 
 def burn_effect(entity: "Entity") -> None:
-    entity.health -= 25
-    print_error(f"{entity.name} is burned and loses 10 health! Current health: {entity.health}")
+    entity.health -= entity.max_health // 10  # 10% of max health
+    print_error(f"{entity.name} is burned and loses health! Current health: {entity.health}")
     return None
 
 def burn_reverse(entity: "Entity") -> None:
@@ -87,7 +87,7 @@ def mana_restore_effect(entity: "Entity") -> None:
 
 
 def frostbite_effect(entity: "Entity") -> None:
-    entity.health -= 12
+    entity.health -= entity.max_health // 12  # 8% of max health
     colorprint(f"{entity.name} is frostbitten and takes 8 damage!", "lightred")
     return None
 
@@ -97,7 +97,8 @@ def frostbite_remove(entity: "Entity") -> None:
 
 
 def purify_effect(entity: "Entity") -> None:
-    entity.effects = []
+    for effect in entity.effects:
+        effect.remove(entity)  # Remove all status effects
     colorprint(f"{entity.name} has been purified and all status effects have been removed!", "lightgreen")
     return None
 
