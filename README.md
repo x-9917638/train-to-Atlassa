@@ -78,6 +78,7 @@ Available Commands:
 
 
 # Mechanics
+
 ## Professions
 Train to Atlassa has 4 professions: Rogue, Warrior, Mage, Priest
 
@@ -94,9 +95,15 @@ Professions influence the stats and skills of the player.
   - High mana, High Attack
   - Skills are all-rounded
 
+## Levels
+Every entity in the game has a level. Levels dictate the amount of stats an entity has.
+
+The player can gain experience by defeating enemies. Upon levelling up, they will receive a random new skills if available. In addition, depending on their profession, they will receive stat points.
 
 ## Skills
-There are a variety of skills in Train to Atlasssa, and each class has their own dedicated skills
+The player has a skill hand, and a skill deck. The player can check their deck with the **skills** command, but cannot check their hand before entering battle. Upon entering battle, the player can only use skills from their hand.
+
+There are a variety of skills in Train to Atlasssa, and each class has their own dedicated skills.
 
 The player also begins with 2 default skills: Gambling Fever, and Basic Attack
 
@@ -107,8 +114,27 @@ Skills have 4 stats:
 - Accuracy: How likely the attack is to hit
 - Effect: Any additional effects that the skill inflicts.
 
+## Sections
+The game is comprised of 4 sections, which group multiple carriages together. Each section unlocks new skills, items, bosses and enemies.
+
+To proceed to the next section, the player must defeat the boss in the current section.
+
+## Carriages
+Each "room" that the player progresses through is a carriage. There are four types of carriage:
+- Ally: Has a 50% chance to have an ally in the carriage
+- Normal: 1-2 Enemies will be in this carriage
+- Challenge: 3-4 Enemies will be in this carriage
+- Boss: 1-2 Bosses will be in this carriage
+
+Each carriage has a chance to have up to 2 items on generation.
+
+## Winning
+The player wins once the last boss, located in Carriage 8 of Section 4, has been defeated.
+
 ## Items
 Items are scattered amongst carriages in Train to Atlassa, and the player can attempt to find them using the *explore* command. 
+
+The explore command has a 50% chance to fail. If it does, the items are removed from the carriage.
 
 Items are split into 3 categories: Armor, Weapons, Consumables.
 
@@ -151,16 +177,50 @@ Train to Atlassa implements multiple status effects:
   - Each turn, +10 Defense
 
 ## Combat
+Train to Atlassa implements turn based combat.
+Each turn, the player chooses their action first, then the enemies attack, then finally, allies.
+
+The player can choose from 4 options:
+- Attack: Choose and use a skill
+- Rest: Take a nap
+- Items: Use consumables
+- Retreat
+  
 ### HP
+Health points. To regain health, specific consumable items can be used, or the player can rest during battle.
+
 ### MP
+Mana points.
+All skills require mana to cast. To regain mana, specific consumable items can be used, or the player can rest during battle.
+
+### Skills
+Each turn, a random skill is drawn and placed into the players skill hand. If the player chooses to attack, they can pick and use a skill from their hand.
+
 ### Items
+During battle, the player can use consumables to gain an advatange. However, this will end their turn.
+
+### Resting
+Heal 10% of max health and 10% of max mana.
+
+### Retreating
+If the player thinks that they cannot win a battle, they may attempt to use the **retreat** command with a 33% chance of success. 
+
+If successful, this clears the room, however, if failed, penalises the player for -10% of their current health.
+
 ## Enemies
+There are a wide range of enemies in Train to Atlassa. Each section has its unique pool of enemies for the player to face. 
+
+As the player progresses, enemies also become stronger in order to keep the player engaged.
+
+
 ## Allies
+Train to Atlassa generate allies randomly, hence, it is almost guaranteed that unique allys will be encountered each playthrough. In fact, there are 12,800 allies when accounting for name and description alone! 
 
-### Weapons
-### Consumables
-### Armor
+Allies, like players, have a profession. This includes all the player professions, as well as Priest. Their skills are generated from the same pool that the player's is.
 
+Allies can buff players, or defeat enemies, helping the player to win.
+
+Players can have a maximum of 2 living allies at any time.
 
 # Story
 TODO
