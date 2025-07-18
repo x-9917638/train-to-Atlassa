@@ -196,7 +196,7 @@ class CombatSystem(BaseCommandHandler):
     def _player_turn_setup(self) -> None:
         logger.info(f"Player {self.player.name}'s turn begins.")
         clear_stdout()
-        colorprint(Styles.bold + PLAYER_TURN_BANNER, "green", delay=0)
+        colorprint(Styles.bold + PLAYER_TURN_BANNER, "lightgreen", delay=0)
         time.sleep(0.3)
         clear_stdout()
         colorprint(f"{Styles.bold}Health: {self.player.health}/{self.player.max_health}", "magenta")
@@ -211,7 +211,7 @@ class CombatSystem(BaseCommandHandler):
 
         if self.allies:
             typing_print(f"{Styles.bold}Allies:{Styles.reset}")
-            colorprint(self._display_allies() + "\n", "green", delay=0.002)
+            colorprint(self._display_allies() + "\n", "lightgreen", delay=0.002)
 
         colorprint("Choose an action...", "lightblue")
         print("{red}Attack{reset} | {green}Rest{reset} | {yellow}Items{reset} | {blue}Retreat{reset}".format(

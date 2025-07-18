@@ -23,7 +23,7 @@ def shield_effect(entity: "Entity") -> None:
     entity.defense += 10
     entity.max_health += 50
     entity.health += 50 
-    colorprint(f"{entity.name} is shielded and gains 50 health and 10 defense!", "green")
+    colorprint(f"{entity.name} is shielded and gains 50 health and 10 defense!", "lightgreen")
     return None
 
 def shield_remove(entity: "Entity") -> None:
@@ -50,7 +50,7 @@ def burn_effect(entity: "Entity") -> None:
     return None
 
 def burn_reverse(entity: "Entity") -> None:
-    colorprint(f"{entity.name} is no longer burned.", "green")
+    colorprint(f"{entity.name} is no longer burned.", "lightgreen")
     return None
 
 
@@ -74,7 +74,7 @@ def vulnerable_effect(entity: "Entity") -> None:
 
 def vulnerable_remove(entity: "Entity") -> None:
     entity.defense += 30
-    colorprint(f"{entity.name} is no longer vulnerable.", "green")
+    colorprint(f"{entity.name} is no longer vulnerable.", "lightgreen")
     return None
 
 
@@ -82,7 +82,7 @@ def mana_restore_effect(entity: "Entity") -> None:
     entity.mana += 100
     if entity.mana > entity.max_mana:
         entity.mana = entity.max_mana
-    colorprint(f"{entity.name} gained 100 mana! Current mana: {entity.mana}", "green")
+    colorprint(f"{entity.name} gained 100 mana! Current mana: {entity.mana}", "lightgreen")
     return None
 
 
@@ -92,13 +92,13 @@ def frostbite_effect(entity: "Entity") -> None:
     return None
 
 def frostbite_remove(entity: "Entity") -> None:
-    colorprint(f"{entity.name} thawed out.", "green")
+    colorprint(f"{entity.name} thawed out.", "lightgreen")
     return None
 
 
 def purify_effect(entity: "Entity") -> None:
     entity.effects = []
-    colorprint(f"{entity.name} has been purified and all status effects have been removed!", "green")
+    colorprint(f"{entity.name} has been purified and all status effects have been removed!", "lightgreen")
     return None
 
 def purify_remove(entity: "Entity") -> None: # Param here is just for type hints to not scream at me
@@ -108,7 +108,7 @@ def purify_remove(entity: "Entity") -> None: # Param here is just for type hints
 
 def full_heal_effect(entity: "Entity") -> None:
     entity.health = entity.max_health
-    colorprint(f"{entity.name} has been fully healed!", "green")
+    colorprint(f"{entity.name} has been fully healed!", "lightgreen")
     return None
 
 def full_heal_remove(entity: "Entity") -> None: # Param here is just for type hints to not scream at me
@@ -118,7 +118,7 @@ def full_heal_remove(entity: "Entity") -> None: # Param here is just for type hi
 
 def blessing_effect(entity: "Entity") -> None:
     entity.defense += 10
-    colorprint(f"{entity.name} is blessed by the gods and gains 10 defense!", "green")
+    colorprint(f"{entity.name} is blessed by the gods and gains 10 defense!", "lightgreen")
     return None
 
 def blessing_remove(entity: "Entity") -> None:

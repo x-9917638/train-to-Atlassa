@@ -372,7 +372,7 @@ Description: {item.description}{Styles.reset}""")
                 else:
                     self.player.add_ally(ally)
                     self.current_carriage.allies.remove(ally)
-                    colorprint(f"{ally.name} has joined your party!", "green")
+                    colorprint(f"{ally.name} has joined your party!", "lightgreen")
             
             case "n" | "no":
                 return None
@@ -398,9 +398,9 @@ Description: {item.description}{Styles.reset}""")
             return None
         
         logger.debug("Player passed initial chance for items in the carriage.")
-        colorprint("You found the following items in this carriage:", "green")
+        colorprint("You found the following items in this carriage:", "lightgreen")
         for item in self.current_carriage.items.copy():
-            colorprint(f"- {item.name}: {item.description}", "green")
+            colorprint(f"- {item.name}: {item.description}", "lightgreen")
             self.player.add_item_to_inventory(item)
             self.current_carriage.items.remove(item)
         
