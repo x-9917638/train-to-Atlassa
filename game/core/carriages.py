@@ -95,23 +95,6 @@ DESCRIPTIONS_PRIEST = [
     "A guardian of sacred knowledge, preserving ancient texts and teachings."
 ]
 
-
-# <https://stackoverflow.com/questions/43549515/weighted-random-sample-without-replacement-in-python>
-def weighted_sample_without_replacement(population, weights=None, k=1):
-    weights = list(weights) if weights else [1.0 for i in range(len(population))]
-    positions = range(len(population))
-    indices = []
-    while True:
-        needed = k - len(indices)
-        if not needed:
-            break
-        for i in rand.choices(positions, weights, k=needed):
-            if weights[i]:
-                weights[i] = 0.0
-                indices.append(i)
-    return [population[i-1] for i in indices]
-
-
 class Carriage:
     num2word_map: dict[int, str] = {
         1: "ONE",
@@ -164,16 +147,16 @@ class Carriage:
                     
             case CarriageType.BOSS:
                 num_bosses: int = rand.choice([1, 1, 1, 1, 2])
-                boss_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_BOSSES"]
-                bosses = weighted_sample_without_replacement(boss_pool, k=num_bosses)
+                boss_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_BOSSES"].copy()
+                bosses = rand.sample(boss_pool, k=num_bosses)
                 self._add_enemy(bosses)
 
         return None
 
 
     def _choose_enemies(self, num_enemies: int) -> list["Enemy"]:
-        enemy_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_ENEMIES"]
-        enemies = weighted_sample_without_replacement(enemy_pool, k=num_enemies)
+        enemy_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_ENEMIES"].copy()
+        enemies = rand.sample(enemy_pool, k=num_enemies)
         return enemies
 
 

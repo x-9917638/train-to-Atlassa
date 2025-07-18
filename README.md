@@ -9,9 +9,12 @@ A text based adventure game with turn based combat.
 
 # Getting Started
 1. Make sure the required dependencies are installed
-2. Clone the repository: `git clone https://github.com/x-9917638/train-to-Atlassa.git`
-3. Change directory: `cd train-to-Atlassa`
-4. Start the game: `python3 main.py`
+2. Clone the repository: 
+```git clone https://github.com/x-9917638/train-to-Atlassa.git```
+3. Change directory: 
+```cd train-to-Atlassa```
+4. Start the game: 
+```python3 main.py```
 
 # Usage
 Train to Atlassa accepts input via various commands. 
@@ -75,7 +78,14 @@ Available Commands:
 
 
 # Mechanics
-TODO
+## General Mechanics
+### Professions
+### Skills
+### Items
+#### Weapons
+#### Consumables
+#### Armor
+## Combat Mechanics
 
 # Story
 TODO
