@@ -24,7 +24,7 @@ There are 2 main modes:
 - Default
 - Combat
 
-## Default mode
+## Default
 The player is placed into default mode for navigation, and managing their status. 
 <br>
 Autocompletions are supported.
