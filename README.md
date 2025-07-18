@@ -223,7 +223,18 @@ Allies can buff players, or defeat enemies, helping the player to win.
 Players can have a maximum of 2 living allies at any time.
 
 # Story
-TODO
+The game is set in a fictional fantasy world, albeit one technologically advanced enough to have trains.
+
+The Hero has just returned from a grand conquest in the Central Grand City, Citadel, where they have slain the Monster King and save the city.
+
+After saving the Grand City of Citadel, the Hero, boards the Train to Atlassa...
+
+Little do they know, the remnants of the Monster King's army is waiting. The Monsters have hijacked the train and are using it to facilitate an invasion of Atlassa, the Capitol of the Dwarves.
+
+The player takes the role of the Hero, where their goal is to retake the train from the monsters.
+
+A tragic fate awaits those of Atlassa if they fail.
+
 
 # Licence
 This program is free software: you can redistribute it and/or modify
