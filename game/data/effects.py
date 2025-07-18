@@ -30,7 +30,7 @@ def shield_remove(entity: "Entity") -> None:
     entity.defense -= 10
     entity.max_health -= min(entity.max_health - 1, 50)  # Prevents going below 1 health
     entity.health -= min(entity.health - 1, 50)
-    colorprint(f"{entity.name}'s shield has worn off and they lose 50 health and 10 defense.", "red")
+    colorprint(f"{entity.name}'s shield has worn off and they lose 50 health and 10 defense.", "lightred")
     return None
 
 
@@ -63,13 +63,13 @@ def war_cry_effect(entity: "Entity") -> None:
 def war_cry_remove(entity: "Entity") -> None:
     entity.attack -= 10
     entity.defense -= 10
-    colorprint(f"The war cry has worn off of {entity.name}...", "red")
+    colorprint(f"The war cry has worn off of {entity.name}...", "lightred")
     return None
 
 
 def vulnerable_effect(entity: "Entity") -> None:
     entity.defense -= 30
-    colorprint(f"{entity.name} has their defense lowered by 30...", "red")
+    colorprint(f"{entity.name} has their defense lowered by 30...", "lightred")
     return None
 
 def vulnerable_remove(entity: "Entity") -> None:
@@ -88,7 +88,7 @@ def mana_restore_effect(entity: "Entity") -> None:
 
 def frostbite_effect(entity: "Entity") -> None:
     entity.health -= 12
-    colorprint(f"{entity.name} is frostbitten and takes 8 damage!", "red")
+    colorprint(f"{entity.name} is frostbitten and takes 8 damage!", "lightred")
     return None
 
 def frostbite_remove(entity: "Entity") -> None:
@@ -123,7 +123,7 @@ def blessing_effect(entity: "Entity") -> None:
 
 def blessing_remove(entity: "Entity") -> None:
     entity.defense -= 30
-    colorprint(f"{entity.name}'s blessing has worn off and they lose 30 defense.", "red")
+    colorprint(f"{entity.name}'s blessing has worn off and they lose 30 defense.", "lightred")
     return None
 
 

@@ -106,7 +106,7 @@ def print_game_msg(to_print:str, delay: float = 0.01):
 
 def print_error(to_print:str, delay: float = 0.01):
     # Print a red colored string - for error messages on invalid actions from the user, etc.
-    typing_print(f"\033[31m{to_print}\033[0m", delay=delay)
+    typing_print(f"\033[91m{to_print}\033[0m", delay=delay)
 
 def clear_stdout():
     """Clear standard output."""
@@ -149,6 +149,7 @@ class BaseCommandHandler(cmd.Cmd):
 
     def emptyline(self):
         self.do_help("") # empty line = help
+        return False
     
 
         

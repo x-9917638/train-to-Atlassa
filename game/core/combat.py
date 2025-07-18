@@ -207,7 +207,7 @@ class CombatSystem(BaseCommandHandler):
         
 
         typing_print(f"{Styles.bold}Enemies:{Styles.reset}")
-        colorprint(self._display_enemies() + "\n", "red", delay=0.002)
+        colorprint(self._display_enemies() + "\n", "lightred", delay=0.002)
 
         if self.allies:
             typing_print(f"{Styles.bold}Allies:{Styles.reset}")
@@ -298,7 +298,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
         match skill.target:
             case SkillTarget.SINGLE_ENEMY:
                 typing_print(f"{Styles.fg.lightblue}{Styles.bold}{skill.name} selected.{Styles.reset}")
-                colorprint(self._display_enemies(), "red", delay=0.002)
+                colorprint(self._display_enemies(), "lightred", delay=0.002)
                 try:
                     chosen_enemy = int(input(
                         f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
@@ -373,7 +373,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
 
         results = chosen_skill.use(enemy, targets)
         if results[1]:  # If hit
-            colorprint(results[0], "red")
+            colorprint(results[0], "lightred")
         else:
             colorprint(results[0], "lightgreen")
         return None
