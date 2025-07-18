@@ -317,7 +317,6 @@ Description: {item.description}{Styles.reset}""")
 
         print_game_msg(f"Pick an item...\n")
         choice = input(f"{Styles.fg.pink}> {Styles.reset}").strip()
-
         
         try:
             index = int(choice) - 1

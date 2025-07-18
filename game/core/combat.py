@@ -295,43 +295,55 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
 
     def _get_targets(self, skill: "Skill") -> list["Entity"]:
         clear_stdout()
+
+        if not self.allies and skill.target in [SkillTarget.SINGLE_ALLY, SkillTarget.ALL_ALLIES]:
+            print_error("You have no allies to target.")
+            return []
+        
         match skill.target:
             case SkillTarget.SINGLE_ENEMY:
-                typing_print(f"{Styles.fg.lightblue}{Styles.bold}{skill.name} selected.{Styles.reset}")
-                colorprint(self._display_enemies(), "lightred", delay=0.002)
-                try:
-                    chosen_enemy = int(input(
-                        f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
-                    target = [self.enemies[chosen_enemy - 1]]
-                except (IndexError, ValueError):
-                    print_error("Invalid target.")
-                    return self._get_targets(skill)
+                target = [self._select_single_enemy(skill)]
+                
             case SkillTarget.ALL_ENEMIES:
                 target = self.enemies
+
             case SkillTarget.SELF:
                 target = [self.player]
+
             case SkillTarget.ALL_ALLIES:
-                if self.allies:
-                    target = self.allies
-                else:
-                    target = []
+                target = self.allies
+
             case SkillTarget.SINGLE_ALLY:
-                typing_print(f"{Styles.fg.lightblue}{skill.name} selected.{Styles.reset}")
-                colorprint(self._display_allies(), "lightgreen", delay=0.002)
-                if self.allies:
-                    try:
-                        chosen_ally = int(input(
-                            f"{Styles.fg.lightblue}Pick an ally.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
-                        target = [self.allies[chosen_ally - 1]]
-                    except (IndexError, ValueError):
-                        print_error("Invalid target.")
-                        return self._get_targets(skill)
-                else:
-                    target = []
+                target = [self._select_single_ally(skill)]
             case _:
-                raise ValueError(
-                    "Skill initialised incorrectly: error in target.\nThis should never happen. Please report this.")
-        return target  # type: ignore
+                raise ValueError("Skill initialised incorrectly: error in target.\nThis should never happen. Please report this.")
+        return target 
+
+
+    def _select_single_enemy(self, skill) -> "Enemy":
+        typing_print(f"{Styles.fg.lightblue}{Styles.bold}{skill.name} selected.{Styles.reset}")
+        colorprint(self._display_enemies(), "lightred", delay=0.002)
+        try:
+            chosen_enemy = int(input(f"{Styles.fg.lightblue}Pick an enemy.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
+            target = self.enemies[chosen_enemy - 1]
+            return target
+        except (IndexError, ValueError):
+            print_error("Invalid target.")
+            return self._select_single_enemy(skill)
+
+
+    def _select_single_ally(self, skill: "Skill") -> "Ally":
+        typing_print(f"{Styles.fg.lightblue}{skill.name} selected.{Styles.reset}")
+        colorprint(self._display_allies(), "lightgreen", delay=0.002)
+
+        try:
+            chosen_ally = int(input(f"{Styles.fg.lightblue}Pick an ally.\n{Styles.reset}{Styles.fg.pink}> {Styles.reset}").strip())
+            target = self.allies[chosen_ally - 1]
+            return target
+        
+        except (IndexError, ValueError):
+            print_error("Invalid target.")
+            return self._select_single_ally(skill)
 
 
     def _run_away(self) -> None:
