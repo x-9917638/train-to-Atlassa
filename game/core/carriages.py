@@ -121,7 +121,7 @@ class Carriage:
     def generate_entities(self) -> None:
         match self.type:
             case CarriageType.FIGHT:
-                enemies: list["Enemy"] = self._choose_enemies(rand.randint(1, 3))
+                enemies: list["Enemy"] = self._choose_enemies(rand.randint(1, 2))
                 self._add_enemy(enemies)
 
             case CarriageType.ALLY:
