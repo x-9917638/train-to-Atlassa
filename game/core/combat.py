@@ -225,9 +225,12 @@ class CombatSystem(BaseCommandHandler):
     
 
     def _display_enemies(self) -> str:
-        return "\n".join(
-            [f"{i + 1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})" for i, enemy in enumerate(self.enemies) if
-             enemy.is_alive()])
+        text = []
+        for i, enemy in enumerate(self.enemies):
+            if not enemy.is_alive():
+                continue
+            text.append(f"{i + 1}. {enemy.name} (HP: {enemy.health}/{enemy.max_health})")
+        return "\n".join(text)
 
 
     def _display_skills(self) -> None:
