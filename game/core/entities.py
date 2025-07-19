@@ -12,7 +12,7 @@
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from ..data.skills import GENERAL_SKILLS, ENEMY_SKILLS, WARRIOR_SKILLS, MAGE_SKILLS, ROGUE_SKILLS, PRIEST_SKILLS
-from  ..utils import Professions
+from  ..utils import Professions, colorprint
 
 import random, math, logging, copy
 
@@ -54,7 +54,7 @@ class Entity: # Abstract base class for all entities in the game
     def is_alive(self) -> bool:
         return self.health > 0
     
-    def _give_new_skills(self, num_skills: int) -> None:     
+    def _give_new_skills(self, num_skills: int) -> list["Skill"]:     
         if not self.profession:
             return None   
         profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[f"{self.profession.value.upper()}_SKILLS"]) 
@@ -68,9 +68,11 @@ class Entity: # Abstract base class for all entities in the game
         
         num_skills = min(num_skills, len(skill_pool))  # Ensure we don't try to get more skills than available
 
-        self.skill_deck.extend(random.sample(skill_pool, k=num_skills))
+        new_skills: list["Skill"] = random.sample(skill_pool, k=num_skills) if num_skills > 0 else []
+
+        self.skill_deck.extend(new_skills)
         
-        return None
+        return new_skills
 
 
 
@@ -128,7 +130,7 @@ class Player(Entity):
     def check_level_up(self) -> bool:
         if self.experience >= self.level * 30:
             self._level_up()
-            return True
+            return self.check_level_up()  # Check again in case of multiple level-ups
         return False
 
     
@@ -157,6 +159,11 @@ class Player(Entity):
                 self.defense += random.randrange(1, 5)
             case _:
                 raise ValueError(f"Unknown profession: {self.profession}")
+        colorprint(f"{self.name} has leveled up to level {self.level}!", "green")
+        colorprint(f"You have earned 1 new skill!", "green")
+        debug = self._give_new_skills(1)  # Give a new skill on level up
+        logger.info(f"{self.name} has leveled up to level {self.level}!")
+        logger.info(f"Added 1 new skill: {debug[0] if debug else 'None'}")
         self.health = self.max_health
         self.mana = self.max_mana
         self.effects = [] 

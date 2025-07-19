@@ -63,7 +63,6 @@ class CombatSystem(BaseCommandHandler):
         self.allies: list["Ally"] = allies
         self.enemies: list["Enemy"] = enemies
         self.triggered_help = False
-        self.num_skills_owed = 0 # Number of skills owed to the player after the battle, +1 skill per level
 
     def postcmd(self, stop, line) -> bool:
         if self.triggered_help: # If we got here because of help or unknown cmd, skip the rest of postcmd.
@@ -71,8 +70,7 @@ class CombatSystem(BaseCommandHandler):
             return False
         
         self._allocate_experience()
-        if self.player.check_level_up():
-            self.num_skills_owed += 1
+        self.player.check_level_up():
 
         if not any(enemy.is_alive() for enemy in self.enemies):
             logger.info("All enemies defeated.")
@@ -90,6 +88,7 @@ class CombatSystem(BaseCommandHandler):
 
         input(f"{Styles.fg.lightblue}Press Enter to continue...{Styles.reset}")
         
+        # We must repeat the check in case allys killed everything
         self._allocate_experience()
         self.player.check_level_up()
         
@@ -400,14 +399,14 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             return None
         
         for ally in self.allies.copy():
-            if not ally.is_alive:
+            if not ally.is_alive():
                 self.allies.remove(ally)
                 self.player.allies.remove(ally)
                 continue
             # Do status effects
             [effect.apply(ally) for effect in ally.effects if ally.effects]
 
-        [self._ally_action(ally) for ally in self.allies if ally.is_alive]
+        [self._ally_action(ally) for ally in self.allies if ally.is_alive()]
         
         logger.info("Allies have taken their turn.")
         return None

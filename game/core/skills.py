@@ -60,6 +60,9 @@ class Skill:
             return "\n".join(results), hit
         return (_attack_miss_message(user.name), miss)
     
+    def __repr__(self):
+        return f"Skill(name={self.name}, description={self.description}, power={self.power}, mana_cost={self.mana_cost}, target={self.target}, accuracy={self.accuracy})"
+    
 
 def _attack_miss_message(name: str) -> str:
     """Returns a random attack missed message."""
@@ -71,4 +74,5 @@ def _attack_miss_message(name: str) -> str:
         f"{name} attempts a strike, but their weapon bounces off the enemy's armor and hits them in the face. Ouch."
     ]
     return rand.choice(messages)
+
 
