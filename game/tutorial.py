@@ -19,6 +19,7 @@ from .core.skills import Skill
 
 from .data.effects import STATUS_EFFECTS
 
+from .utils import clear_stdout
 from .utils import Styles, typing_print, print_error
 from .utils import SkillTarget, Professions
 
@@ -45,8 +46,8 @@ else:
 def start_tutorial():
     """Introduce the player to the game."""
 
-    typing_print("Press [ESC] to skip the tutorial at any time!", delay=0.01)
-    typing_print("Press any key to continue...", delay=0.01)
+    typing_print("Press [ESC] to skip the tutorial at any time!")
+    typing_print("Press any key to continue...")
     if getch() == ESC_KEY: return
 
     logging.info("Starting tutorial...")
@@ -58,33 +59,33 @@ def start_tutorial():
     
     if getch() == ESC_KEY: return
     if sys.platform == "win32":
-        typing_print("Note: autocompletions are not available on Windows.", delay=0.01)
+        typing_print("Note: autocompletions are not available on Windows.")
     else:
-        typing_print("Autocompletions are available with [TAB]!", delay=0.01)
+        typing_print("Autocompletions are available with [TAB]!")
     
     if getch() == ESC_KEY: return
-    typing_print("After saving the Grand City of Citadel, you, the Hero, board the Train to Atlassa...", delay=0.01)
+    typing_print("After saving the Grand City of Citadel, you, the Hero, board the Train to Atlassa...")
  
     if getch() == ESC_KEY: return
-    typing_print("Little do you know, the remnant of the monster invasion is waiting...", delay=0.01)
+    typing_print("Little do you know, the remnant of the monster invasion is waiting...")
     
     if getch() == ESC_KEY: return
-    typing_print("A tragic fate awaits those of Atlassa if you fail.", delay=0.01)
+    typing_print("A tragic fate awaits those of Atlassa if you fail.")
 
     if getch() == ESC_KEY: return
-    typing_print("Can you save your faithful allies?", delay=0.01)
+    typing_print("Can you save your faithful allies?")
 
     if getch() == ESC_KEY: return
-    typing_print("Can you retake the train from these vile monsters and save Atlassa?", delay=0.01)
+    typing_print("Can you retake the train from these vile monsters and save Atlassa?")
 
     if getch() == ESC_KEY: return
-    typing_print("Train to Atlassa is a turn-based RPG with a focus on randomness and strategic management.", delay=0.01)
+    typing_print("Train to Atlassa is a turn-based RPG with a focus on randomness and strategic management.")
 
     if getch() == ESC_KEY: return
-    typing_print("Choose your profession and gain unique skills every playthrough!", delay=0.01)
+    typing_print("Choose your profession and gain unique skills every playthrough!")
 
     if getch() == ESC_KEY: return
-    typing_print("Lets test your skills with a small tutorial battle.\nThis is your last chance to skip the tutorial: [ESC]", delay=0.01)
+    typing_print("Lets test your skills with a small tutorial battle.\nThis is your last chance to skip the tutorial: [ESC]")
     if getch() == ESC_KEY: return
 
     logging.info("Starting tutorial combat.")
@@ -120,41 +121,76 @@ class TutorialCombat(CombatSystem):
             self.triggered_help = False
             return False
         
-        typing_print("After your turn, the enemies attack.", delay=0.01)
+        typing_print("After your turn, the enemies attack.")
         self.enemy_turn()
-        typing_print("Press any key to continue...\n", delay=0.01)
+        typing_print("Press any key to continue...\n")
         getch()
 
-        typing_print("After the enemies' turn, your allies attack.", delay=0.01)
+        typing_print("After the enemies' turn, your allies attack.")
         self.ally_turn()
-        typing_print("Press any key to continue...\n", delay=0.01)
+        typing_print("Press any key to continue...\n")
         getch()
 
-        typing_print("And now it all repeats!\nCongratulations! Now you've finished the tutorial!", delay=0.01)
+        typing_print("Congratulations! Now you've finished the tutorial!")
         getch()
 
         return True
-
-    def start_combat(self) -> None:
-        typing_print("It's your turn first!", delay=0.01)
-        typing_print("Each turn, you randomly draw one skill that can be used from your \"deck\" of skills", delay=0.01)
-        typing_print("This turn, lets attack!", delay=0.01)
+    
+    def _player_turn_setup(self) -> None:
+        clear_stdout()
+        typing_print("Train to Atlassa implements turn based combat. Each turn, the player chooses their action first, then the enemies attack, then finally, allies.")
+        typing_print("During combat, you can attack, use items, rest, or retreat.")
+        typing_print("Each turn, a random skill is drawn and placed into the players skill hand. If you choose to attack, you can pick and use a skill from your hand.")
+        typing_print("""You can also: 
+    - Use consumable items to gain an advantage
+    - Rest to heal 10% of max health and 10% of max mana.
+    - Retreat to run away from combat.""")
+        typing_print("Picking any of these options will end your turn.")
+        typing_print("Note that you have an ally: Blarj.")
+        typing_print("Allies can attack and help you in combat, but you may only have 2 allies at a time.")
+        typing_print("This turn, lets attack!")
         getch()
-        return super().start_combat()
+        super()._player_turn_setup()
+        return None
+
     
     # don't want the player doing anything other than atack in tutorial
-    def do_items(self, arg) -> bool:
+    def do_items(self, arg) -> None:
         print_error("Woah there! You don't have any items right now. You need to attack!")
         getch()
         super().do_attack(arg) # Force them to attack
+        return None
     
-    def do_retreat(self, arg) -> bool:
+    def do_retreat(self, arg) -> None:
         print_error("Woah there! You can't run from this! You need to attack!")
         getch()
-        return super().do_attack(arg)
+        super().do_attack(arg)
+        return None
     
-    def do_rest(self, arg) -> bool:
+    def do_rest(self, arg) -> None:
         print_error("Woah there! You aren't tired at all... Why not attack instead?")
         getch()
-        return super().do_attack(arg)
+        super().do_attack(arg)
+        return None
 
+
+class TutorialGame(Game):
+    """A game class for the tutorial."""
+    def __init__(self):
+        super().__init__("Hero")
+        # Hardcode player stats for tutorial
+        self.player = Player("Hero")
+        self.player.level = 100
+        self.player.attack = 5 # Don't one shot the enmy
+        self.player.mana = 10000
+        self.player.max_mana = 10000
+        self.player.health = 10000
+        self.player.max_health = 10000
+        self.player.profession = Professions.WARRIOR
+        self.player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=STATUS_EFFECTS["poison"])]
+        self.player.add_ally(Ally(name="Blarj", description="The System Guide", level=1, section=1, profession=Professions.MAGE))
+        self.player.allies[0].skill_deck = [Skill("Delete", "", 9999999999999, 0, SkillTarget.ALL_ENEMIES)]
+    
+
+
+    
