@@ -141,10 +141,10 @@ Items are split into 3 categories: Armor, Weapons, Consumables.
 Armor and weapons have a *boost* stat. This stat determines how effective the item is.
 - Armor: 
   - Adds *boost* amount of defense
-  - Adds 100 x *boost* amount of max health
+  - Adds 10 x *boost* amount of max health
 - Weapons:
   - Adds *boost* amount of attack
-  - Adds 100 x *boost* amount of max mana
+  - Adds 10 x *boost* amount of max mana
 - Consumables:
   - Each consumable has a unique effect. 
   - In most cases, the description should tell the player what the consumable will do.
