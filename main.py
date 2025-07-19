@@ -75,10 +75,10 @@ def tutorial() -> None:
     clear_stdout()
     return None
 
-def is_valid_name(name:str) -> bool:
+def is_valid_name(name: str) -> bool:
     alphabet: list[str] = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
    
-    if not all(char in alphabet or char.isspace() for char in name) and 0 < len(name) < 40:  
+    if not all(char in alphabet or char.isspace() for char in name) or not 0 < len(name) < 40:  
         print_error(f"{Styles.fg.red}Invalid name: {name}. Please use only letters and spaces, and please keep it between 1 and 40 characters.{Styles.reset}")
         return False
     return True
