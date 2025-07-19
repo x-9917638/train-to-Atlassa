@@ -60,7 +60,7 @@ class CombatSystem(BaseCommandHandler):
     def __init__(self, player: "Player", allies: list["Ally"], enemies: list["Enemy"]):
         super().__init__()
         self.player: "Player" = player
-        self.allies: list["Ally"] = allies
+        self.allies: list["Ally"] = allies.copy()
         self.enemies: list["Enemy"] = enemies
         self.triggered_help = False
 
@@ -406,7 +406,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             # Do status effects
             [effect.apply(ally) for effect in ally.effects if ally.effects]
 
-        [self._ally_action(ally) for ally in self.allies if ally.is_alive()]
+        [self._ally_action(ally) for ally in self.allies]
         
         logger.info("Allies have taken their turn.")
         return None
