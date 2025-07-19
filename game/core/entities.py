@@ -141,22 +141,22 @@ class Player(Entity):
         match self.profession:
             case Professions.WARRIOR:
                 # High degense, high health
-                self.max_health += random.randrange(70, 100)
+                self.max_health += random.randrange(53, 75)
                 self.max_mana += random.randrange(10, 20)
-                self.attack += random.randrange(1, 5)
-                self.defense += random.randrange(5, 10)
+                self.attack += random.randrange(1, 4)
+                self.defense += random.randrange(4, 8)
             case Professions.MAGE:
                 # High mana, High attack
-                self.max_health += random.randrange(30, 60)
-                self.max_mana += random.randrange(30, 50)
-                self.attack += random.randrange(5, 10)
-                self.defense += random.randrange(1, 5)
+                self.max_health += random.randrange(23, 45)
+                self.max_mana += random.randrange(25, 40)
+                self.attack += random.randrange(4, 8)
+                self.defense += random.randrange(1, 4)
             case Professions.ROGUE:
                 # High attack
-                self.max_health += random.randrange(50, 80)
+                self.max_health += random.randrange(38, 60)
                 self.max_mana += random.randrange(10, 20)
-                self.attack += random.randrange(8, 15)
-                self.defense += random.randrange(1, 5)
+                self.attack += random.randrange(6, 12)
+                self.defense += random.randrange(1, 4)
             case _:
                 raise ValueError(f"Unknown profession: {self.profession}")
         colorprint(f"{self.name} has leveled up to level {self.level}!", "green")
