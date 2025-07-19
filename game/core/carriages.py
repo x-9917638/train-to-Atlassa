@@ -172,8 +172,8 @@ class Carriage:
 
     def _choose_enemies(self, num_enemies: int) -> list["Enemy"]:
         enemy_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_ENEMIES"].copy()
-        enemies = rand.sample(enemy_pool, k=num_enemies)
-        return enemies
+        chosen_enemies = rand.sample(enemy_pool, k=num_enemies)
+        return chosen_enemies
 
 
     def generate_items(self) -> None:
@@ -186,12 +186,12 @@ class Carriage:
 
     def _choose_items(self, num_items: int) -> list["Item"]:
         item_pool: list[dict["Item", float]] = globals()[f"SECTION_{self.section_str}_ITEMS"]
-        items = []
+        chosen_items = []
         WEAPONS, ARMORS, SCROLLS = 0, 1, 2 # No magic numbers!
         for _ in range(num_items):
             category = rand.choice((WEAPONS, ARMORS, SCROLLS)) 
-            items.extend(rand.choices(list(item_pool[category].keys()), k=1, weights=list(item_pool[category].values())))
-        return items
+            chosen_items.extend(rand.choices(list(item_pool[category].keys()), k=1, weights=list(item_pool[category].values())))
+        return chosen_items
     
 
     def _add_enemy(self, enemies: list["Enemy"]) -> None:

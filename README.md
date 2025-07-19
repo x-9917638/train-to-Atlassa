@@ -19,16 +19,16 @@ A text based adventure game with turn based combat.
 # Usage
 Train to Atlassa accepts input via various commands. 
 It acts as an interactive shell prompt with various modes, depending on the commands given.
-<br>
+
 There are 2 main modes:
 - Default
 - Combat
 
 ## Default
 The player is placed into default mode for navigation, and managing their status. 
-<br>
+
 Autocompletions are supported.
-<br>
+
 Available Commands:
 - Movement:
     - Move to next carriage: **next, n**
@@ -50,7 +50,7 @@ Available Commands:
 
 ### Inventory
 The inventory presents a simple menu to manage items.
-<br>
+
 Available Commands:
 - Equip a Weapon or Armor | **e, equip**
 - Use a Consumable | **u, use**
@@ -59,7 +59,7 @@ Available Commands:
 
 ## Combat
 After initiating combat using the *fight* command, the player is sent into combat mode.
-<br>
+
 The interface displays the following:
 - Health
 - Mana
@@ -68,7 +68,7 @@ The interface displays the following:
 
 
 The player can choose one of five commands, and autocompletions are supported.
-<br>
+
 Available Commands:
 - Use a skill | **attack**
 - Rest (Heal 20% max HP, 10% max MP) | **rest**
