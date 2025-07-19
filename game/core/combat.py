@@ -70,7 +70,7 @@ class CombatSystem(BaseCommandHandler):
             return False
         
         self._allocate_experience()
-        self.player.check_level_up():
+        self.player.check_level_up()
 
         if not any(enemy.is_alive() for enemy in self.enemies):
             logger.info("All enemies defeated.")
