@@ -60,7 +60,11 @@ class Entity: # Abstract base class for all entities in the game
         profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[f"{self.profession.value.upper()}_SKILLS"]) 
         skill_pool: list["Skill"] = []
         for i in range(1, self.section + 1):
-            skill_pool.extend(profession_skills[i])
+            skill = profession_skills[i]
+            if skill in self.skill_deck:
+                continue
+            if skill not in skill_pool:  # Avoid duplicates in the pool
+                skill_pool.extend(skill)
         
         num_skills = min(num_skills, len(skill_pool))  # Ensure we don't try to get more skills than available
 

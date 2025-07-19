@@ -22,7 +22,7 @@ from .entities import Ally
 
 
 import random as rand
-import logging
+import logging, copy
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -135,7 +135,7 @@ class Carriage:
                     
             case CarriageType.BOSS:
                 num_bosses: int = rand.choice([1, 1, 1, 1, 2])
-                boss_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_BOSSES"].copy()
+                boss_pool: list["Enemy"] = copy.deepcopy(globals()[f"SECTION_{self.section_str}_BOSSES"])
                 bosses = rand.sample(boss_pool, k=num_bosses)
                 self._add_enemy(bosses)
 
@@ -171,7 +171,7 @@ class Carriage:
 
 
     def _choose_enemies(self, num_enemies: int) -> list["Enemy"]:
-        enemy_pool: list["Enemy"] = globals()[f"SECTION_{self.section_str}_ENEMIES"].copy()
+        enemy_pool: list["Enemy"] = copy.deepcopy(globals()[f"SECTION_{self.section_str}_ENEMIES"])
         chosen_enemies = rand.sample(enemy_pool, k=num_enemies)
         return chosen_enemies
 
