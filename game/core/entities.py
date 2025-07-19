@@ -78,7 +78,7 @@ class Entity: # Abstract base class for all entities in the game
 
 class Player(Entity):
     def __init__(self, name: str):
-        super().__init__(name, 100, 5, 5) # Base player stats
+        super().__init__(name, 120, 8, 8) # Base player stats
         self.level: int = 1
         self.experience: int = 0
         self.max_mana: int = 50
