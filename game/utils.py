@@ -40,19 +40,6 @@ class Professions(Enum):
     PRIEST = "Priest"
     ENEMY = "Enemy"  # Special case for enemies, not a player profession
 
-class CombatCommand(Enum):
-    FIGHT = "attack"
-    ITEM = "items"
-    REST = "rest"
-    RUN = "retreat"
-
-class GeneralCommand(Enum):
-    NEXT = "next"
-    BACK = "back"
-    BAG = ["inv", "inventory"] # Player can type shorthand 'inv' or 'inventory'
-    SEARCH = "search"
-
-
 class Styles:
     """
     Provides text styling via ANSI escape codes.

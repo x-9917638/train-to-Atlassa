@@ -174,23 +174,4 @@ class TutorialCombat(CombatSystem):
         return None
 
 
-class TutorialGame(Game):
-    """A game class for the tutorial."""
-    def __init__(self):
-        super().__init__("Hero")
-        # Hardcode player stats for tutorial
-        self.player = Player("Hero")
-        self.player.level = 100
-        self.player.attack = 5 # Don't one shot the enmy
-        self.player.mana = 10000
-        self.player.max_mana = 10000
-        self.player.health = 10000
-        self.player.max_health = 10000
-        self.player.profession = Professions.WARRIOR
-        self.player.skill_deck = [Skill("Mighty Slash", "A powerful slash that cleaves monsters with ease.", 20, 20, SkillTarget.SINGLE_ENEMY, effect=STATUS_EFFECTS["poison"])]
-        self.player.add_ally(Ally(name="Blarj", description="The System Guide", level=1, section=1, profession=Professions.MAGE))
-        self.player.allies[0].skill_deck = [Skill("Delete", "", 9999999999999, 0, SkillTarget.ALL_ENEMIES)]
-    
-
-
     

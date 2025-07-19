@@ -398,6 +398,7 @@ Description: {item.description}{Styles.reset}""")
         
         logger.debug("Player passed initial chance for items in the carriage.")
         colorprint("You found the following items in this carriage:", "lightgreen")
+        
         for item in self.current_carriage.items.copy():
             colorprint(f"- {item.name}: {item.description}", "lightgreen")
             self.player.add_item_to_inventory(item)
