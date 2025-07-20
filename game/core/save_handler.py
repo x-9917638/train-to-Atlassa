@@ -25,6 +25,9 @@ if TYPE_CHECKING:
     from ..game import GameData
 
 
+class FileCorruptError(Exception):
+    pass
+
 
 def handle_load() -> 'GameData':
     """
@@ -53,7 +56,7 @@ See the GNU Affero General Public License for more details.""")
         untrusted_tag: bytes = save_file.read(32)
         if not hmac.compare_digest(untrusted_tag, tag):
             logger.error("HMAC tag mismatch! Save file may have been tampered with or is corrupted.")
-            raise ValueError(f"{Styles.fg.red}The save file may have been tampered with or is corrupted.{Styles.reset}")
+            raise FileCorruptError(f"{Styles.fg.red}The save file may have been tampered with or is corrupted.{Styles.reset}")
         logger.debug("Successfully loaded game data")
         game_data: "GameData" = pickle.load(save_file)
     return game_data
