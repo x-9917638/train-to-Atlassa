@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-build:
+  release-build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,5 +25,5 @@ jobs:
       - name: Upload distributions
         uses: actions/upload-artifact@v4
         with:
-          name: release-dists
+          name: build-windows
           path: dist/
