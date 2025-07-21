@@ -39,6 +39,9 @@ class Item(ABC): # ABC: Abstract Base Class
         if not isinstance(other, Item):
             return False
         return (other.name == self.name)
+    
+    def __hash__(self):
+        return hash((self.name, self.description))
 
     
 class Weapon(Item):

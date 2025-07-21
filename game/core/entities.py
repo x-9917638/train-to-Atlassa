@@ -186,8 +186,11 @@ class Player(Entity):
 
 class Enemy(Entity):
     def __init__(self, name: str, description: str, level:int, exp_amt:int, num_skills:int, section: int):
-        health, attack, defense = (level * 65, level * 3, level * 3)
-        super().__init__(name, health, attack, defense)
+        health = level * 65
+        stat_scaling = math.ceil( # y = x^1.8 x 3
+            (level ** 1.8) * 3
+        )
+        super().__init__(name, health, stat_scaling, stat_scaling)
         self.mana: int = 99999999
         self.description: str = description
         self.section: int = section # The section this enemy belongs to, used for scaling skills
