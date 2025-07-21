@@ -54,7 +54,7 @@ class Entity: # Abstract base class for all entities in the game
     def is_alive(self) -> bool:
         return self.health > 0
     
-    def _give_new_skills(self, num_skills: int) -> list["Skill"]:     
+    def _give_new_skills(self, num_skills: int) -> Optional[list["Skill"]]:     
         if not self.profession:
             return None   
         profession_skills: dict[int, list["Skill"]] = copy.deepcopy(globals()[f"{self.profession.value.upper()}_SKILLS"]) 
@@ -214,7 +214,7 @@ class Ally(Entity):
         super().__init__(name, health, attack, defense)
         self.description: str = description
         self.mana: int = 999999999
-        self.profession: Professions = profession
+        self.profession = profession
         self.section: int = section
 
     
