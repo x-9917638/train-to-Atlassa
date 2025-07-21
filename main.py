@@ -36,8 +36,6 @@ from game.utils import clear_stdout, check_terminal_size
 from game.tutorial import start_tutorial
 
 
-
-
 GAME_BANNER = fr"""{Styles.bold}{Styles.fg.magenta}ooooooooooooo                     o8o                       .                        .o.           .   oooo
 8'   888   `8                     `"'                     .o8                       .888.        .o8   `888                                        
      888      oooo d8b  .oooo.   oooo  ooo. .oo.        .o888oo  .ooooo.           .8"888.     .o888oo  888   .oooo.    .oooo.o  .oooo.o  .oooo.   

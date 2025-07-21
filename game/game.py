@@ -22,6 +22,7 @@ from .utils import clear_stdout
 from .utils import BaseCommandHandler
 
 from .data.skills import WARRIOR_SKILLS, ROGUE_SKILLS, MAGE_SKILLS
+from .data.art import art
 
 import time, os, pathlib, random, logging, copy
 
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-WARNING_MESSAGE = f"""{" " * 25}{Styles.fg.red}__        ___    ____  _   _ ___ _   _  ____ 
+WARNING_MESSAGE = fr"""{" " * 25}{Styles.fg.red}__        ___    ____  _   _ ___ _   _  ____ 
 {" " * 25}\ \      / / \  |  _ \| \ | |_ _| \ | |/ ___|
  {" " * 25}\ \ /\ / / _ \ | |_) |  \| || ||  \| | |  _ 
   {" " * 25}\ V  V / ___ \|  _ <| |\  || || |\  | |_| |
@@ -131,6 +132,7 @@ class Game:
 
         else:
             colorprint("You have completed all floors! Congratulations!", "lightgreen")
+            print(random.choice(art))
             self.victory = True
 
         return None
