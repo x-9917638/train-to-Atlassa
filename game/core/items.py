@@ -34,6 +34,11 @@ class Item(ABC): # ABC: Abstract Base Class
     
     def __repr__(self): # For debug logs
         return f"{self.name}"
+    
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Item):
+            return False
+        return (other.name == self.name)
 
     
 class Weapon(Item):
