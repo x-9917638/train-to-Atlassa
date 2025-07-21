@@ -20,7 +20,7 @@ jobs:
           pip install pyinstaller
 
       - name: Build release distributions
-        run: python -m pyinstaller --onefile main.py --name=TrainToAtlassa
+        run: pyinstaller --onefile main.py --name=TrainToAtlassa
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
