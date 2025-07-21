@@ -52,3 +52,9 @@ class StatusEffect:
         entity.effects.remove(self)
         return None
         
+    def copy(self) -> 'StatusEffect':
+        """
+        Create a copy of the status effect.
+        This is used to ensure that each application of the effect is independent.
+        """
+        return StatusEffect(self.name, self.duration, self._apply, self._remove)

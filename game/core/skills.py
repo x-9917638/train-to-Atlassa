@@ -31,7 +31,7 @@ class Skill:
         self.mana_cost = mana_cost
         self.target = target
         self.accuracy = accuracy
-        self.effect = effect
+        self.effect = effect.copy() if effect else None
     
     def use(self, user: "Player | Ally | Enemy", targets: list["Entity"]) -> tuple[str, bool]:
         hit, miss = True, False
@@ -62,6 +62,7 @@ class Skill:
     
     def __repr__(self):
         return f"Skill(name={self.name}, description={self.description}, power={self.power}, mana_cost={self.mana_cost}, target={self.target}, accuracy={self.accuracy})"
+    
     
 
 def _attack_miss_message(name: str) -> str:
