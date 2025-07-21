@@ -384,7 +384,7 @@ Description: {item.description}{Styles.reset}""")
             print_error("There are no items in this carriage.")
             return None
         
-        success = random.choice((True, False)) # 50% to fail search
+        success = random.choice((True, True, False)) # 33% to fail search
         if not success: 
             print_error("You found no items in this carriage.")
             self.current_carriage.items = [] 
