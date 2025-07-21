@@ -63,6 +63,11 @@ class Skill:
     def __repr__(self):
         return f"Skill(name={self.name}, description={self.description}, power={self.power}, mana_cost={self.mana_cost}, target={self.target}, accuracy={self.accuracy})"
     
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Skill):
+            return False
+        return (self.name == other.name)
     
 
 def _attack_miss_message(name: str) -> str:

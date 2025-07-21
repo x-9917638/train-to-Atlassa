@@ -53,8 +53,10 @@ class StatusEffect:
         return None
         
     def copy(self) -> 'StatusEffect':
-        """
-        Create a copy of the status effect.
-        This is used to ensure that each application of the effect is independent.
-        """
         return StatusEffect(self.name, self.duration, self._apply, self._remove)
+
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, StatusEffect):
+            return False
+        return (self.name == other.name)
