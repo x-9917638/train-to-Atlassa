@@ -202,6 +202,11 @@ class CombatSystem(BaseCommandHandler):
         colorprint(f"{Styles.bold}Mana: {self.player.mana}/{self.player.max_mana}\n", "cyan")
 
         [effect.apply(self.player) for effect in self.player.effects if self.player.effects]
+        if not self.player.is_alive(): # Must check here in case death by poison or similar
+            logger.info("Player died.")
+            print_error("You died...\nGame Over!")
+            return None
+    
         self.player.draw_skills()
         
 

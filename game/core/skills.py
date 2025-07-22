@@ -54,8 +54,9 @@ class Skill:
 
             if self.effect:
                 for target in targets:
-                    target.effects.append(self.effect)
-                    results.append(f"{target.name} is now {self.effect.name}!")
+                    if self.effect not in target.effects:
+                        target.effects.append(self.effect)
+                        results.append(f"{target.name} is now {self.effect.name}!")
 
             return "\n".join(results), hit
         return (_attack_miss_message(user.name), miss)
