@@ -12,15 +12,27 @@
 #
 #       You should have received a copy of the GNU Affero General Public License
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Make sure log doesn't become massive.
+f = open("game.log", "r")
+if not len(["" for _ in f]) > 3000: # Less than 3k lines ("" saves memory)
+    pass
+else:
+    f.close()
+    f = open("game.log", "w") # Wipe file
+f.close()
+
 import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.DEBUG,
     filename="game.log",
-    filemode="w",
+    filemode="a",
     encoding="utf-8",
     format="%(asctime)s.%(filename)s:%(levelname)s - %(message)s",
 )
+
+logger.info("------------------------NEW SESSION------------------------")
 
 import os, sys
 from typing import Optional
