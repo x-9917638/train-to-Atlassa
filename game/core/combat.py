@@ -390,7 +390,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             skills = enemy.skill_deck.copy()
             skills.sort(key=lambda skill: max(1, enemy.attack // 6) * skill.power, reverse=True)  # Sort skills by power
             
-            seed = rand.betavariate(alpha=2, beta=4.5)  # Bias towards higher power skills
+            seed = rand.betavariate(alpha=2, beta=5.5)  # Bias towards higher power skills
             
             index = min(math.floor(seed * len(skills)), len(skills) - 1)
             chosen_skill = skills[index]
