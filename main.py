@@ -89,8 +89,7 @@ def choose_save_file(paths: list[str]) -> str:
 Save #{i}
 Player: {player_name}
 Date: {date[0]}/{date[1]}
-Time: {time[0]}:{time[1]}"""
-              )
+Time: {time[0]}:{time[1]}""")
     typing_print(f"\nPick a save file...{Styles.reset}")
     while True:
         try:
@@ -108,10 +107,13 @@ def tutorial() -> None:
     return None
 
 def is_valid_name(name: str) -> bool:
-    alphabet: list[str] = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
+    lowercase_letters: list[str] = [chr(i) for i in range(97, 123)]
+    uppercase_letters: list[str] = [chr(i) for i in range(65, 91)]
+    numbers: list[str] = [chr(i) for i in range(48, 58)]
+    valid_chararacters: list[str] = uppercase_letters + lowercase_letters + numbers
    
-    if not all(char in alphabet or char.isspace() for char in name) or not 0 < len(name) < 40:  
-        print_error(f"Invalid name: {name}. Please use only letters and spaces, and please keep it between 1 and 40 characters.")
+    if not all(char in valid_chararacters for char in name) or not 0 < len(name) < 40:  
+        print_error(f"Invalid name. Please use only letters and numbers, with length between 1 and 40 characters.")
         return False
     return True
 
