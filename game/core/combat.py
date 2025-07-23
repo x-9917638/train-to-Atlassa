@@ -222,9 +222,9 @@ class CombatSystem(BaseCommandHandler):
             red=Styles.fg.red,
             reset=Styles.reset,
             yellow=Styles.fg.yellow,
-            green=Styles.fg.green,
-            blue=Styles.fg.blue,
-            pink=Styles.fg.lightblue))
+            green=Styles.fg.lightgreen,
+            blue=Styles.fg.lightblue,
+            pink=Styles.fg.pink))
         return None
     
 
@@ -295,7 +295,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
         items = [item for item in self.player.inventory if isinstance(item, Consumable)] 
         for i, item in enumerate(items, 1):
             quantity = self.player.inventory[item]
-            print(f"{Styles.fg.green}{i}. {item.name} x{quantity} - {item.description} {Styles.reset}")
+            print(f"{Styles.fg.lightgreen}{i}. {item.name} x{quantity} - {item.description} {Styles.reset}")
             time.sleep(0.01)
         return None
 

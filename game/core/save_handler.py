@@ -16,6 +16,7 @@
 from ..utils import Styles, print_error
 import pathlib
 import pickle, hashlib, hmac
+import datetime
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ class FileCorruptError(Exception):
     pass
 
 
-def handle_load() -> 'GameData':
+def handle_load(filepath: str) -> 'GameData':
     """
     Although basic integrity checking is dones this is still really easy to bypass... HMAC key is hardcoded.
     Which is why warn user.
@@ -52,7 +53,7 @@ See the GNU Affero General Public License for more details.""")
     
     print(f"{Styles.fg.lightblue}Loading game...{Styles.reset}")
 
-    with open("./saves/savegame.pkl", "rb") as save_file:
+    with open(filepath, "rb") as save_file:
         untrusted_tag: bytes = save_file.read(32)
         if not hmac.compare_digest(untrusted_tag, tag):
             logger.error("HMAC tag mismatch! Save file may have been tampered with or is corrupted.")
@@ -74,8 +75,11 @@ def handle_save(data: 'GameData') -> None:
 
     # Ensure the saves directory exists
     pathlib.Path("./saves").mkdir(parents=True, exist_ok=True)
+    
+    time = datetime.datetime.now()
 
-    with open(pathlib.Path("./saves/savegame.pkl"), "wb") as f:
+    # Save to savegame_player_name_day_month_hour_minute.pkl
+    with open(pathlib.Path(f"./saves/savegame_{data.player.name}_{time.day}_{time.month}_{time.hour}_{time.minute if time.minute >= 10 else "0" + str(time.minute)}.pkl"), "wb") as f:
         f.write(tag) # Add hmac tag for integrity checking
         logger.debug("HMAC tag written.")
         pickle.dump(data, f) # Save the game data

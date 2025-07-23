@@ -211,7 +211,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             typing_print("Your inventory:")
             for item in self.player.inventory:
                 quantity: int = self.player.inventory[item]
-                print(f"{Styles.fg.green}- {item.name}, x{quantity}: {item.description}{Styles.reset}")
+                print(f"{Styles.fg.lightgreen}- {item.name}, x{quantity}: {item.description}{Styles.reset}")
                 time.sleep(0.01)
             return True
         else:
@@ -245,7 +245,7 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
 
         typing_print("Available items:")
         for i, item in enumerate(equipment, 1):
-            print(f"""{Styles.fg.green}{i}. {item.name}
+            print(f"""{Styles.fg.lightgreen}{i}. {item.name}
 Description: {item.description}
 Boost: {item.boost}{Styles.reset}""")
             time.sleep(0.01)
@@ -257,7 +257,7 @@ Boost: {item.boost}{Styles.reset}""")
             index = int(choice) - 1
             item = equipment[index]
             item.equip(self.player)
-            typing_print(f"{Styles.fg.green}Equipped {item.name}!{Styles.reset}")
+            typing_print(f"{Styles.fg.lightgreen}Equipped {item.name}!{Styles.reset}")
         
         except (ValueError, IndexError):
             print_error("Invalid input.")
@@ -275,7 +275,7 @@ Boost: {item.boost}{Styles.reset}""")
             return None
         
         for i, item in enumerate(consumables, 1):
-            print(f"""{Styles.fg.green}{i}. {item.name}
+            print(f"""{Styles.fg.lightgreen}{i}. {item.name}
 Description: {item.description}{Styles.reset}""")
             time.sleep(0.01)
 
@@ -309,7 +309,7 @@ Description: {item.description}{Styles.reset}""")
         
         typing_print("Your inventory:")
         for i, item in enumerate(self.player.inventory, 1):
-            print(f"{Styles.fg.green}{i}. {item.name} - {item.description}{Styles.reset}")
+            print(f"{Styles.fg.lightgreen}{i}. {item.name} - {item.description}{Styles.reset}")
             time.sleep(0.01)
 
         print_game_msg(f"Pick an item...\n")
@@ -328,7 +328,7 @@ Description: {item.description}{Styles.reset}""")
             
             for i in range(num_items):
                 self.player.remove_item_from_inventory(item)
-            typing_print(f"{Styles.fg.green}Dropped {num_items} of {item.name}!{Styles.reset}")
+            typing_print(f"{Styles.fg.lightgreen}Dropped {num_items} of {item.name}!{Styles.reset}")
         
         except (ValueError, IndexError):
             print_error("Invalid input.")
@@ -557,7 +557,6 @@ class GameCommandHandler(BaseCommandHandler):
 
     def do_save(self, arg) -> None:
         self.game._save_game()
-        colorprint(f"Game saved to {pathlib.Path("./saves/savegame.pkl").absolute()}!", "lightgreen")
+        colorprint(f"Game saved to {pathlib.Path("./saves/").absolute()}!", "lightgreen")
         return None
-
 

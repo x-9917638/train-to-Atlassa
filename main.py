@@ -34,7 +34,7 @@ logging.basicConfig(
 
 logger.info("------------------------NEW SESSION------------------------")
 
-import os, sys
+import os, sys, glob
 from typing import Optional
 import time
 
@@ -66,17 +66,34 @@ def setup() -> None:
     return None
 
 def prompt_load_save() -> Optional[GameData]:
-    if not os.path.exists("./saves/savegame.pkl"):
+    save_paths: list[str] = glob.glob("./saves/savegame_*.pkl")
+    if not save_paths:
         return None    
     choice: str = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset} ").strip().lower()
     
     match choice:
         case "y" | "yes":
-            data: GameData = handle_load()
+            savefile_path = choose_save_file(save_paths)
+            data: GameData = handle_load(savefile_path)
             return data
         case _: # If it's not an explicit yes then we assume no
             typing_print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
             return None
+
+def choose_save_file(paths: list[str]) -> str:
+    for i, savefile in enumerate(paths, 1):
+        stuff  = savefile.split("_") 
+        # name, (day, month), (hours, minutes)
+        player_name, date, time = stuff[1], (stuff[2], stuff[3]), (stuff[4], stuff[5][:-4])
+        print(f"{Styles.fg.lightgreen}Save #{i}\nPlayer: {player_name}\nDate: {date[0]}/{date[1]}\nTime: {time[0]}:{time[1]}\n")
+    typing_print(f"Pick a save file...{Styles.reset}")
+    while True:
+        try:
+            path_index = int(input()) - 1
+            return paths[path_index]
+        except ValueError:
+            print_error("Invalid input, please select a valid number!")
+        
 
 
 def tutorial() -> None:
@@ -89,7 +106,7 @@ def is_valid_name(name: str) -> bool:
     alphabet: list[str] = [chr(i) for i in range(65, 91)] + [chr(i) for i in range(97, 123)]
    
     if not all(char in alphabet or char.isspace() for char in name) or not 0 < len(name) < 40:  
-        print_error(f"{Styles.fg.red}Invalid name: {name}. Please use only letters and spaces, and please keep it between 1 and 40 characters.{Styles.reset}")
+        print_error(f"Invalid name: {name}. Please use only letters and spaces, and please keep it between 1 and 40 characters.")
         return False
     return True
 
