@@ -80,6 +80,7 @@ def prompt_load_save() -> Optional[GameData]:
             typing_print(f"{Styles.fg.lightblue}Starting a new game...{Styles.reset}")
             return None
 
+
 def choose_save_file(paths: list[str]) -> str:
     for i, savefile in enumerate(paths, 1):
         stuff  = savefile.split("_") 

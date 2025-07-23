@@ -15,6 +15,7 @@
 # NOTE: Stores secret in file, not for real-world applications.
 from ..utils import Styles, print_error
 import pathlib
+from glob import glob
 import pickle, hashlib, hmac
 import datetime
 
@@ -78,6 +79,8 @@ def handle_save(data: 'GameData') -> None:
     
     time = datetime.datetime.now()
 
+    prev_saves: list[str] = glob(f"./saves/savegame_{data.player.name}_*.pkl")
+
     # Save to savegame_player_name_day_month_hour_minute.pkl
     with open(pathlib.Path(f"./saves/savegame_{data.player.name}_{time.day}_{time.month}_{time.hour}_{time.minute if time.minute >= 10 else "0" + str(time.minute)}.pkl"), "wb") as f:
         f.write(tag) # Add hmac tag for integrity checking
@@ -85,4 +88,15 @@ def handle_save(data: 'GameData') -> None:
         pickle.dump(data, f) # Save the game data
         logger.debug("Game data dumped to file.")
     logger.debug("Successfully saved game data")
+
+    # We delete previous saves for the same character after the new save is successfully created.
+    if prev_saves:
+        logger.debug(f"Found previous saves: {prev_saves}")
+        for save in prev_saves:
+            try:
+                pathlib.Path(save).unlink()  # Delete previous saves from the same character
+                logger.debug(f"Deleted previous save: {save}")
+            except Exception as e:
+                logger.error(f"Failed to delete previous save {save}: {e}")
+
     return None
