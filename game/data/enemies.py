@@ -373,12 +373,12 @@ SECTION_FOUR_ENEMIES = [
 
 
 SECTION_ONE_BOSSES = [
-    # Early Game Bosses (Level 2-3)
+    # Early Game Bosses (Level 3-4)
     Enemy(
 		name="Goblin King", 
 		section=1,
 		description="The cunning and ruthless ruler of the goblins, wielding a jagged crown and a massive club.", 
-		level=2, 
+		level=3, 
 		exp_amt=30, 
 		num_skills=4
 	),
@@ -386,19 +386,19 @@ SECTION_ONE_BOSSES = [
 		name="Bone Lord", 
 		section=1,
 		description="A towering skeleton adorned with ancient armor, commanding legions of the undead.", 
-		level=3, 
+		level=4, 
 		exp_amt=40, 
 		num_skills=5
     )
 ]
 
 SECTION_TWO_BOSSES = [
-    # Mid Game Bosses (Level 4-5)
+    # Mid Game Bosses (Level 5-6)
     Enemy(
 		name="Witch Queen", 
 		section=2,
 		description="A master of curses and dark magic, surrounded by a cloud of sinister energy.", 
-		level=4, 
+		level=5, 
 		exp_amt=60, 
 		num_skills=6
 	),
@@ -406,19 +406,19 @@ SECTION_TWO_BOSSES = [
 		name="Ancient Treant", 
 		section=2,
 		description="A colossal, ancient tree spirit, its roots and branches crushing all who oppose it.", 
-		level=5, 
+		level=6, 
 		exp_amt=80, 
 		num_skills=6
     )
 ]
 
 SECTION_THREE_BOSSES = [
-    # Late Game Bosses (Level 6-7)
+    # Late Game Bosses (Level 7-8)
     Enemy(
 		name="Drake Matriarch", 
 		section=3,
 		description="The matriarch of a dragon brood, her scales shimmer with elemental power.", 
-		level=6, 
+		level=7, 
 		exp_amt=120, 
 		num_skills=7
 	),
@@ -426,7 +426,7 @@ SECTION_THREE_BOSSES = [
 		name="Lord of Shadows", 
 		section=3,
 		description="A mysterious figure cloaked in darkness, able to manipulate the very shadows themselves.", 
-		level=7, 
+		level=8, 
 		exp_amt=140, 
 		num_skills=8
     )
@@ -438,7 +438,7 @@ SECTION_FOUR_BOSSES = [
 		name="Archdemon Malakar", 
 		section=4,
 		description="A demon lord from the deepest abyss, radiating overwhelming power and malice.", 
-		level=8, 
+		level=9, 
 		exp_amt=200, 
 		num_skills=10
 	),
@@ -446,7 +446,7 @@ SECTION_FOUR_BOSSES = [
 		name="The Eternal Lich", 
 		section=4,
 		description="An immortal sorcerer whose phylactery is hidden, wielding devastating necromancy.", 
-		level=8, 
+		level=10, 
 		exp_amt=220,
         num_skills=10
     )
