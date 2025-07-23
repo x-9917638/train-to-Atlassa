@@ -19,7 +19,7 @@ SECTION_ONE_WEAPONS = { # <Weapon>: <Weighted Chance>
         name="Training Sword | <Tier 1>", 
         description="It's a sword, but not a very good one.", 
         boost_range=(3, 7)
-        ): 0.44,
+        ): 0.54,
     Weapon(
         name="Rusty Sword | <Tier 1>", 
         description="A subpar sword.", 
@@ -28,17 +28,17 @@ SECTION_ONE_WEAPONS = { # <Weapon>: <Weighted Chance>
     Weapon(
         name="Iron Sword | <Tier 1>", 
         description="A sturdy iron sword.", 
-        boost_range=(8, 15)
-        ): 0.2,
+        boost_range=(8, 13)
+        ): 0.1,
     Weapon(
         name="Steel Sword | <Tier 1>", 
         description="A sharp steel sword, fit for a knight.", 
-        boost_range=(12, 20)
+        boost_range=(12, 17)
         ): 0.05,
     Weapon(
         name="Enchanted Sword | <Tier 1>", 
         description="A sword, imbued with magic.", 
-        boost_range=(15, 25)
+        boost_range=(15, 20)
         ): 0.01
 }
 
@@ -46,18 +46,18 @@ SECTION_TWO_WEAPONS = { # <Weapon>: <Weighted Chance>
     Weapon(
         name="Frostbite | <Tier 2>",
         description="A cursed sword that freezes wounds, leaving victims brittle.",
-        boost_range=(15, 17)
-    ): 0.3,
+        boost_range=(10, 12)
+    ): 0.42,
     Weapon(
         name="Duskfang | <Tier 2>",
         description="A dagger, perfect for an assassination.",
-        boost_range=(15, 20)
-    ): 0.3,
+        boost_range=(8, 14)
+    ): 0.42,
     Weapon(
         name="Dawnbringer | <Tier 2>",
         description="A greatsword with the radiance of the sun.",
         boost_range=(10, 25)
-    ): 0.3,
+    ): 0.1,
     Weapon(
         name="Shadow Blade | <Tier 2>",
         description="It seems to have been forged with pure darkness.",
@@ -67,7 +67,7 @@ SECTION_TWO_WEAPONS = { # <Weapon>: <Weighted Chance>
         name="Holy Avenger | <Tier 2>",
         description="A pure holy light emanates from the sword.",
         boost_range=(25, 40)
-    ): 0.05
+    ): 0.01
 }
 
 SECTION_THREE_WEAPONS = { # <Weapon>: <Weighted Chance>
