@@ -15,22 +15,22 @@
 
 # Make sure log doesn't become massive.
 try:
-    f = open("game.log", "r")
+    f = open("./game.log", "r")
 except FileNotFoundError:
-    f = open("game.log", "w")
+    f = open("./game.log", "w")
     
 if not len(["" for _ in f]) > 3000: # Less than 3k lines ("" saves memory)
     pass
 else:
     f.close()
-    f = open("game.log", "w") # Wipe file
+    f = open("./game.log", "w") # Wipe file
 f.close()
 
 import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="game.log",
+    filename="./game.log",
     filemode="a",
     encoding="utf-8",
     format="%(asctime)s.%(filename)s:%(levelname)s - %(message)s",
