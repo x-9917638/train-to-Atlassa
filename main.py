@@ -14,7 +14,11 @@
 #       along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Make sure log doesn't become massive.
-f = open("game.log", "r")
+try:
+    f = open("game.log", "r")
+except FileNotFoundError:
+    f = open("game.log", "w")
+    
 if not len(["" for _ in f]) > 3000: # Less than 3k lines ("" saves memory)
     pass
 else:
