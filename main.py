@@ -93,7 +93,8 @@ Time: {time[0]}:{time[1]}""")
     typing_print(f"\nPick a save file...{Styles.reset}")
     while True:
         try:
-            path_index = int(input()) - 1
+            choice = int(input())
+            path_index = choice - 1 if choice > 0 else 0x9999 # If it's negative we can just cause the indexerror
             return paths[path_index]
         except (ValueError, IndexError):
             print_error("Invalid input, please select a valid number!")
