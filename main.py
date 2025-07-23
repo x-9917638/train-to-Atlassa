@@ -34,9 +34,9 @@ logging.basicConfig(
 
 logger.info("------------------------NEW SESSION------------------------")
 
-import os, sys, glob
+import sys, time
+from glob import glob
 from typing import Optional
-import time
 
 
 from game.game import Game, GameData, GameCommandHandler
@@ -66,10 +66,10 @@ def setup() -> None:
     return None
 
 def prompt_load_save() -> Optional[GameData]:
-    save_paths: list[str] = glob.glob("./saves/savegame_*.pkl")
+    save_paths: list[str] = glob("./saves/savegame_*.pkl")
     if not save_paths:
         return None    
-    choice: str = input(f"{Styles.fg.lightblue}Save found!\nLoad game? [y]es/[N]o{Styles.reset} ").strip().lower()
+    choice: str = input(f"{Styles.fg.lightblue}Save(s) found!\nLoad game? [y]es/[N]o{Styles.reset} ").strip().lower()
     
     match choice:
         case "y" | "yes":
@@ -85,13 +85,18 @@ def choose_save_file(paths: list[str]) -> str:
         stuff  = savefile.split("_") 
         # name, (day, month), (hours, minutes)
         player_name, date, time = stuff[1], (stuff[2], stuff[3]), (stuff[4], stuff[5][:-4])
-        print(f"{Styles.fg.lightgreen}Save #{i}\nPlayer: {player_name}\nDate: {date[0]}/{date[1]}\nTime: {time[0]}:{time[1]}\n")
-    typing_print(f"Pick a save file...{Styles.reset}")
+        print(f"""{Styles.fg.lightgreen} 
+Save #{i}
+Player: {player_name}
+Date: {date[0]}/{date[1]}
+Time: {time[0]}:{time[1]}"""
+              )
+    typing_print(f"\nPick a save file...{Styles.reset}")
     while True:
         try:
             path_index = int(input()) - 1
             return paths[path_index]
-        except ValueError:
+        except (ValueError, IndexError):
             print_error("Invalid input, please select a valid number!")
         
 
