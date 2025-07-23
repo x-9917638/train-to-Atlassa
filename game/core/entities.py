@@ -91,6 +91,7 @@ class Player(Entity):
         self.skill_hand: list["Skill"] = []
         self.profession: Optional[Professions] = None
         self.allies: list[Ally] = []
+        self._give_new_skills(1)  # Give a new skill on creation
     
     
     def add_ally(self, ally: "Ally") -> None:
@@ -117,13 +118,13 @@ class Player(Entity):
         return None
     
     
-    def draw_skills(self, num: int = 1) -> list["Skill"]:
+    def draw_skills(self, num: int = 2) -> list["Skill"]:
         available_skills: list["Skill"] = [skill for skill in self.skill_deck if skill not in self.skill_hand] # Make sure we do not draw dupes
-        if len(available_skills):
+
         # If there aren't any skills to draw, don't draw.
-            drawn: list["Skill"] = random.sample(available_skills, num)
-            self.skill_hand.extend(drawn)
-        else: drawn = []
+        drawn: list["Skill"] = random.sample(available_skills, min(num, len(available_skills)))
+        self.skill_hand.extend(drawn)
+
         return drawn
     
     
@@ -197,7 +198,6 @@ class Enemy(Entity):
         self.profession = Professions.ENEMY
         self.create_enemy_skills(num_skills)
         self.exp_amt: int = exp_amt # How much experience this enemy gives when defeated
-        
     
     
     def create_enemy_skills(self, amount: int) -> None:

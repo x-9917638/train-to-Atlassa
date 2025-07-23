@@ -22,6 +22,7 @@ from .items import Consumable
 import os, logging
 import time
 import random as rand
+import math
 
 logger = logging.getLogger(__name__)
 
@@ -386,7 +387,14 @@ Accuracy: {skill.accuracy * 100}%{Styles.reset}
             logger.debug(f"Enemy {enemy.name} detected and used a fatal skill")
 
         else:
-            chosen_skill = rand.choice(enemy.skill_deck)
+            skills = enemy.skill_deck.copy()
+            skills.sort(key=lambda skill: max(1, enemy.attack // 6) * skill.power, reverse=True)  # Sort skills by power
+            
+            seed = rand.betavariate(alpha=2, beta=4.5)  # Bias towards higher power skills
+            
+            index = min(math.floor(seed * len(skills)), len(skills) - 1)
+            chosen_skill = skills[index]
+
             targets = self.npc_choose_target(chosen_skill, enemy)
             logger.debug(f"Enemy {enemy.name} chose a random skill.")
 
