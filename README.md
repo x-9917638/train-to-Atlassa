@@ -8,6 +8,8 @@ A text based adventure game with turn based combat.
 - Note: Autocompletion of commands will not work on Windows due to the lack of readline.
 
 # Getting Started
+Download the binary for your system in the releases, or
+
 1. Make sure the required dependencies are installed
 2. Clone the repository: 
 ```git clone https://github.com/x-9917638/train-to-Atlassa.git```
