@@ -1,0 +1,4 @@
+{
+    "setup": "pip install getch",
+    "run": "python main.py"
+}
