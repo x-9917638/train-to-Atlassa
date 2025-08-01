@@ -54,9 +54,9 @@ Available Commands:
 The inventory presents a simple menu to manage items.
 
 Available Commands:
-- Equip a Weapon or Armor | **e, equip**
-- Use a Consumable | **u, use**
-- Drop (delete) an Item | **d, drop**
+- Equip a Weapon or Armor | **e, equip**, then pick the number of the consumable.
+- Use a Consumable | **u, use**, then pick the number of the equipment. 
+- Drop (delete) an Item | **d, drop**, then pick the number of the item to be dropped.
 - Cancel | **any other input**
 
 ## Combat
@@ -72,9 +72,9 @@ The interface displays the following:
 The player can choose one of five commands, and autocompletions are supported.
 
 Available Commands:
-- Use a skill | **attack**
+- Use a skill | **attack**, then pick the number of the skill, then pick the number of the target (depending on skill)
 - Rest (Heal 20% max HP, 10% max MP) | **rest**
-- Use a consusmable item | **items**        
+- Use a consusmable item | **items**, then pick the number of the consumable
 - Retreat (Clears the room) | **retreat**    
 - Show help | **help, h** or *empty command*
 
