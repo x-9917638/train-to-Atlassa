@@ -17,7 +17,7 @@
 try:
     f = open("./game.log", "r")
 except FileNotFoundError:
-    f = open("./game.log", "w")
+    f = open("./game.log", "w+")
     
 if not len(["" for _ in f]) > 3000: # Less than 3k lines ("" saves memory)
     pass
